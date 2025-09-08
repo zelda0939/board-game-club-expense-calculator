@@ -262,7 +262,7 @@
         </div>
 
         <button @click="clearInputs" class="clear-button">清空所有欄位</button>
-        <p class="footer-note" v-if="amountToGiveWife < 0">註：金額為負數代表老婆應給您錢。</p>
+        <p class="footer-note">註：金額為綠色代表你應收的錢，紅色代表你應付的錢。</p>
     </div>
 
     <script>
@@ -390,7 +390,8 @@
                         },
                         brother: {
                             meal: 0,
-                            transport: 0
+                            transport: 0,
+                            printer_3d: 0
                         }
                     };
                     this.our_own = {
@@ -401,9 +402,6 @@
                         wife: {
                             meal: 0,
                             transport: 0
-                        },
-                        brother: {
-                            printer_3d: 0
                         }
                     };
                     localStorage.removeItem('familyCostCalculator');
