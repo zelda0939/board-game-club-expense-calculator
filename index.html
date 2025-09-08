@@ -333,7 +333,7 @@
                         .transport || 0) + (this.reimbursable.brother.printer_3d || 0);
                     const result = myTotal + wifeTotal - brotherTotal;
                     console.log('familyShouldReceive:', result);
-                    return result;
+                    return Math.round(result);
                 },
                 // 我應再給老婆
                 amountToGiveWife() {
