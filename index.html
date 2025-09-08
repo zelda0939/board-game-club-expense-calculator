@@ -357,7 +357,7 @@
                     const result = averageExpense - (myTotalOwnExpense - this.familyShouldReceive) + (Math
                         .floor(this.reimbursable.brother.printer_3d / 2) || 0);
                     console.log('amountToGiveWife:', result);
-                    return result;
+                    return Math.round(result);
                 },
                 // 動態變更標題文字
                 amountToGiveWifeText() {
