@@ -178,15 +178,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="reimbursable.me.meal" placeholder="0">
+                        <input type="number" v-model.number="reimbursable.me.meal" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="reimbursable.wife.meal" placeholder="0">
+                        <input type="number" v-model.number="reimbursable.wife.meal" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <input type="number" v-model.number="reimbursable.brother.meal" placeholder="0">
+                        <input type="number" v-model.number="reimbursable.brother.meal" placeholder="0" @focus="selectAll">
                     </div>
                 </div>
             </div>
@@ -195,15 +195,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="reimbursable.me.transport" placeholder="0">
+                        <input type="number" v-model.number="reimbursable.me.transport" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="reimbursable.wife.transport" placeholder="0">
+                        <input type="number" v-model.number="reimbursable.wife.transport" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <input type="number" v-model.number="reimbursable.brother.transport" placeholder="0">
+                        <input type="number" v-model.number="reimbursable.brother.transport" placeholder="0" @focus="selectAll">
                     </div>
                 </div>
             </div>
@@ -216,11 +216,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="our_own.me.meal" placeholder="0">
+                        <input type="number" v-model.number="our_own.me.meal" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="our_own.wife.meal" placeholder="0">
+                        <input type="number" v-model.number="our_own.wife.meal" placeholder="0" @focus="selectAll">
                     </div>
                 </div>
             </div>
@@ -229,11 +229,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="our_own.me.transport" placeholder="0">
+                        <input type="number" v-model.number="our_own.me.transport" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="our_own.wife.transport" placeholder="0">
+                        <input type="number" v-model.number="our_own.wife.transport" placeholder="0" @focus="selectAll">
                     </div>
                 </div>
             </div>
@@ -243,7 +243,7 @@
             <h2>其他花費</h2>
             <div class="input-group">
                 <label>哥 3D列印</label>
-                <input type="number" v-model.number="reimbursable.brother.printer_3d" placeholder="0">
+                <input type="number" v-model.number="reimbursable.brother.printer_3d" placeholder="0" @focus="selectAll">
             </div>
         </div>
 
@@ -411,6 +411,10 @@
                 // 格式化貨幣顯示
                 formatCurrency(value) {
                     return new Intl.NumberFormat('zh-TW').format(value);
+                },
+                // 點擊輸入框時全選內容
+                selectAll(event) {
+                    event.target.select();
                 }
             }
         }).mount('#app');
