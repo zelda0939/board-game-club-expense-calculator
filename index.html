@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>桌遊社開銷計算機</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        /* CSS 樣式 */
+        :root {
+            --primary-color: #42b983;
+            --secondary-color: #ffffff;
+            --background-color: #f0f2f5;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #app {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 1.8em;
+        }
+
+        .card {
+            background-color: var(--secondary-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+        }
+
+        .input-wrapper span {
+            display: block;
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .input-group input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1.1em;
+            text-align: center;
+            box-sizing: border-box;
+            -moz-appearance: textfield;
+            /* Firefox */
+            appearance: textfield;
+            /* Standard property */
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .results-card {
+            background-color: #e8f5e9;
+            /* 淺綠色背景 */
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #c8e6c9;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item .label {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .result-item .value {
+            font-size: 1.4em;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+
+        .value.positive {
+            color: var(--success-color);
+        }
+
+        .value.negative {
+            color: var(--danger-color);
+        }
+
+        .clear-button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--secondary-color);
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .clear-button:hover {
+            background-color: #36a473;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <h1>桌遊社開銷計算機</h1>
+
+        <div class="card">
+            <h2>代墊費用</h2>
+            <div class="input-group">
+                <label>代墊餐費</label>
+                <div class="input-row">
+                    <div class="input-wrapper">
+                        <span>我</span>
+                        <input type="number" v-model.number="reimbursable.me.meal" placeholder="0">
+                    </div>
+                    <div class="input-wrapper">
+                        <span>老婆</span>
+                        <input type="number" v-model.number="reimbursable.wife.meal" placeholder="0">
+                    </div>
+                    <div class="input-wrapper">
+                        <span>哥</span>
+                        <input type="number" v-model.number="reimbursable.brother.meal" placeholder="0">
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>代墊車費</label>
+                <div class="input-row">
+                    <div class="input-wrapper">
+                        <span>我</span>
+                        <input type="number" v-model.number="reimbursable.me.transport" placeholder="0">
+                    </div>
+                    <div class="input-wrapper">
+                        <span>老婆</span>
+                        <input type="number" v-model.number="reimbursable.wife.transport" placeholder="0">
+                    </div>
+                    <div class="input-wrapper">
+                        <span>哥</span>
+                        <input type="number" v-model.number="reimbursable.brother.transport" placeholder="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>自家花費</h2>
+            <div class="input-group">
+                <label>自家餐費</label>
+                <div class="input-row">
+                    <div class="input-wrapper">
+                        <span>我</span>
+                        <input type="number" v-model.number="our_own.me.meal" placeholder="0">
+                    </div>
+                    <div class="input-wrapper">
+                        <span>老婆</span>
+                        <input type="number" v-model.number="our_own.wife.meal" placeholder="0">
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>自家車費</label>
+                <div class="input-row">
+                    <div class="input-wrapper">
+                        <span>我</span>
+                        <input type="number" v-model.number="our_own.me.transport" placeholder="0">
+                    </div>
+                    <div class="input-wrapper">
+                        <span>老婆</span>
+                        <input type="number" v-model.number="our_own.wife.transport" placeholder="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>其他花費</h2>
+            <div class="input-group">
+                <label>哥 3D列印</label>
+                <input type="number" v-model.number="reimbursable.brother.printer_3d" placeholder="0">
+            </div>
+        </div>
+
+        <div class="card results-card">
+            <h2>計算結果</h2>
+            <div class="result-item">
+                <span class="label">{{ familyShouldReceiveText }}</span>
+                <span class="value" :class="familyShouldReceive >= 0 ? 'positive' : 'negative'">{{ formatCurrency(Math.abs(familyShouldReceive)) }}</span>
+            </div>
+            <div class="result-item">
+                <span class="label">{{ amountToGiveWifeText }}</span>
+                <span class="value" :class="amountToGiveWife >= 0 ? 'negative' : 'positive'">
+                    {{ formatCurrency(Math.abs(amountToGiveWife)) }}
+                </span>
+            </div>
+        </div>
+
+        <button @click="clearInputs" class="clear-button">清空所有欄位</button>
+        <p class="footer-note" v-if="amountToGiveWife < 0">註：金額為負數代表老婆應給您錢。</p>
+    </div>
+
+    <script>
+        // Vue.js 應用邏輯
+        const {
+            createApp
+        } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    reimbursable: { // 代墊費用
+                        me: {
+                            meal: 0,
+                            transport: 0
+                        },
+                        wife: {
+                            meal: 0,
+                            transport: 0
+                        },
+                        brother: {
+                            meal: 0,
+                            transport: 0,
+                            printer_3d: 0
+                        } // 新增「哥」的欄位
+                    },
+                    our_own: { // 自家花費
+                        me: {
+                            meal: 0,
+                            transport: 0
+                        },
+                        wife: {
+                            meal: 0,
+                            transport: 0
+                        }
+                    }
+                };
+            },
+            mounted() {
+                const savedData = localStorage.getItem('familyCostCalculator');
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    this.reimbursable = parsedData.reimbursable;
+                    this.our_own = parsedData.our_own;
+                }
+            },
+            watch: {
+                reimbursable: {
+                    handler(newValue) {
+                        localStorage.setItem('familyCostCalculator', JSON.stringify({ reimbursable: newValue, our_own: this.our_own }));
+                    },
+                    deep: true
+                },
+                our_own: {
+                    handler(newValue) {
+                        localStorage.setItem('familyCostCalculator', JSON.stringify({ reimbursable: this.reimbursable, our_own: newValue }));
+                    },
+                    deep: true
+                }
+            },
+            computed: {
+                // 我們家應獲得差額
+                familyShouldReceive() {
+                    const myTotal = (this.reimbursable.me.meal || 0) + (this.reimbursable.me.transport || 0);
+                    const wifeTotal = (this.reimbursable.wife.meal || 0) + (this.reimbursable.wife.transport ||
+                        0);
+                    const brotherTotal = (this.reimbursable.brother.meal || 0) + (this.reimbursable.brother
+                        .transport || 0) + (this.reimbursable.brother.printer_3d || 0);
+                    const result = myTotal + wifeTotal - brotherTotal;
+                    console.log('familyShouldReceive:', result);
+                    return result;
+                },
+                // 我應再給老婆
+                amountToGiveWife() {
+                    // 1. 計算我的總支出
+                    const myTotalOwnExpense = (this.reimbursable.me.meal || 0) + (this.reimbursable.me
+                        .transport || 0) + (this.our_own.me.meal || 0) + (this.our_own.me.transport || 0);
+                    console.log('myTotalOwnExpense:', myTotalOwnExpense);
+                    // 2. 計算老婆的總支出
+                    const wifeTotalOwnExpense = (this.reimbursable.wife.meal || 0) + (this.reimbursable.wife
+                        .transport ||
+                        0) + (this.our_own.wife.meal || 0) + (this.our_own.wife.transport ||
+                        0);
+                    console.log('wifeTotalOwnExpense:', wifeTotalOwnExpense);
+                    // 3. 計算夫妻兩人總支出
+                    const totalFamilyExpense = myTotalOwnExpense + wifeTotalOwnExpense - this.familyShouldReceive;
+                    console.log('totalFamilyExpense:', totalFamilyExpense);
+                    // 4. 計算平均每人應支出
+                    const averageExpense = totalFamilyExpense / 2;
+                    console.log('averageExpense:', averageExpense);
+                    // 5. 計算我應給老婆的金額 (平均值 - 我的實際支出)
+                    const result = averageExpense - (myTotalOwnExpense - this.familyShouldReceive) + (Math
+                        .floor(this.reimbursable.brother.printer_3d / 2) || 0);
+                    console.log('amountToGiveWife:', result);
+                    return result;
+                },
+                // 動態變更標題文字
+                amountToGiveWifeText() {
+                    if (this.amountToGiveWife >= 0) {
+                        return "我應再給老婆";
+                    } else {
+                        return "老婆應再給我";
+                    }
+                },
+                // 動態變更我們家應獲得差額的標題文字
+                familyShouldReceiveText() {
+                    if (this.familyShouldReceive >= 0) {
+                        return "我們家應獲得差額";
+                    } else {
+                        return "我們家應付出差額";
+                    }
+                }
+            },
+            methods: {
+                // 清空所有輸入
+                clearInputs() {
+                    this.reimbursable = {
+                        me: {
+                            meal: 0,
+                            transport: 0
+                        },
+                        wife: {
+                            meal: 0,
+                            transport: 0
+                        },
+                        brother: {
+                            meal: 0,
+                            transport: 0
+                        }
+                    };
+                    this.our_own = {
+                        me: {
+                            meal: 0,
+                            transport: 0
+                        },
+                        wife: {
+                            meal: 0,
+                            transport: 0
+                        },
+                        brother: {
+                            printer_3d: 0
+                        }
+                    };
+                    localStorage.removeItem('familyCostCalculator');
+                },
+                // 格式化貨幣顯示
+                formatCurrency(value) {
+                    return new Intl.NumberFormat('zh-TW').format(value);
+                }
+            }
+        }).mount('#app');
+    </script>
+
+</body>
+
+</html>
