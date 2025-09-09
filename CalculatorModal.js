@@ -62,6 +62,9 @@ export default {
             if (val === '=') {
                 this.tryEval();
                 this.lastCalculated = true;
+                if(this.error) {
+                    return;
+                }
             } else if (val === 'C') {
                 this.input = '';
                 this.error = '';
@@ -158,6 +161,12 @@ export default {
                 if (/^[0-9+\-*/().\s]+$/.test(inputToEvaluate)) {
                     let result = eval(inputToEvaluate);
                     console.log('tryEval: Result:', result);
+                    if(result === Infinity || result === -Infinity) {
+                        console.log('tryEval: Result is Infinity or -Infinity');
+                        this.error = '算式錯誤';
+                        this.lastCalculated = false;
+                        return;
+                    }
                     // 檢查結果是否為浮點數
                     if (typeof result === 'number' && !Number.isInteger(result)) {
                         result = round(result, 10);
