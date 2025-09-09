@@ -11,7 +11,9 @@ export default {
                 <input type="text" v-model="input" readonly>
                 <div class="buttons">
                     <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'*',')','.',0,'=','/','DEL']"
-                            @click="press(n)"
+                            @touchstart="handleTouchStart($event, n)"
+                            @touchend="handleTouchEnd($event, n)"
+                            @touchmove="handleTouchMove($event)"
                             :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
                             :key="n">
                         {{ n === 'DEL' ? '⌫' : n }}
@@ -35,7 +37,12 @@ export default {
         return {
             input: '',
             error: '',
-            lastCalculated: false
+            lastCalculated: false,
+            // 新增觸控事件相關的數據
+            touchStartX: 0,
+            touchStartY: 0,
+            isMoving: false,
+            touchThreshold: 10 // 定義輕微滑動的像素閾值
         };
     },
     watch: {
@@ -53,6 +60,30 @@ export default {
     methods: {
         handleCancel() {
             this.$emit('update:visible', false);
+        },
+        // 新增觸控事件處理函數
+        handleTouchStart(event, val) {
+            this.isMoving = false;
+            if (event.touches.length > 0) {
+                this.touchStartX = event.touches[0].clientX;
+                this.touchStartY = event.touches[0].clientY;
+            }
+        },
+        handleTouchMove(event) {
+            if (event.touches.length > 0) {
+                const deltaX = Math.abs(event.touches[0].clientX - this.touchStartX);
+                const deltaY = Math.abs(event.touches[0].clientY - this.touchStartY);
+                if (deltaX > this.touchThreshold || deltaY > this.touchThreshold) {
+                    this.isMoving = true;
+                }
+            }
+        },
+        handleTouchEnd(event, val) {
+            if (!this.isMoving) {
+                // 只有在沒有明顯移動時才觸發 press
+                this.press(val);
+            }
+            this.isMoving = false; // 重置狀態
         },
         press(val) {
             if (navigator.vibrate) {
