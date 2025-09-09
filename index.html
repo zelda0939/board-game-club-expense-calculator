@@ -364,7 +364,7 @@
             <div class="calculator">
                 <input type="text" v-model="calculator.input" readonly>
                 <div class="buttons">
-                    <button v-for="n in [7,8,9,'+',4,5,6,'-',1,2,3,'*','C','0','.','/','=','DEL']"
+                    <button v-for="n in [7,8,9,'+',4,5,6,'-',1,2,3,'*','C','(',')','/','=','0','.','DEL']"
                             @click="press(n)"
                             :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
                             :key="n">
@@ -557,6 +557,9 @@
                     } else if (val === 'DEL') {
                         this.calculator.input = this.calculator.input.slice(0, -1);
                         this.calculator.error = '';
+                    } else if (['(', ')'].includes(val)) {
+                        this.calculator.input += val.toString();
+                        this.calculator.error = '';
                     } else if (val === '') { // 處理空按鈕
                         return;
                     } else {
@@ -566,9 +569,8 @@
                 },
                 tryEval() {
                     try {
-                        // 僅允許數字與運算符
-                        if (/^[0-9+\-*/.\s]+$/.test(this.calculator.input)) {
-                            // 避免連續運算符
+                        // 僅允許數字與運算符和括號
+                        if (/^[0-9+\-*/().\s]+$/.test(this.calculator.input)) {
                             const result = eval(this.calculator.input);
                             if (typeof result === 'number' && isFinite(result)) {
                                 this.calculator.input = result.toString();
