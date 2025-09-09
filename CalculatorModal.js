@@ -38,7 +38,7 @@ export default {
             if (isVisible) {
                 this.input = this.initialValue;
                 this.error = '';
-                this.lastCalculated = false;
+                this.lastCalculated = true;
                 document.body.classList.add('no-scroll');
             } else {
                 document.body.classList.remove('no-scroll');
@@ -91,15 +91,82 @@ export default {
                 this.input += val.toString();
                 this.error = '';
                 this.lastCalculated = false;
-            } else { // 數字或小數點
+            } else if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].includes(val) || val === '.') { // 處理數字或小數點
+                console.log('input:', val);
                 if (this.lastCalculated) {
-                    this.input = val.toString();
+                    this.input = (val === '.') ? '0.' : val.toString();
                     this.lastCalculated = false;
                 } else {
+                    this.input += val.toString(); // 先直接追加
+                }
+            } else if (['+', '-', '*', '/', '(', ')'].includes(val)) {
+                if (this.lastCalculated && !['+', '-', '*', '/'].includes(val)) {
+                    // 如果上次是計算結果，並且按下了非運算符的鍵 (例如括號)，則清除輸入
+                    this.input = val.toString();
+                    this.lastCalculated = false;
+                } else if (this.lastCalculated && ['+', '-', '*', '/'].includes(val)) {
+                    // 如果上次是計算結果，按下運算符，則追加
+                    this.input += val.toString();
+                    this.lastCalculated = false;
+                } else if (['+', '-', '*', '/'].includes(val)) {
+                    const lastChar = this.input.slice(-1);
+                    if (['+', '-', '*', '/'].includes(lastChar)) {
+                        this.input = this.input.slice(0, -1) + val.toString();
+                    } else {
+                        this.input += val.toString();
+                    }
+                } else if (val === '(') {
+                    const lastChar = this.input.slice(-1);
+                    if (lastChar && (/[0-9)]/.test(lastChar))) {
+                        this.input += '*(';
+                    } else {
+                        this.input += '(';
+                    }
+                } else if (val === ')') {
                     this.input += val.toString();
                 }
-                this.error = '';
+                this.lastCalculated = false; // 按下其他鍵時清除此狀態
             }
+            this.error = '';
+            // 在所有輸入處理之後，進行正規化
+            this.input = this.normalizeNumberInput(this.input);
+        },
+        normalizeNumberInput(inputString) {
+            if (!inputString) return '';
+
+            // 匹配數字、小數點或運算符/括號
+            // 使用正則表達式捕獲每個數字/小數點序列或單個運算符/括號
+            const tokens = inputString.match(/(\d+\.?\d*|\.?\d+|[+\-*\/()])/g);
+            if (!tokens) return '';
+
+            let normalizedTokens = [];
+
+            for (let i = 0; i < tokens.length; i++) {
+                let token = tokens[i];
+
+                if (/[+\-*\/()]/.test(token)) { // 運算符或括號
+                    normalizedTokens.push(token);
+                } else { // 數字部分
+                    // 處理前導零
+                    if (token.length > 1 && token.startsWith('0') && !token.startsWith('0.')) {
+                        token = token.replace(/^0+/, ''); // 移除所有前導零
+                        if (token === '') token = '0'; // 如果移除後為空，則設為'0'
+                    }
+                    
+                    // 處理單獨的 '.'
+                    if (token === '.') {
+                        token = '0.';
+                    }
+
+                    // 確保沒有多個小數點 (只保留第一個)
+                    const decimalParts = token.split('.');
+                    if (decimalParts.length > 2) {
+                        token = decimalParts[0] + '.' + decimalParts.slice(1).join('');
+                    }
+                    normalizedTokens.push(token);
+                }
+            }
+            return normalizedTokens.join('');
         },
         tryEval() {
             this.error = '';
