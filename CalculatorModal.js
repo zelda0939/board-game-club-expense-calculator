@@ -6,27 +6,29 @@ function round(val, digits = 12) {
 export default {
     name: 'CalculatorModal',
     template: `
-        <div v-if="visible" class="calculator-modal">
-            <div class="calculator">
-                <input type="text" v-model="input" readonly>
-                <div class="buttons">
-                    <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'*',')','.',0,'=','/','DEL']"
-                            @touchstart="handleTouchStart($event, n)"
-                            @touchend="handleTouchEnd($event, n)"
-                            @touchmove="handleTouchMove($event)"
-                            @click="press(n)"
-                            :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
-                            :key="n">
-                        {{ n === 'DEL' ? '⌫' : n }}
-                    </button>
-                </div>
-                <div v-if="error" class="error-tip">{{ error }}</div>
-                <div class="action-row">
-                    <button @click="confirmAndClose">確定</button>
-                    <button @click="handleCancel" class="action-btn">取消</button>
+        <Transition name="modal">
+            <div v-if="visible" class="calculator-modal">
+                <div class="calculator">
+                    <input type="text" v-model="input" readonly>
+                    <div class="buttons">
+                        <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'*',')','.',0,'=','/','DEL']"
+                                @touchstart="handleTouchStart($event, n)"
+                                @touchend="handleTouchEnd($event, n)"
+                                @touchmove="handleTouchMove($event)"
+                                @click="press(n)"
+                                :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
+                                :key="n">
+                            {{ n === 'DEL' ? '⌫' : n }}
+                        </button>
+                    </div>
+                    <div v-if="error" class="error-tip">{{ error }}</div>
+                    <div class="action-row">
+                        <button @click="confirmAndClose">確定</button>
+                        <button @click="handleCancel" class="action-btn">取消</button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </Transition>
     `,
     props: {
         visible: Boolean,

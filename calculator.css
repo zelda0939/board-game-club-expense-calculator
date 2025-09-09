@@ -10,6 +10,7 @@
     align-items: flex-end; /* 改為靠底部對齊 */
     justify-content: center;
     z-index: 1000;
+    transition: opacity 0.3s ease; /* 新增淡入淡出過渡 */
 }
 .calculator {
     background: var(--secondary-color);
@@ -17,6 +18,21 @@
     box-shadow: 0 4px 16px var(--shadow-color);
     padding: 24px 20px 16px 20px;
     font-family: inherit;
+    transform: translateY(0); /* 初始位置 */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out; /* 新增滑動和淡入淡出過渡 */
+    opacity: 1; /* 初始完全不透明 */
+}
+
+/* 進入和離開的過渡效果 */
+.modal-enter-from .calculator,
+.modal-leave-to .calculator {
+    transform: translateY(100%); /* 從底部滑入/滑出 */
+    opacity: 0; /* 淡入淡出 */
+}
+
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
 }
 .calculator input[type="text"] {
     width: 100%;
