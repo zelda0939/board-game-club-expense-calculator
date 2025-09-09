@@ -143,6 +143,7 @@
         .clear-button {
             width: 100%;
             padding: 15px;
+            margin-bottom: 20px;
             font-size: 1.1em;
             font-weight: bold;
             color: var(--secondary-color);
@@ -173,7 +174,7 @@
             height: 100vh;
             background: rgba(0, 0, 0, 0.2);
             display: flex;
-            align-items: center;
+            align-items: flex-end; /* 改為靠底部對齊 */
             justify-content: center;
             z-index: 1000;
         }
@@ -188,7 +189,7 @@
         .calculator input[type="text"] {
             width: 100%;
             max-width: 100%;
-            font-size: 1.5em;
+            font-size: 1.3em;
             padding: 18px 16px;
             margin-bottom: 20px;
             border: 1px solid var(--border-color);
@@ -212,6 +213,7 @@
             gap: 16px;
             justify-content: space-between;
             margin-top: 16px; /* 增加與按鈕的間距 */
+            margin-bottom: 16px;
         }
         .calculator button {
             font-size: 1.1em;
@@ -224,7 +226,7 @@
             cursor: pointer;
             transition: background 0.2s;
             width: 100%;
-            /* 移除了 aspect-ratio, display, align-items, justify-content */
+            outline: none; /* 移除點擊時的焦點框 */
         }
         .calculator .buttons button {
             aspect-ratio: 1 / 1; /* 使按鈕為正方形 */
@@ -268,7 +270,7 @@
 
     <div id="app">
         <h1>桌遊社開銷計算機</h1>
-
+        <button @click="clearInputs" class="clear-button">清空所有欄位</button>
         <div class="card">
             <h2>代墊費用</h2>
             <div class="input-group">
@@ -359,12 +361,15 @@
             </div>
         </div>
 
-        <button @click="clearInputs" class="clear-button">清空所有欄位</button>
         <p class="footer-note">註：金額為綠色代表你應收的錢，紅色代表你應付的錢。</p>
 
         <div v-if="calculator.visible" class="calculator-modal">
             <div class="calculator">
                 <input type="text" v-model="calculator.input" readonly>
+                <div class="action-row">
+                    <button @click="confirmCalculator">確定</button>
+                    <button @click="closeCalculator" class="action-btn">取消</button>
+                </div>
                 <div class="buttons">
                     <button v-for="n in [7,8,9,'+',4,5,6,'-',1,2,3,'*','C','(',')','/','=','0','.','DEL']"
                             @click="press(n)"
@@ -374,10 +379,6 @@
                     </button>
                 </div>
                 <div v-if="calculator.error" class="error-tip">{{ calculator.error }}</div>
-                <div class="action-row">
-                    <button @click="confirmCalculator">確定</button>
-                    <button @click="closeCalculator" class="action-btn">取消</button>
-                </div>
             </div>
         </div>
     </div>
