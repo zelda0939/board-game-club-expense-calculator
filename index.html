@@ -166,6 +166,13 @@
         }
 
         /* Calculator styles */
+        /* 這裡將會是空的，因為樣式會被抽取 */
+
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        /* CalculatorModal 專用樣式 */
         .calculator-modal {
             position: fixed;
             left: 0;
@@ -183,7 +190,6 @@
             border-radius: 16px;
             box-shadow: 0 4px 16px var(--shadow-color);
             padding: 24px 20px 16px 20px;
-            /* min-width: 260px; */
             font-family: inherit;
         }
         .calculator input[type="text"] {
@@ -206,8 +212,6 @@
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 3px;
-            /* padding: 16px; */
-            /* margin-bottom: 8px; */
         }
         .calculator .action-row {
             display: flex;
@@ -283,11 +287,6 @@
             margin-bottom: 0px;
             font-size: 0.9em;
             min-height: 1.2em; /* 預留空間防止佈局跳動 */
-        }
-
-        /* 鎖定滾動 */
-        body.no-scroll {
-            overflow: hidden;
         }
     </style>
 </head>
@@ -389,33 +388,29 @@
 
         <p class="footer-note">註：金額為綠色代表你應收的錢，紅色代表你應付的錢。</p>
 
-        <div v-if="calculator.visible" class="calculator-modal">
-            <div class="calculator">
-                <input type="text" v-model="calculator.input" readonly>
-                <div class="action-row">
-                    <button @click="confirmCalculator">確定</button>
-                    <button @click="closeCalculator" class="action-btn">取消</button>
-                </div>
-                <div class="buttons">
-                    <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'*',')','.',0,'=','/','DEL']"
-                            @click="press(n)"
-                            :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
-                            :key="n">
-                        {{ n === 'DEL' ? '⌫' : n }}
-                    </button>
-                </div>
-                <div v-if="calculator.error" class="error-tip">{{ calculator.error }}</div>
-            </div>
-        </div>
+        <!-- 計算機模組 -->
+        <calculator-modal 
+            :visible="calculatorState.visible"
+            :initial-value="calculatorState.initialValue"
+            :target-path="calculatorState.targetPath"
+            @update:visible="calculatorState.visible = $event"
+            @update:value="updateFieldValue"
+        ></calculator-modal>
+
     </div>
 
-    <script>
+    <script type="module">
+        // 引入 CalculatorModal 組件
+        import CalculatorModal from './CalculatorModal.js';
+
+        console.log("CalculatorModal imported:", CalculatorModal);
+
         // Vue.js 應用邏輯
         const {
             createApp
         } = Vue;
 
-        createApp({
+        const app = createApp({
             data() {
                 return {
                     reimbursable: { // 代墊費用
@@ -443,12 +438,10 @@
                             transport: 0
                         }
                     },
-                    calculator: {
+                    calculatorState: {
                         visible: false,
-                        input: '',
-                        field: '',
-                        error: '',
-                        lastCalculated: false /* 新增狀態，標記上次是否為計算結果 */
+                        initialValue: '',
+                        targetPath: ''
                     }
                 };
             },
@@ -472,17 +465,6 @@
                         localStorage.setItem('familyCostCalculator', JSON.stringify({ reimbursable: this.reimbursable, our_own: newValue }));
                     },
                     deep: true
-                },
-                // 監聽計算機是否顯示，並控制 body 滾動
-                'calculator.visible': {
-                    handler(isVisible) {
-                        if (isVisible) {
-                            document.body.classList.add('no-scroll');
-                        } else {
-                            document.body.classList.remove('no-scroll');
-                        }
-                    },
-                    immediate: true // 立即執行一次，以防初始狀態計算機就是開啟的
                 }
             },
             computed: {
@@ -572,144 +554,29 @@
                 formatCurrency(value) {
                     return new Intl.NumberFormat('zh-TW').format(value);
                 },
-                openCalculator(field) {
-                    this.calculator.visible = true;
-                    // 取得目前欄位的值並帶入計算機
-                    const path = field.split('.');
+                openCalculator(fieldPath) {
+                    this.calculatorState.targetPath = fieldPath;
+                    // 獲取當前欄位的值作為初始值
+                    const path = fieldPath.split('.');
                     let obj = this;
                     for (let i = 0; i < path.length - 1; i++) {
                         obj = obj[path[i]];
                     }
                     const currentValue = obj[path[path.length - 1]];
-                    this.calculator.input = (currentValue !== undefined && currentValue !== null && currentValue !== 0) ? currentValue.toString() : '';
-                    this.calculator.field = field;
-                    this.calculator.error = '';
-                    this.calculator.lastCalculated = false; // 清除狀態
+                    this.calculatorState.initialValue = (currentValue !== undefined && currentValue !== null) ? currentValue.toString() : '';
+                    this.calculatorState.visible = true;
                 },
-                closeCalculator() {
-                    this.calculator.visible = false;
-                    this.calculator.error = '';
-                    this.calculator.lastCalculated = false; // 清除狀態
-                },
-                press(val) {
-                    // 增加輕微震動效果 (手機瀏覽器支援)
-                    if (navigator.vibrate) {
-                        navigator.vibrate(50); // 震動 50 毫秒
+                updateFieldValue({ path, value }) {
+                    const parts = path.split('.');
+                    let target = this;
+                    for (let i = 0; i < parts.length - 1; i++) {
+                        target = target[parts[i]];
                     }
-
-                    if (val === '=') {
-                        this.tryEval();
-                        this.calculator.lastCalculated = true; /* 標記為計算結果 */
-                    } else if (val === 'C') {
-                        this.calculator.input = '';
-                        this.calculator.error = '';
-                        this.calculator.lastCalculated = false; /* 清除狀態 */
-                    } else if (val === 'DEL') {
-                        this.calculator.input = this.calculator.input.slice(0, -1);
-                        this.calculator.error = '';
-                        this.calculator.lastCalculated = false; /* 清除狀態 */
-                    } else if (['+', '-', '*', '/'].includes(val)) {
-                        if (this.calculator.lastCalculated) {
-                            // 如果上次是計算結果，直接在結果後追加運算符
-                            this.calculator.input += val.toString();
-                            this.calculator.lastCalculated = false;
-                        } else {
-                            // 如果前一個字元也是運算符號，則替換它
-                            const lastChar = this.calculator.input.slice(-1);
-                            if (['+', '-', '*', '/'].includes(lastChar)) {
-                                this.calculator.input = this.calculator.input.slice(0, -1) + val.toString();
-                            } else {
-                                this.calculator.input += val.toString();
-                            }
-                        }
-                        this.calculator.error = '';
-                    } else if (val === '(') {
-                        // 如果前一個是數字或右括號，自動增加乘號
-                        const lastChar = this.calculator.input.slice(-1);
-                        if (lastChar && (/[0-9)]/.test(lastChar))) {
-                            this.calculator.input += '*(';
-                        } else {
-                            this.calculator.input += '(';
-                        }
-                        this.calculator.error = '';
-                        this.calculator.lastCalculated = false; /* 清除狀態 */
-                    } else if (val === ')') {
-                        this.calculator.input += val.toString();
-                        this.calculator.error = '';
-                        this.calculator.lastCalculated = false; /* 清除狀態 */
-                    } else if (val === '') { // 處理空按鈕
-                        return;
-                    } else { // 數字或小數點
-                        if (this.calculator.lastCalculated) {
-                            // 如果上次是計算結果，清空並開始新的數字輸入
-                            this.calculator.input = val.toString();
-                            this.calculator.lastCalculated = false;
-                        } else {
-                            this.calculator.input += val.toString();
-                        }
-                        this.calculator.error = '';
-                    }
-                },
-                tryEval() {
-                    this.calculator.error = ''; // 先清除之前的錯誤訊息
-                    const inputToEvaluate = this.calculator.input;
-
-                    // 如果輸入是空的或只有空白字元，則不算錯誤，直接返回
-                    if (inputToEvaluate.trim() === '') {
-                        return;
-                    }
-
-                    try {
-                        // 僅允許數字、運算符和括號 (不包含額外字符，例如字母)
-                        // 注意：eval 允許空格，所以正則表達式也應允許
-                        if (/^[0-9+\-*/().\s]+$/.test(inputToEvaluate)) {
-                            const result = eval(inputToEvaluate);
-                            if (typeof result === 'number' && isFinite(result)) {
-                                this.calculator.input = result.toString();
-                                // 此處不設置 this.calculator.error，因為它已在開頭清除
-                            } else {
-                                this.calculator.error = '算式錯誤';
-                                this.calculator.lastCalculated = false; // 錯誤時清除狀態
-                            }
-                        } else {
-                            this.calculator.error = '算式錯誤';
-                            this.calculator.lastCalculated = false; // 錯誤時清除狀態
-                        }
-                    } catch (e) {
-                        this.calculator.error = '算式錯誤';
-                        this.calculator.lastCalculated = false; // 錯誤時清除狀態
-                    }
-                },
-                confirmCalculator() {
-                    // 先嘗試計算結果
-                    this.tryEval();
-
-                    // 如果有錯誤，不關閉計算機
-                    if (this.calculator.error) {
-                        return;
-                    }
-
-                    let value = this.calculator.input;
-                    // 如果輸入框為空，直接設為0
-                    if (value === '') {
-                        value = 0;
-                    } else if (value === '錯誤') {
-                        value = 0; // 錯誤狀態也設為0
-                    } else if (!/^-?\d+(\.\d+)?$/.test(value)) {
-                        this.calculator.error = '請先輸入正確算式';
-                        return;
-                    }
-
-                    if (this.calculator.field) {
-                        const path = this.calculator.field.split('.');
-                        let obj = this;
-                        for (let i = 0; i < path.length - 1; i++) {
-                            obj = obj[path[i]];
-                        }
-                        obj[path[path.length - 1]] = Number(value);
-                    }
-                    this.closeCalculator();
+                    target[parts[parts.length - 1]] = value;
                 }
+            },
+            components: {
+                CalculatorModal
             }
         }).mount('#app');
     </script>
