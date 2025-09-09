@@ -221,7 +221,14 @@
             color: var(--secondary-color);
             cursor: pointer;
             transition: background 0.2s;
-            width: 100%; /* 確保所有按鈕等寬 */
+            width: 100%;
+            /* 移除了 aspect-ratio, display, align-items, justify-content */
+        }
+        .calculator .buttons button {
+            aspect-ratio: 1 / 1; /* 使按鈕為正方形 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .calculator button:hover {
             background: #36a473;
