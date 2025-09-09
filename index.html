@@ -183,7 +183,7 @@
             border-radius: 16px;
             box-shadow: 0 4px 16px var(--shadow-color);
             padding: 24px 20px 16px 20px;
-            min-width: 260px;
+            /* min-width: 260px; */
             font-family: inherit;
         }
         .calculator input[type="text"] {
@@ -202,11 +202,12 @@
             margin-right: 0;
         }
         .calculator .buttons {
-            font-size: 1.5em;
+            font-size: 1.3em;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 8px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 3px;
+            /* padding: 16px; */
+            /* margin-bottom: 8px; */
         }
         .calculator .action-row {
             display: flex;
@@ -216,7 +217,7 @@
             margin-bottom: 16px;
         }
         .calculator button {
-            font-size: 1.1em;
+            font-size: 1.3em;
             font-weight: bold;
             padding: 10px 0;
             border: none;
@@ -371,7 +372,7 @@
                     <button @click="closeCalculator" class="action-btn">取消</button>
                 </div>
                 <div class="buttons">
-                    <button v-for="n in [7,8,9,'+',4,5,6,'-',1,2,3,'*','C','(',')','/','=','0','.','DEL']"
+                    <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'*',')','.',0,'=','/','DEL']"
                             @click="press(n)"
                             :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
                             :key="n">
