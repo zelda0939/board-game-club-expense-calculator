@@ -46,6 +46,12 @@ export default {
             touchThreshold: 5 // 定義輕微滑動的像素閾值，從 10 調整為 5，使其更靈敏
         };
     },
+    mounted() {
+        window.addEventListener('keydown', this.handleKeyDown);
+    },
+    unmounted() {
+        window.removeEventListener('keydown', this.handleKeyDown);
+    },
     watch: {
         visible(isVisible) {
             if (isVisible) {
@@ -61,6 +67,55 @@ export default {
     methods: {
         handleCancel() {
             this.$emit('update:visible', false);
+        },
+        // 新增鍵盤事件處理函數
+        handleKeyDown(event) {
+            if (!this.visible) {
+                return; // 計算機不可見時不處理鍵盤事件
+            }
+
+            const key = event.key;
+            let processed = false;
+
+            // 數字和運算符
+            if (/[0-9]/.test(key)) {
+                this.press(parseInt(key));
+                processed = true;
+            } else if (['+', '-', '*', '/', '.', '(', ')'].includes(key)) {
+                this.press(key);
+                processed = true;
+            } else if (key === 'Enter') {
+                this.press('=');
+                processed = true;
+            } else if (key === 'Backspace') {
+                this.press('DEL');
+                processed = true;
+            } else if (key.toLowerCase() === 'c') {
+                this.press('C');
+                processed = true;
+            } else if (key === 'NumpadAdd') { // 數字鍵盤 + 
+                this.press('+');
+                processed = true;
+            } else if (key === 'NumpadSubtract') { // 數字鍵盤 - 
+                this.press('-');
+                processed = true;
+            } else if (key === 'NumpadMultiply') { // 數字鍵盤 * 
+                this.press('*');
+                processed = true;
+            } else if (key === 'NumpadDivide') { // 數字鍵盤 / 
+                this.press('/');
+                processed = true;
+            } else if (key === 'NumpadDecimal') { // 數字鍵盤 .
+                this.press('.');
+                processed = true;
+            } else if (key === 'NumpadEnter') { // 數字鍵盤 Enter
+                this.press('=');
+                processed = true;
+            }
+
+            if (processed) {
+                event.preventDefault(); // 阻止瀏覽器預設行為
+            }
         },
         // 新增觸控事件處理函數
         handleTouchStart(event, val) {
