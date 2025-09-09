@@ -42,7 +42,7 @@ export default {
             touchStartX: 0,
             touchStartY: 0,
             isMoving: false,
-            touchThreshold: 10 // 定義輕微滑動的像素閾值
+            touchThreshold: 5 // 定義輕微滑動的像素閾值，從 10 調整為 5，使其更靈敏
         };
     },
     watch: {
@@ -68,6 +68,8 @@ export default {
                 this.touchStartX = event.touches[0].clientX;
                 this.touchStartY = event.touches[0].clientY;
             }
+            // 阻止預設行為，以避免在按鈕上觸發瀏覽器自身的捲動
+            event.preventDefault();
         },
         handleTouchMove(event) {
             if (event.touches.length > 0) {
