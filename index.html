@@ -651,14 +651,22 @@
                     }
                 },
                 tryEval() {
+                    this.calculator.error = ''; // 先清除之前的錯誤訊息
+                    const inputToEvaluate = this.calculator.input;
+
+                    // 如果輸入是空的或只有空白字元，則不算錯誤，直接返回
+                    if (inputToEvaluate.trim() === '') {
+                        return;
+                    }
+
                     try {
-                        // 僅允許數字與運算符和括號
-                        if (/^[0-9+\-*/().\s]+$/.test(this.calculator.input)) {
-                            const result = eval(this.calculator.input);
+                        // 僅允許數字、運算符和括號 (不包含額外字符，例如字母)
+                        // 注意：eval 允許空格，所以正則表達式也應允許
+                        if (/^[0-9+\-*/().\s]+$/.test(inputToEvaluate)) {
+                            const result = eval(inputToEvaluate);
                             if (typeof result === 'number' && isFinite(result)) {
                                 this.calculator.input = result.toString();
-                                this.calculator.error = '';
-                                // 不在此處設置 lastCalculated，由 press 方法處理
+                                // 此處不設置 this.calculator.error，因為它已在開頭清除
                             } else {
                                 this.calculator.error = '算式錯誤';
                                 this.calculator.lastCalculated = false; // 錯誤時清除狀態
@@ -667,20 +675,31 @@
                             this.calculator.error = '算式錯誤';
                             this.calculator.lastCalculated = false; // 錯誤時清除狀態
                         }
-                    } catch {
+                    } catch (e) {
                         this.calculator.error = '算式錯誤';
                         this.calculator.lastCalculated = false; // 錯誤時清除狀態
                     }
                 },
                 confirmCalculator() {
+                    // 先嘗試計算結果
+                    this.tryEval();
+
+                    // 如果有錯誤，不關閉計算機
+                    if (this.calculator.error) {
+                        return;
+                    }
+
                     let value = this.calculator.input;
-                    // 檢查是否為合法數字
-                    if (value === '' || value === '錯誤') {
+                    // 如果輸入框為空，直接設為0
+                    if (value === '') {
                         value = 0;
+                    } else if (value === '錯誤') {
+                        value = 0; // 錯誤狀態也設為0
                     } else if (!/^-?\d+(\.\d+)?$/.test(value)) {
                         this.calculator.error = '請先輸入正確算式';
                         return;
                     }
+
                     if (this.calculator.field) {
                         const path = this.calculator.field.split('.');
                         let obj = this;
