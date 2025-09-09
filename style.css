@@ -1,0 +1,172 @@
+/* CSS 樣式 */
+:root {
+    --primary-color: #42b983;
+    --secondary-color: #ffffff;
+    --background-color: #f0f2f5;
+    --text-color: #333;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --danger-color: #e74c3c;
+    --success-color: #2ecc71;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 15px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 1.8em;
+}
+
+.card {
+    background-color: var(--secondary-color);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.card h2 {
+    margin-top: 0;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+}
+
+.input-wrapper {
+    flex: 1;
+}
+
+.input-wrapper span {
+    display: block;
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.input-group input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1.1em;
+    text-align: center;
+    box-sizing: border-box;
+    -moz-appearance: textfield;
+    /* Firefox */
+    appearance: textfield;
+    /* Standard property */
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.results-card {
+    background-color: #e8f5e9;
+    /* 淺綠色背景 */
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #c8e6c9;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-item .label {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.result-item .value {
+    font-size: 1.4em;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+.value.positive {
+    color: var(--success-color);
+}
+
+.value.negative {
+    color: var(--danger-color);
+}
+
+.clear-button {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--secondary-color);
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.clear-button:hover {
+    background-color: #36a473;
+}
+
+.footer-note {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #888;
+}
+
+/* Calculator styles */
+/* 這裡將會是空的，因為樣式會被抽取 */
+
+body.no-scroll {
+    overflow: hidden;
+}
+
+.value.neutral {
+    color: #888; /* 預設灰色 */
+}
+
+[v-cloak] {
+    display: none;
+}
