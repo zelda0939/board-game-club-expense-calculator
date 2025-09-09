@@ -85,7 +85,12 @@ export default {
                 this.press(key);
                 processed = true;
             } else if (key === 'Enter') {
-                this.press('=');
+                // 檢查是否為單純數值
+                if (/^-?\d+(\.\d+)?$/.test(this.input.trim())) {
+                    this.confirmAndClose(); // 如果是單純數值，則直接確認並關閉
+                } else {
+                    this.press('='); // 否則，執行等於操作
+                }
                 processed = true;
             } else if (key === 'Backspace') {
                 this.press('DEL');
