@@ -538,7 +538,7 @@
             computed: {
                 // 我們家應獲得差額
                 familyShouldReceive() {
-                    const sumExpenses = (expenses) => Array.isArray(expenses) ? expenses.reduce((sum, expense) => sum + expense.amount, 0) : 0;
+                    const sumExpenses = (expenses) => expenses.reduce((sum, expense) => sum + expense.amount, 0);
 
                     const myTotal = sumExpenses(this.reimbursable.me.meal) + sumExpenses(this.reimbursable.me.transport);
                     const wifeTotal = sumExpenses(this.reimbursable.wife.meal) + sumExpenses(this.reimbursable.wife.transport);
@@ -549,7 +549,7 @@
                 },
                 // 我應再給老婆
                 amountToGiveWife() {
-                    const sumExpenses = (expenses) => Array.isArray(expenses) ? expenses.reduce((sum, expense) => sum + expense.amount, 0) : 0;
+                    const sumExpenses = (expenses) => expenses.reduce((sum, expense) => sum + expense.amount, 0);
 
                     // 1. 計算我的總支出 (包含代墊和自家花費)
                     const myReimbursableTotal = sumExpenses(this.reimbursable.me.meal) + sumExpenses(this.reimbursable.me.transport);
