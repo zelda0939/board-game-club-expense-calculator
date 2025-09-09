@@ -1,3 +1,8 @@
+function round(val, digits = 12) {
+    const p = 10 ** digits;
+    return Math.round((val + Number.EPSILON) * p) / p;
+}
+
 export default {
     name: 'CalculatorModal',
     template: `
@@ -91,41 +96,13 @@ export default {
                 this.input += val.toString();
                 this.error = '';
                 this.lastCalculated = false;
-            } else if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].includes(val) || val === '.') { // 處理數字或小數點
-                console.log('input:', val);
+            } else if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(val.toString()) || val === '.') { // 處理數字或小數點
                 if (this.lastCalculated) {
                     this.input = (val === '.') ? '0.' : val.toString();
                     this.lastCalculated = false;
                 } else {
                     this.input += val.toString(); // 先直接追加
                 }
-            } else if (['+', '-', '*', '/', '(', ')'].includes(val)) {
-                if (this.lastCalculated && !['+', '-', '*', '/'].includes(val)) {
-                    // 如果上次是計算結果，並且按下了非運算符的鍵 (例如括號)，則清除輸入
-                    this.input = val.toString();
-                    this.lastCalculated = false;
-                } else if (this.lastCalculated && ['+', '-', '*', '/'].includes(val)) {
-                    // 如果上次是計算結果，按下運算符，則追加
-                    this.input += val.toString();
-                    this.lastCalculated = false;
-                } else if (['+', '-', '*', '/'].includes(val)) {
-                    const lastChar = this.input.slice(-1);
-                    if (['+', '-', '*', '/'].includes(lastChar)) {
-                        this.input = this.input.slice(0, -1) + val.toString();
-                    } else {
-                        this.input += val.toString();
-                    }
-                } else if (val === '(') {
-                    const lastChar = this.input.slice(-1);
-                    if (lastChar && (/[0-9)]/.test(lastChar))) {
-                        this.input += '*(';
-                    } else {
-                        this.input += '(';
-                    }
-                } else if (val === ')') {
-                    this.input += val.toString();
-                }
-                this.lastCalculated = false; // 按下其他鍵時清除此狀態
             }
             this.error = '';
             // 在所有輸入處理之後，進行正規化
@@ -171,6 +148,7 @@ export default {
         tryEval() {
             this.error = '';
             const inputToEvaluate = this.input;
+            console.log('tryEval: Evaluating expression:', inputToEvaluate);
 
             if (inputToEvaluate.trim() === '') {
                 return;
@@ -178,19 +156,24 @@ export default {
 
             try {
                 if (/^[0-9+\-*/().\s]+$/.test(inputToEvaluate)) {
-                    const result = eval(inputToEvaluate);
+                    let result = eval(inputToEvaluate);
+                    console.log('tryEval: Result:', result);
+                    // 檢查結果是否為浮點數
+                    if (typeof result === 'number' && !Number.isInteger(result)) {
+                        result = round(result, 10);
+                    }
+                    
                     if (typeof result === 'number' && isFinite(result)) {
                         this.input = result.toString();
                     } else {
                         this.error = '算式錯誤';
                         this.lastCalculated = false;
                     }
-                } else {
-                    this.error = '算式錯誤';
-                    this.lastCalculated = false;
                 }
+
             } catch (e) {
-                this.error = '算式錯誤';
+                console.error('tryEval: Error during evaluation:', e.message);
+                this.error = e.message === '除數不能為零' ? e.message : '算式錯誤';
                 this.lastCalculated = false;
             }
         },
