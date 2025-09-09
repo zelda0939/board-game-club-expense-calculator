@@ -163,77 +163,6 @@
             font-size: 0.9em;
             color: #888;
         }
-
-        .expense-input-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-top: 8px;
-        }
-
-        .expense-input-group input[type="number"] {
-            flex: 1;
-            padding: 10px;
-        }
-
-        .expense-input-group input[type="text"] {
-            flex: 1;
-            padding: 10px;
-        }
-
-        .add-expense-button {
-            padding: 10px 15px;
-            font-size: 0.9em;
-            font-weight: bold;
-            color: var(--secondary-color);
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .add-expense-button:hover {
-            background-color: #36a473;
-        }
-
-        .expense-list {
-            list-style: none;
-            padding: 0;
-            margin-top: 10px;
-        }
-
-        .expense-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px dashed #eee;
-        }
-
-        .expense-item:last-child {
-            border-bottom: none;
-        }
-
-        .expense-item .remove-expense-button {
-            background-color: var(--danger-color);
-            color: var(--secondary-color);
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.8em;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .expense-item .remove-expense-button:hover {
-            background-color: #c0392b;
-        }
     </style>
 </head>
 
@@ -249,45 +178,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <div class="expense-input-group">
-                            <input type="number" v-model.number="newReimbursableMeMealAmount" placeholder="金額" @focus="selectAll">
-                            <input type="text" v-model="newReimbursableMeMealNote" placeholder="備註">
-                            <button @click="addReimbursableMeMeal" class="add-expense-button">新增</button>
-                        </div>
-                        <ul class="expense-list">
-                            <li v-for="(expense, index) in reimbursable.me.meal" :key="index" class="expense-item">
-                                <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                                <button @click="removeExpense('reimbursable', 'me', 'meal', index)" class="remove-expense-button">X</button>
-                            </li>
-                        </ul>
+                        <input type="number" v-model.number="reimbursable.me.meal" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <div class="expense-input-group">
-                            <input type="number" v-model.number="newReimbursableWifeMealAmount" placeholder="金額" @focus="selectAll">
-                            <input type="text" v-model="newReimbursableWifeMealNote" placeholder="備註">
-                            <button @click="addReimbursableWifeMeal" class="add-expense-button">新增</button>
-                        </div>
-                        <ul class="expense-list">
-                            <li v-for="(expense, index) in reimbursable.wife.meal" :key="index" class="expense-item">
-                                <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                                <button @click="removeExpense('reimbursable', 'wife', 'meal', index)" class="remove-expense-button">X</button>
-                            </li>
-                        </ul>
+                        <input type="number" v-model.number="reimbursable.wife.meal" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <div class="expense-input-group">
-                            <input type="number" v-model.number="newReimbursableBrotherMealAmount" placeholder="金額" @focus="selectAll">
-                            <input type="text" v-model="newReimbursableBrotherMealNote" placeholder="備註">
-                            <button @click="addReimbursableBrotherMeal" class="add-expense-button">新增</button>
-                        </div>
-                        <ul class="expense-list">
-                            <li v-for="(expense, index) in reimbursable.brother.meal" :key="index" class="expense-item">
-                                <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                                <button @click="removeExpense('reimbursable', 'brother', 'meal', index)" class="remove-expense-button">X</button>
-                            </li>
-                        </ul>
+                        <input type="number" v-model.number="reimbursable.brother.meal" placeholder="0" @focus="selectAll">
                     </div>
                 </div>
             </div>
@@ -296,45 +195,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <div class="expense-input-group">
-                            <input type="number" v-model.number="newReimbursableMeTransportAmount" placeholder="金額" @focus="selectAll">
-                            <input type="text" v-model="newReimbursableMeTransportNote" placeholder="備註">
-                            <button @click="addReimbursableMeTransport" class="add-expense-button">新增</button>
-                        </div>
-                        <ul class="expense-list">
-                            <li v-for="(expense, index) in reimbursable.me.transport" :key="index" class="expense-item">
-                                <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                                <button @click="removeExpense('reimbursable', 'me', 'transport', index)" class="remove-expense-button">X</button>
-                            </li>
-                        </ul>
+                        <input type="number" v-model.number="reimbursable.me.transport" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <div class="expense-input-group">
-                            <input type="number" v-model.number="newReimbursableWifeTransportAmount" placeholder="金額" @focus="selectAll">
-                            <input type="text" v-model="newReimbursableWifeTransportNote" placeholder="備註">
-                            <button @click="addReimbursableWifeTransport" class="add-expense-button">新增</button>
-                        </div>
-                        <ul class="expense-list">
-                            <li v-for="(expense, index) in reimbursable.wife.transport" :key="index" class="expense-item">
-                                <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                                <button @click="removeExpense('reimbursable', 'wife', 'transport', index)" class="remove-expense-button">X</button>
-                            </li>
-                        </ul>
+                        <input type="number" v-model.number="reimbursable.wife.transport" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <div class="expense-input-group">
-                            <input type="number" v-model.number="newReimbursableBrotherTransportAmount" placeholder="金額" @focus="selectAll">
-                            <input type="text" v-model="newReimbursableBrotherTransportNote" placeholder="備註">
-                            <button @click="addReimbursableBrotherTransport" class="add-expense-button">新增</button>
-                        </div>
-                        <ul class="expense-list">
-                            <li v-for="(expense, index) in reimbursable.brother.transport" :key="index" class="expense-item">
-                                <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                                <button @click="removeExpense('reimbursable', 'brother', 'transport', index)" class="remove-expense-button">X</button>
-                            </li>
-                        </ul>
+                        <input type="number" v-model.number="reimbursable.brother.transport" placeholder="0" @focus="selectAll">
                     </div>
                 </div>
             </div>
@@ -347,31 +216,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <div class="expense-input-group">
-                            <input type="number" v-model.number="newOur_ownMeMealAmount" placeholder="金額" @focus="selectAll">
-                            <input type="text" v-model="newOur_ownMeMealNote" placeholder="備註">
-                            <button @click="addOur_ownMeMeal" class="add-expense-button">新增</button>
-                        </div>
-                        <ul class="expense-list">
-                            <li v-for="(expense, index) in our_own.me.meal" :key="index" class="expense-item">
-                                <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                                <button @click="removeExpense('our_own', 'me', 'meal', index)" class="remove-expense-button">X</button>
-                            </li>
-                        </ul>
+                        <input type="number" v-model.number="our_own.me.meal" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <div class="expense-input-group">
-                            <input type="number" v-model.number="newOur_ownWifeMealAmount" placeholder="金額" @focus="selectAll">
-                            <input type="text" v-model="newOur_ownWifeMealNote" placeholder="備註">
-                            <button @click="addOur_ownWifeMeal" class="add-expense-button">新增</button>
-                        </div>
-                        <ul class="expense-list">
-                            <li v-for="(expense, index) in our_own.wife.meal" :key="index" class="expense-item">
-                                <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                                <button @click="removeExpense('our_own', 'wife', 'meal', index)" class="remove-expense-button">X</button>
-                            </li>
-                        </ul>
+                        <input type="number" v-model.number="our_own.wife.meal" placeholder="0" @focus="selectAll">
                     </div>
                 </div>
             </div>
@@ -380,31 +229,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <div class="expense-input-group">
-                            <input type="number" v-model.number="newOur_ownMeTransportAmount" placeholder="金額" @focus="selectAll">
-                            <input type="text" v-model="newOur_ownMeTransportNote" placeholder="備註">
-                            <button @click="addOur_ownMeTransport" class="add-expense-button">新增</button>
-                        </div>
-                        <ul class="expense-list">
-                            <li v-for="(expense, index) in our_own.me.transport" :key="index" class="expense-item">
-                                <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                                <button @click="removeExpense('our_own', 'me', 'transport', index)" class="remove-expense-button">X</button>
-                            </li>
-                        </ul>
+                        <input type="number" v-model.number="our_own.me.transport" placeholder="0" @focus="selectAll">
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <div class="expense-input-group">
-                            <input type="number" v-model.number="newOur_ownWifeTransportAmount" placeholder="金額" @focus="selectAll">
-                            <input type="text" v-model="newOur_ownWifeTransportNote" placeholder="備註">
-                            <button @click="addOur_ownWifeTransport" class="add-expense-button">新增</button>
-                        </div>
-                        <ul class="expense-list">
-                            <li v-for="(expense, index) in our_own.wife.transport" :key="index" class="expense-item">
-                                <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                                <button @click="removeExpense('our_own', 'wife', 'transport', index)" class="remove-expense-button">X</button>
-                            </li>
-                        </ul>
+                        <input type="number" v-model.number="our_own.wife.transport" placeholder="0" @focus="selectAll">
                     </div>
                 </div>
             </div>
@@ -414,17 +243,7 @@
             <h2>其他花費</h2>
             <div class="input-group">
                 <label>哥 3D列印</label>
-                <div class="expense-input-group">
-                    <input type="number" v-model.number="newReimbursableBrotherPrinter3dAmount" placeholder="金額" @focus="selectAll">
-                    <input type="text" v-model="newReimbursableBrotherPrinter3dNote" placeholder="備註">
-                    <button @click="addReimbursableBrotherPrinter3d" class="add-expense-button">新增</button>
-                </div>
-                <ul class="expense-list">
-                    <li v-for="(expense, index) in reimbursable.brother.printer_3d" :key="index" class="expense-item">
-                        <span>{{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                        <button @click="removeExpense('reimbursable', 'brother', 'printer_3d', index)" class="remove-expense-button">X</button>
-                    </li>
-                </ul>
+                <input type="number" v-model.number="reimbursable.brother.printer_3d" placeholder="0" @focus="selectAll">
             </div>
         </div>
 
@@ -442,17 +261,8 @@
             </div>
         </div>
 
-        <div class="card">
-            <h2>所有花費清單</h2>
-            <ul class="expense-list">
-                <li v-for="(expense, index) in allExpenses" :key="index" class="expense-item">
-                    <span>{{ expense.person }} - {{ expense.category }} ({{ expense.type === 'reimbursable' ? '代墊' : '自家' }}) : {{ formatCurrency(expense.amount) }} - {{ expense.note }}</span>
-                </li>
-            </ul>
-        </div>
-
         <button @click="clearInputs" class="clear-button">清空所有欄位</button>
-        <p class="footer-note" v-if="amountToGiveWife < 0">註：金額為負數代表老婆應給您錢。</p>
+        <p class="footer-note">註：金額為綠色代表你應收的錢，紅色代表你應付的錢。</p>
     </div>
 
     <script>
@@ -464,51 +274,29 @@
         createApp({
             data() {
                 return {
-                    newReimbursableMeMealAmount: 0,
-                    newReimbursableMeMealNote: '',
-                    newReimbursableMeTransportAmount: 0,
-                    newReimbursableMeTransportNote: '',
-                    newReimbursableWifeMealAmount: 0,
-                    newReimbursableWifeMealNote: '',
-                    newReimbursableWifeTransportAmount: 0,
-                    newReimbursableWifeTransportNote: '',
-                    newReimbursableBrotherMealAmount: 0,
-                    newReimbursableBrotherMealNote: '',
-                    newReimbursableBrotherTransportAmount: 0,
-                    newReimbursableBrotherTransportNote: '',
-                    newReimbursableBrotherPrinter3dAmount: 0,
-                    newReimbursableBrotherPrinter3dNote: '',
-                    newOur_ownMeMealAmount: 0,
-                    newOur_ownMeMealNote: '',
-                    newOur_ownMeTransportAmount: 0,
-                    newOur_ownMeTransportNote: '',
-                    newOur_ownWifeMealAmount: 0,
-                    newOur_ownWifeMealNote: '',
-                    newOur_ownWifeTransportAmount: 0,
-                    newOur_ownWifeTransportNote: '',
                     reimbursable: { // 代墊費用
                         me: {
-                            meal: [],
-                            transport: []
+                            meal: 0,
+                            transport: 0
                         },
                         wife: {
-                            meal: [],
-                            transport: []
+                            meal: 0,
+                            transport: 0
                         },
                         brother: {
-                            meal: [],
-                            transport: [],
-                            printer_3d: []
+                            meal: 0,
+                            transport: 0,
+                            printer_3d: 0
                         } // 新增「哥」的欄位
                     },
                     our_own: { // 自家花費
                         me: {
-                            meal: [],
-                            transport: []
+                            meal: 0,
+                            transport: 0
                         },
                         wife: {
-                            meal: [],
-                            transport: []
+                            meal: 0,
+                            transport: 0
                         }
                     }
                 };
@@ -538,41 +326,36 @@
             computed: {
                 // 我們家應獲得差額
                 familyShouldReceive() {
-                    const sumExpenses = (expenses) => expenses.reduce((sum, expense) => sum + expense.amount, 0);
-
-                    const myTotal = sumExpenses(this.reimbursable.me.meal) + sumExpenses(this.reimbursable.me.transport);
-                    const wifeTotal = sumExpenses(this.reimbursable.wife.meal) + sumExpenses(this.reimbursable.wife.transport);
-                    const brotherTotal = sumExpenses(this.reimbursable.brother.meal) + sumExpenses(this.reimbursable.brother.transport) + sumExpenses(this.reimbursable.brother.printer_3d);
+                    const myTotal = (this.reimbursable.me.meal || 0) + (this.reimbursable.me.transport || 0);
+                    const wifeTotal = (this.reimbursable.wife.meal || 0) + (this.reimbursable.wife.transport ||
+                        0);
+                    const brotherTotal = (this.reimbursable.brother.meal || 0) + (this.reimbursable.brother
+                        .transport || 0) + (this.reimbursable.brother.printer_3d || 0);
                     const result = myTotal + wifeTotal - brotherTotal;
                     console.log('familyShouldReceive:', result);
                     return Math.round(result);
                 },
                 // 我應再給老婆
                 amountToGiveWife() {
-                    const sumExpenses = (expenses) => expenses.reduce((sum, expense) => sum + expense.amount, 0);
-
-                    // 1. 計算我的總支出 (包含代墊和自家花費)
-                    const myReimbursableTotal = sumExpenses(this.reimbursable.me.meal) + sumExpenses(this.reimbursable.me.transport);
-                    const myOurOwnTotal = sumExpenses(this.our_own.me.meal) + sumExpenses(this.our_own.me.transport);
-                    const myTotalOwnExpense = myReimbursableTotal + myOurOwnTotal;
+                    // 1. 計算我的總支出
+                    const myTotalOwnExpense = (this.reimbursable.me.meal || 0) + (this.reimbursable.me
+                        .transport || 0) + (this.our_own.me.meal || 0) + (this.our_own.me.transport || 0);
                     console.log('myTotalOwnExpense:', myTotalOwnExpense);
-
-                    // 2. 計算老婆的總支出 (包含代墊和自家花費)
-                    const wifeReimbursableTotal = sumExpenses(this.reimbursable.wife.meal) + sumExpenses(this.reimbursable.wife.transport);
-                    const wifeOurOwnTotal = sumExpenses(this.our_own.wife.meal) + sumExpenses(this.our_own.wife.transport);
-                    const wifeTotalOwnExpense = wifeReimbursableTotal + wifeOurOwnTotal;
+                    // 2. 計算老婆的總支出
+                    const wifeTotalOwnExpense = (this.reimbursable.wife.meal || 0) + (this.reimbursable.wife
+                        .transport ||
+                        0) + (this.our_own.wife.meal || 0) + (this.our_own.wife.transport ||
+                        0);
                     console.log('wifeTotalOwnExpense:', wifeTotalOwnExpense);
-
                     // 3. 計算夫妻兩人總支出
                     const totalFamilyExpense = myTotalOwnExpense + wifeTotalOwnExpense - this.familyShouldReceive;
                     console.log('totalFamilyExpense:', totalFamilyExpense);
-
                     // 4. 計算平均每人應支出
                     const averageExpense = totalFamilyExpense / 2;
                     console.log('averageExpense:', averageExpense);
-
                     // 5. 計算我應給老婆的金額 (平均值 - 我的實際支出)
-                    const result = averageExpense - (myTotalOwnExpense - this.familyShouldReceive) + (Math.floor(sumExpenses(this.reimbursable.brother.printer_3d) / 2) || 0);
+                    const result = averageExpense - (myTotalOwnExpense - this.familyShouldReceive) + (Math
+                        .floor(this.reimbursable.brother.printer_3d / 2) || 0);
                     console.log('amountToGiveWife:', result);
                     return Math.round(result);
                 },
@@ -591,93 +374,34 @@
                     } else {
                         return "我們家應付出差額";
                     }
-                },
-                allExpenses() {
-                    const expenses = [];
-
-                    // 代墊費用
-                    for (const person in this.reimbursable) {
-                        for (const category in this.reimbursable[person]) {
-                            this.reimbursable[person][category].forEach(expense => {
-                                expenses.push({
-                                    type: 'reimbursable',
-                                    person: person,
-                                    category: category,
-                                    amount: expense.amount,
-                                    note: expense.note
-                                });
-                            });
-                        }
-                    }
-
-                    // 自家花費
-                    for (const person in this.our_own) {
-                        for (const category in this.our_own[person]) {
-                            this.our_own[person][category].forEach(expense => {
-                                expenses.push({
-                                    type: 'our_own',
-                                    person: person,
-                                    category: category,
-                                    amount: expense.amount,
-                                    note: expense.note
-                                });
-                            });
-                        }
-                    }
-                    
-                    // 依照日期或其他順序排序 (這裡暫不排序，只合併)
-                    return expenses;
                 }
             },
             methods: {
                 // 清空所有輸入
                 clearInputs() {
-                    this.newReimbursableMeMealAmount = 0;
-                    this.newReimbursableMeMealNote = '';
-                    this.newReimbursableMeTransportAmount = 0;
-                    this.newReimbursableMeTransportNote = '';
-                    this.newReimbursableWifeMealAmount = 0;
-                    this.newReimbursableWifeMealNote = '';
-                    this.newReimbursableWifeTransportAmount = 0;
-                    this.newReimbursableWifeTransportNote = '';
-                    this.newReimbursableBrotherMealAmount = 0;
-                    this.newReimbursableBrotherMealNote = '';
-                    this.newReimbursableBrotherTransportAmount = 0;
-                    this.newReimbursableBrotherTransportNote = '';
-                    this.newReimbursableBrotherPrinter3dAmount = 0;
-                    this.newReimbursableBrotherPrinter3dNote = '';
-                    this.newOur_ownMeMealAmount = 0;
-                    this.newOur_ownMeMealNote = '';
-                    this.newOur_ownMeTransportAmount = 0;
-                    this.newOur_ownMeTransportNote = '';
-                    this.newOur_ownWifeMealAmount = 0;
-                    this.newOur_ownWifeMealNote = '';
-                    this.newOur_ownWifeTransportAmount = 0;
-                    this.newOur_ownWifeTransportNote = '';
-
                     this.reimbursable = {
                         me: {
-                            meal: [],
-                            transport: []
+                            meal: 0,
+                            transport: 0
                         },
                         wife: {
-                            meal: [],
-                            transport: []
+                            meal: 0,
+                            transport: 0
                         },
                         brother: {
-                            meal: [],
-                            transport: [],
-                            printer_3d: []
+                            meal: 0,
+                            transport: 0,
+                            printer_3d: 0
                         }
                     };
                     this.our_own = {
                         me: {
-                            meal: [],
-                            transport: []
+                            meal: 0,
+                            transport: 0
                         },
                         wife: {
-                            meal: [],
-                            transport: []
+                            meal: 0,
+                            transport: 0
                         }
                     };
                     localStorage.removeItem('familyCostCalculator');
@@ -689,123 +413,6 @@
                 // 點擊輸入框時全選內容
                 selectAll(event) {
                     event.target.select();
-                },
-                addReimbursableMeMeal() {
-                    if (this.newReimbursableMeMealAmount > 0) {
-                        this.reimbursable.me.meal.push({
-                            amount: this.newReimbursableMeMealAmount,
-                            note: this.newReimbursableMeMealNote
-                        });
-                        this.newReimbursableMeMealAmount = 0;
-                        this.newReimbursableMeMealNote = '';
-                    }
-                },
-                addReimbursableMeTransport() {
-                    if (this.newReimbursableMeTransportAmount > 0) {
-                        this.reimbursable.me.transport.push({
-                            amount: this.newReimbursableMeTransportAmount,
-                            note: this.newReimbursableMeTransportNote
-                        });
-                        this.newReimbursableMeTransportAmount = 0;
-                        this.newReimbursableMeTransportNote = '';
-                    }
-                },
-                addReimbursableWifeMeal() {
-                    if (this.newReimbursableWifeMealAmount > 0) {
-                        this.reimbursable.wife.meal.push({
-                            amount: this.newReimbursableWifeMealAmount,
-                            note: this.newReimbursableWifeMealNote
-                        });
-                        this.newReimbursableWifeMealAmount = 0;
-                        this.newReimbursableWifeMealNote = '';
-                    }
-                },
-                addReimbursableWifeTransport() {
-                    if (this.newReimbursableWifeTransportAmount > 0) {
-                        this.reimbursable.wife.transport.push({
-                            amount: this.newReimbursableWifeTransportAmount,
-                            note: this.newReimbursableWifeTransportNote
-                        });
-                        this.newReimbursableWifeTransportAmount = 0;
-                        this.newReimbursableWifeTransportNote = '';
-                    }
-                },
-                addReimbursableBrotherMeal() {
-                    if (this.newReimbursableBrotherMealAmount > 0) {
-                        this.reimbursable.brother.meal.push({
-                            amount: this.newReimbursableBrotherMealAmount,
-                            note: this.newReimbursableBrotherMealNote
-                        });
-                        this.newReimbursableBrotherMealAmount = 0;
-                        this.newReimbursableBrotherMealNote = '';
-                    }
-                },
-                addReimbursableBrotherTransport() {
-                    if (this.newReimbursableBrotherTransportAmount > 0) {
-                        this.reimbursable.brother.transport.push({
-                            amount: this.newReimbursableBrotherTransportAmount,
-                            note: this.newReimbursableBrotherTransportNote
-                        });
-                        this.newReimbursableBrotherTransportAmount = 0;
-                        this.newReimbursableBrotherTransportNote = '';
-                    }
-                },
-                addReimbursableBrotherPrinter3d() {
-                    if (this.newReimbursableBrotherPrinter3dAmount > 0) {
-                        this.reimbursable.brother.printer_3d.push({
-                            amount: this.newReimbursableBrotherPrinter3dAmount,
-                            note: this.newReimbursableBrotherPrinter3dNote
-                        });
-                        this.newReimbursableBrotherPrinter3dAmount = 0;
-                        this.newReimbursableBrotherPrinter3dNote = '';
-                    }
-                },
-                addOur_ownMeMeal() {
-                    if (this.newOur_ownMeMealAmount > 0) {
-                        this.our_own.me.meal.push({
-                            amount: this.newOur_ownMeMealAmount,
-                            note: this.newOur_ownMeMealNote
-                        });
-                        this.newOur_ownMeMealAmount = 0;
-                        this.newOur_ownMeMealNote = '';
-                    }
-                },
-                addOur_ownWifeMeal() {
-                    if (this.newOur_ownWifeMealAmount > 0) {
-                        this.our_own.wife.meal.push({
-                            amount: this.newOur_ownWifeMealAmount,
-                            note: this.newOur_ownWifeMealNote
-                        });
-                        this.newOur_ownWifeMealAmount = 0;
-                        this.newOur_ownWifeMealNote = '';
-                    }
-                },
-                addOur_ownMeTransport() {
-                    if (this.newOur_ownMeTransportAmount > 0) {
-                        this.our_own.me.transport.push({
-                            amount: this.newOur_ownMeTransportAmount,
-                            note: this.newOur_ownMeTransportNote
-                        });
-                        this.newOur_ownMeTransportAmount = 0;
-                        this.newOur_ownMeTransportNote = '';
-                    }
-                },
-                addOur_ownWifeTransport() {
-                    if (this.newOur_ownWifeTransportAmount > 0) {
-                        this.our_own.wife.transport.push({
-                            amount: this.newOur_ownWifeTransportAmount,
-                            note: this.newOur_ownWifeTransportNote
-                        });
-                        this.newOur_ownWifeTransportAmount = 0;
-                        this.newOur_ownWifeTransportNote = '';
-                    }
-                },
-                removeExpense(type, person, category, index) {
-                    if (type === 'reimbursable') {
-                        this.reimbursable[person][category].splice(index, 1);
-                    } else if (type === 'our_own') {
-                        this.our_own[person][category].splice(index, 1);
-                    }
                 }
             }
         }).mount('#app');
