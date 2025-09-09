@@ -499,7 +499,14 @@
                 },
                 openCalculator(field) {
                     this.calculator.visible = true;
-                    this.calculator.input = '';
+                    // 取得目前欄位的值並帶入計算機
+                    const path = field.split('.');
+                    let obj = this;
+                    for (let i = 0; i < path.length - 1; i++) {
+                        obj = obj[path[i]];
+                    }
+                    const currentValue = obj[path[path.length - 1]];
+                    this.calculator.input = (currentValue !== undefined && currentValue !== null && currentValue !== 0) ? currentValue.toString() : '';
                     this.calculator.field = field;
                 },
                 closeCalculator() {
@@ -519,14 +526,18 @@
                     }
                 },
                 confirmCalculator() {
-                    if (this.calculator.field && this.calculator.input !== '' && this.calculator.input !== '錯誤') {
-                        // 動態設定欄位值
+                    let value = this.calculator.input;
+                    if (this.calculator.field) {
+                        // 若顯示框為空或為'錯誤'，則設為0
+                        if (value === '' || value === '錯誤') {
+                            value = 0;
+                        }
                         const path = this.calculator.field.split('.');
                         let obj = this;
                         for (let i = 0; i < path.length - 1; i++) {
                             obj = obj[path[i]];
                         }
-                        obj[path[path.length - 1]] = Number(this.calculator.input);
+                        obj[path[path.length - 1]] = Number(value);
                     }
                     this.closeCalculator();
                 }
