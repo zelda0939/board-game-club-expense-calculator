@@ -174,6 +174,10 @@
             overflow: hidden;
         }
 
+        .value.neutral {
+            color: #888; /* 預設灰色 */
+        }
+
     </style>
 </head>
 
@@ -262,11 +266,11 @@
             <h2>計算結果</h2>
             <div class="result-item">
                 <span class="label">{{ familyShouldReceiveText }}</span>
-                <span class="value" :class="familyShouldReceive >= 0 ? 'positive' : 'negative'">{{ formatCurrency(Math.abs(familyShouldReceive)) }}</span>
+                <span class="value" :class="{'positive': familyShouldReceive > 0, 'negative': familyShouldReceive < 0, 'neutral': familyShouldReceive === 0}">{{ formatCurrency(Math.abs(familyShouldReceive)) }}</span>
             </div>
             <div class="result-item">
                 <span class="label">{{ amountToGiveWifeText }}</span>
-                <span class="value" :class="amountToGiveWife >= 0 ? 'negative' : 'positive'">
+                <span class="value" :class="{'negative': amountToGiveWife > 0, 'positive': amountToGiveWife < 0, 'neutral': amountToGiveWife === 0}">
                     {{ formatCurrency(Math.abs(amountToGiveWife)) }}
                 </span>
             </div>
