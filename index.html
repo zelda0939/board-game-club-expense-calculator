@@ -163,6 +163,71 @@
             font-size: 0.9em;
             color: #888;
         }
+        .calculator-modal {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .calculator {
+            background: var(--secondary-color);
+            border-radius: 16px;
+            box-shadow: 0 4px 16px var(--shadow-color);
+            padding: 24px 20px 16px 20px;
+            min-width: 260px;
+            font-family: inherit;
+        }
+        .calculator input[type="text"] {
+            width: 100%;
+            max-width: 100%;
+            font-size: 1.3em;
+            padding: 10px 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-align: right;
+            background: var(--background-color);
+            box-sizing: border-box;
+            display: block;
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .calculator .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .calculator .action-row {
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+        }
+        .calculator button {
+            font-size: 1.1em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .calculator button:hover {
+            background: #36a473;
+        }
+        .calculator .action-btn {
+            background: var(--danger-color);
+        }
+        .calculator .action-btn:hover {
+            background: #c0392b;
+        }
     </style>
 </head>
 
@@ -178,15 +243,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="reimbursable.me.meal" placeholder="0" @focus="selectAll">
+                        <input type="number" v-model.number="reimbursable.me.meal" placeholder="0" @focus="openCalculator('reimbursable.me.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="reimbursable.wife.meal" placeholder="0" @focus="selectAll">
+                        <input type="number" v-model.number="reimbursable.wife.meal" placeholder="0" @focus="openCalculator('reimbursable.wife.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <input type="number" v-model.number="reimbursable.brother.meal" placeholder="0" @focus="selectAll">
+                        <input type="number" v-model.number="reimbursable.brother.meal" placeholder="0" @focus="openCalculator('reimbursable.brother.meal')" readonly>
                     </div>
                 </div>
             </div>
@@ -195,15 +260,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="reimbursable.me.transport" placeholder="0" @focus="selectAll">
+                        <input type="number" v-model.number="reimbursable.me.transport" placeholder="0" @focus="openCalculator('reimbursable.me.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="reimbursable.wife.transport" placeholder="0" @focus="selectAll">
+                        <input type="number" v-model.number="reimbursable.wife.transport" placeholder="0" @focus="openCalculator('reimbursable.wife.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <input type="number" v-model.number="reimbursable.brother.transport" placeholder="0" @focus="selectAll">
+                        <input type="number" v-model.number="reimbursable.brother.transport" placeholder="0" @focus="openCalculator('reimbursable.brother.transport')" readonly>
                     </div>
                 </div>
             </div>
@@ -216,11 +281,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="our_own.me.meal" placeholder="0" @focus="selectAll">
+                        <input type="number" v-model.number="our_own.me.meal" placeholder="0" @focus="openCalculator('our_own.me.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="our_own.wife.meal" placeholder="0" @focus="selectAll">
+                        <input type="number" v-model.number="our_own.wife.meal" placeholder="0" @focus="openCalculator('our_own.wife.meal')" readonly>
                     </div>
                 </div>
             </div>
@@ -229,11 +294,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="our_own.me.transport" placeholder="0" @focus="selectAll">
+                        <input type="number" v-model.number="our_own.me.transport" placeholder="0" @focus="openCalculator('our_own.me.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="our_own.wife.transport" placeholder="0" @focus="selectAll">
+                        <input type="number" v-model.number="our_own.wife.transport" placeholder="0" @focus="openCalculator('our_own.wife.transport')" readonly>
                     </div>
                 </div>
             </div>
@@ -243,7 +308,7 @@
             <h2>其他花費</h2>
             <div class="input-group">
                 <label>哥 3D列印</label>
-                <input type="number" v-model.number="reimbursable.brother.printer_3d" placeholder="0" @focus="selectAll">
+                <input type="number" v-model.number="reimbursable.brother.printer_3d" placeholder="0" @focus="openCalculator('reimbursable.brother.printer_3d')" readonly>
             </div>
         </div>
 
@@ -263,6 +328,19 @@
 
         <button @click="clearInputs" class="clear-button">清空所有欄位</button>
         <p class="footer-note">註：金額為綠色代表你應收的錢，紅色代表你應付的錢。</p>
+        <div v-if="calculator.visible" class="calculator-modal">
+            <div class="calculator">
+                <input type="text" v-model="calculator.input" readonly>
+                <div class="buttons">
+                    <button v-for="n in [7,8,9,'+',4,5,6,'-',1,2,3,'*',0,'.','=','/','C']"
+                            @click="press(n)">{{ n }}</button>
+                </div>
+                <div class="action-row">
+                    <button @click="confirmCalculator">確定</button>
+                    <button @click="closeCalculator" class="action-btn">取消</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -298,6 +376,11 @@
                             meal: 0,
                             transport: 0
                         }
+                    },
+                    calculator: {
+                        visible: false,
+                        input: '',
+                        field: ''
                     }
                 };
             },
@@ -413,6 +496,39 @@
                 // 點擊輸入框時全選內容
                 selectAll(event) {
                     event.target.select();
+                },
+                openCalculator(field) {
+                    this.calculator.visible = true;
+                    this.calculator.input = '';
+                    this.calculator.field = field;
+                },
+                closeCalculator() {
+                    this.calculator.visible = false;
+                },
+                press(val) {
+                    if (val === '=') {
+                        try {
+                            this.calculator.input = eval(this.calculator.input).toString();
+                        } catch {
+                            this.calculator.input = '錯誤';
+                        }
+                    } else if (val === 'C') {
+                        this.calculator.input = '';
+                    } else {
+                        this.calculator.input += val.toString();
+                    }
+                },
+                confirmCalculator() {
+                    if (this.calculator.field && this.calculator.input !== '' && this.calculator.input !== '錯誤') {
+                        // 動態設定欄位值
+                        const path = this.calculator.field.split('.');
+                        let obj = this;
+                        for (let i = 0; i < path.length - 1; i++) {
+                            obj = obj[path[i]];
+                        }
+                        obj[path[path.length - 1]] = Number(this.calculator.input);
+                    }
+                    this.closeCalculator();
                 }
             }
         }).mount('#app');
