@@ -238,11 +238,21 @@
         .calculator button:hover {
             background: #36a473;
         }
+        .calculator button:active {
+            transform: translateY(1px); /* 按鈕下沉效果 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 稍微改變陰影 */
+            background-color: #308f65; /* 按住時背景色稍微變深 */
+        }
         .calculator .action-btn {
             background: var(--danger-color);
         }
         .calculator .action-btn:hover {
             background: #c0392b;
+        }
+        .calculator .action-btn:active {
+            background: #a73123;
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .calculator .del-btn {
             background: #aaa;
@@ -250,11 +260,21 @@
         .calculator .del-btn:hover {
             background: #888;
         }
+        .calculator .del-btn:active {
+            background: #777;
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
         .calculator .clear-btn {
             background: #f39c12; /* 歸零按鈕的顏色 */
         }
         .calculator .clear-btn:hover {
             background: #e67e22;
+        }
+        .calculator .clear-btn:active {
+            background: #d35400;
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .calculator .error-tip {
             color: var(--danger-color);
@@ -553,6 +573,11 @@
                     this.calculator.error = '';
                 },
                 press(val) {
+                    // 增加輕微震動效果 (手機瀏覽器支援)
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50); // 震動 50 毫秒
+                    }
+
                     if (val === '=') {
                         this.tryEval();
                     } else if (val === 'C') {
