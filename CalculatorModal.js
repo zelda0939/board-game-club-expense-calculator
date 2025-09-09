@@ -14,6 +14,7 @@ export default {
                             @touchstart="handleTouchStart($event, n)"
                             @touchend="handleTouchEnd($event, n)"
                             @touchmove="handleTouchMove($event)"
+                            @click="press(n)"
                             :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
                             :key="n">
                         {{ n === 'DEL' ? '⌫' : n }}
