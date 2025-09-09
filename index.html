@@ -178,12 +178,16 @@
             color: #888; /* 預設灰色 */
         }
 
+        [v-cloak] {
+            display: none;
+        }
+
     </style>
 </head>
 
 <body>
 
-    <div id="app">
+    <div id="app" v-cloak>
         <h1>桌遊社開銷計算機</h1>
         <button @click="clearInputs" class="clear-button">清空所有欄位</button>
         <div class="card">
