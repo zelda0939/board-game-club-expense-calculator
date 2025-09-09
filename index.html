@@ -284,6 +284,11 @@
             font-size: 0.9em;
             min-height: 1.2em; /* 預留空間防止佈局跳動 */
         }
+
+        /* 鎖定滾動 */
+        body.no-scroll {
+            overflow: hidden;
+        }
     </style>
 </head>
 
@@ -467,6 +472,17 @@
                         localStorage.setItem('familyCostCalculator', JSON.stringify({ reimbursable: this.reimbursable, our_own: newValue }));
                     },
                     deep: true
+                },
+                // 監聽計算機是否顯示，並控制 body 滾動
+                'calculator.visible': {
+                    handler(isVisible) {
+                        if (isVisible) {
+                            document.body.classList.add('no-scroll');
+                        } else {
+                            document.body.classList.remove('no-scroll');
+                        }
+                    },
+                    immediate: true // 立即執行一次，以防初始狀態計算機就是開啟的
                 }
             },
             computed: {
