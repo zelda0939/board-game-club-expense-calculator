@@ -560,6 +560,15 @@
                     } else if (val === 'DEL') {
                         this.calculator.input = this.calculator.input.slice(0, -1);
                         this.calculator.error = '';
+                    } else if (['+', '-', '*', '/'].includes(val)) {
+                        // 如果前一個字元也是運算符號，則替換它
+                        const lastChar = this.calculator.input.slice(-1);
+                        if (['+', '-', '*', '/'].includes(lastChar)) {
+                            this.calculator.input = this.calculator.input.slice(0, -1) + val.toString();
+                        } else {
+                            this.calculator.input += val.toString();
+                        }
+                        this.calculator.error = '';
                     } else if (['(', ')'].includes(val)) {
                         this.calculator.input += val.toString();
                         this.calculator.error = '';
