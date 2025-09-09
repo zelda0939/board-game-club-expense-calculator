@@ -192,9 +192,16 @@ export default {
                 this.error = '';
                 this.lastCalculated = false;
             } else if (val === ')') {
-                this.input += val.toString();
-                this.error = '';
-                this.lastCalculated = false;
+                const openParenthesesCount = (this.input.match(/\(/g) || []).length;
+                const closeParenthesesCount = (this.input.match(/\)/g) || []).length;
+                if (openParenthesesCount > closeParenthesesCount) {
+                    this.input += val.toString();
+                    this.error = '';
+                    this.lastCalculated = false;
+                } else {
+                    this.error = '算式錯誤';
+                    return;
+                }
             } else if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(val.toString()) || val === '.') { // 處理數字或小數點
                 if (this.lastCalculated) {
                     this.input = (val === '.') ? '0.' : val.toString();
