@@ -1,0 +1,116 @@
+/* CalculatorModal 專用樣式 */
+.calculator-modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: flex-end; /* 改為靠底部對齊 */
+    justify-content: center;
+    z-index: 1000;
+}
+.calculator {
+    background: var(--secondary-color);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px var(--shadow-color);
+    padding: 24px 20px 16px 20px;
+    font-family: inherit;
+}
+.calculator input[type="text"] {
+    width: 100%;
+    max-width: 100%;
+    font-size: 1.3em;
+    padding: 18px 16px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-align: right;
+    background: var(--background-color);
+    box-sizing: border-box;
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+}
+.calculator .buttons {
+    font-size: 1.3em;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+}
+.calculator .action-row {
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    margin-top: 16px; /* 增加與按鈕的間距 */
+    margin-bottom: 16px;
+}
+.calculator button {
+    font-size: 1.3em;
+    font-weight: bold;
+    padding: 10px 0;
+    border: none;
+    border-radius: 50px;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+    outline: none; /* 移除點擊時的焦點框 */
+}
+.calculator .buttons button {
+    aspect-ratio: 1 / 1; /* 使按鈕為正方形 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.calculator button:hover {
+    background: #36a473;
+}
+.calculator button:active {
+    transform: translateY(1px); /* 按鈕下沉效果 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 稍微改變陰影 */
+    background-color: #308f65; /* 按住時背景色稍微變深 */
+}
+.calculator .action-btn {
+    background: var(--danger-color);
+}
+.calculator .action-btn:hover {
+    background: #c0392b;
+}
+.calculator .action-btn:active {
+    background: #a73123;
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.calculator .del-btn {
+    background: #aaa;
+}
+.calculator .del-btn:hover {
+    background: #888;
+}
+.calculator .del-btn:active {
+    background: #777;
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.calculator .clear-btn {
+    background: #f39c12; /* 歸零按鈕的顏色 */
+}
+.calculator .clear-btn:hover {
+    background: #e67e22;
+}
+.calculator .clear-btn:active {
+    background: #d35400;
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.calculator .error-tip {
+    color: var(--danger-color);
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 0px;
+    font-size: 0.9em;
+    min-height: 1.2em; /* 預留空間防止佈局跳動 */
+}
