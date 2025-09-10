@@ -21,6 +21,7 @@
     transform: translateY(0); /* 初始位置 */
     transition: transform 0.3s ease-out, opacity 0.3s ease-out; /* 新增滑動和淡入淡出過渡 */
     opacity: 1; /* 初始完全不透明 */
+    margin-bottom: calc(25px + env(safe-area-inset-bottom, 0px)); /* 增加底部外邊距以避開手機底部功能欄 */
 }
 
 /* 進入和離開的過渡效果 */
@@ -60,7 +61,7 @@
     gap: 16px;
     justify-content: space-between;
     margin-top: 16px; /* 增加與按鈕的間距 */
-    margin-bottom: 16px;
+    margin-bottom: 0px;
 }
 .calculator button {
     font-size: 1.3em;
