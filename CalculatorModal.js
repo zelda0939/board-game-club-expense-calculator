@@ -4,7 +4,7 @@ function round(val, digits = 12) {
 }
 
 // 新增的工具函數：將數字字串格式化為帶有千位符號的字串
-function formatNumberWithCommas(numberString) {
+export function formatNumberWithCommas(numberString) {
     // 如果是空字符串或只包含運算符，則不處理
     if (!numberString || numberString.match(/^[+\-*\/().]*$/)) {
         return numberString;
@@ -25,7 +25,7 @@ function formatNumberWithCommas(numberString) {
 }
 
 // 新增的工具函數：移除字串中的千位符號
-function removeCommas(numberString) {
+export function removeCommas(numberString) {
     return numberString.replace(/,/g, '');
 }
 
@@ -86,7 +86,7 @@ export default {
     watch: {
         visible(isVisible) {
             if (isVisible) {
-                this.input = this.initialValue;
+                this.input = this.initialValue.toString(); // 確保 input 始終為字串
                 this.error = '';
                 this.lastCalculated = true;
                 document.body.classList.add('no-scroll');

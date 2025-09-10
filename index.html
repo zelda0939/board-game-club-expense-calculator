@@ -25,15 +25,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="reimbursable.me.meal" placeholder="0" @focus="openCalculator('reimbursable.me.meal')" readonly>
+                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.me.meal').toString())" @input="updateValueFromInput({ path: 'reimbursable.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="reimbursable.wife.meal" placeholder="0" @focus="openCalculator('reimbursable.wife.meal')" readonly>
+                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.wife.meal').toString())" @input="updateValueFromInput({ path: 'reimbursable.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <input type="number" v-model.number="reimbursable.brother.meal" placeholder="0" @focus="openCalculator('reimbursable.brother.meal')" readonly>
+                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.brother.meal').toString())" @input="updateValueFromInput({ path: 'reimbursable.brother.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.meal')" readonly>
                     </div>
                 </div>
             </div>
@@ -42,15 +42,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="reimbursable.me.transport" placeholder="0" @focus="openCalculator('reimbursable.me.transport')" readonly>
+                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.me.transport').toString())" @input="updateValueFromInput({ path: 'reimbursable.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="reimbursable.wife.transport" placeholder="0" @focus="openCalculator('reimbursable.wife.transport')" readonly>
+                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.wife.transport').toString())" @input="updateValueFromInput({ path: 'reimbursable.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <input type="number" v-model.number="reimbursable.brother.transport" placeholder="0" @focus="openCalculator('reimbursable.brother.transport')" readonly>
+                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.brother.transport').toString())" @input="updateValueFromInput({ path: 'reimbursable.brother.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.transport')" readonly>
                     </div>
                 </div>
             </div>
@@ -63,11 +63,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="our_own.me.meal" placeholder="0" @focus="openCalculator('our_own.me.meal')" readonly>
+                        <input type="text" :value="formatNumberWithCommas(getFieldValue('our_own.me.meal').toString())" @input="updateValueFromInput({ path: 'our_own.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="our_own.wife.meal" placeholder="0" @focus="openCalculator('our_own.wife.meal')" readonly>
+                        <input type="text" :value="formatNumberWithCommas(getFieldValue('our_own.wife.meal').toString())" @input="updateValueFromInput({ path: 'our_own.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.meal')" readonly>
                     </div>
                 </div>
             </div>
@@ -76,11 +76,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="number" v-model.number="our_own.me.transport" placeholder="0" @focus="openCalculator('our_own.me.transport')" readonly>
+                        <input type="text" :value="formatNumberWithCommas(getFieldValue('our_own.me.transport').toString())" @input="updateValueFromInput({ path: 'our_own.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="number" v-model.number="our_own.wife.transport" placeholder="0" @focus="openCalculator('our_own.wife.transport')" readonly>
+                        <input type="text" :value="formatNumberWithCommas(getFieldValue('our_own.wife.transport').toString())" @input="updateValueFromInput({ path: 'our_own.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.transport')" readonly>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
             <h2>其他花費</h2>
             <div class="input-group">
                 <label>哥 3D列印</label>
-                <input type="number" v-model.number="reimbursable.brother.printer_3d" placeholder="0" @focus="openCalculator('reimbursable.brother.printer_3d')" readonly>
+                <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.brother.printer_3d').toString())" @input="updateValueFromInput({ path: 'reimbursable.brother.printer_3d', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.printer_3d')" readonly>
             </div>
         </div>
 
@@ -116,7 +116,7 @@
             :initial-value="calculatorState.initialValue"
             :target-path="calculatorState.targetPath"
             @update:visible="calculatorState.visible = $event"
-            @update:value="updateFieldValue"
+            @update:value="updateValueFromCalculator"
         ></calculator-modal>
 
     </div>
@@ -124,6 +124,7 @@
     <script type="module">
         // 引入 CalculatorModal 組件
         import CalculatorModal from './CalculatorModal.js';
+        import { formatNumberWithCommas, removeCommas } from './CalculatorModal.js';
 
         console.log("CalculatorModal imported:", CalculatorModal);
 
@@ -276,6 +277,20 @@
                 formatCurrency(value) {
                     return new Intl.NumberFormat('zh-TW').format(value);
                 },
+                formatNumberWithCommas: formatNumberWithCommas,
+                removeCommas: removeCommas,
+                getFieldValue(fieldPath) {
+                    const parts = fieldPath.split('.');
+                    let value = this;
+                    for (const part of parts) {
+                        if (value && typeof value === 'object' && part in value) {
+                            value = value[part];
+                        } else {
+                            return 0; // 或者根據需求返回其他預設值
+                        }
+                    }
+                    return value;
+                },
                 openCalculator(fieldPath) {
                     this.calculatorState.targetPath = fieldPath;
                     // 獲取當前欄位的值作為初始值
@@ -288,13 +303,22 @@
                     this.calculatorState.initialValue = (currentValue !== undefined && currentValue !== null) ? currentValue.toString() : '';
                     this.calculatorState.visible = true;
                 },
-                updateFieldValue({ path, value }) {
+                updateValueFromCalculator({ path, value }) {
                     const parts = path.split('.');
                     let target = this;
                     for (let i = 0; i < parts.length - 1; i++) {
                         target = target[parts[i]];
                     }
-                    target[parts[parts.length - 1]] = value;
+                    target[parts[parts.length - 1]] = value; // 直接賦值，因為 CalculatorModal 已經處理了數字轉換
+                },
+                updateValueFromInput({ path, value }) {
+                    const parts = path.split('.');
+                    let target = this;
+                    for (let i = 0; i < parts.length - 1; i++) {
+                        target = target[parts[i]];
+                    }
+                    // 移除千位符號並轉換為數字，如果輸入為空則設為 0
+                    target[parts[parts.length - 1]] = Number(removeCommas(value) || 0);
                 }
             },
             components: {
