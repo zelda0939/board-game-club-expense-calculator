@@ -9,16 +9,16 @@ export default {
         <Transition name="modal">
             <div v-if="visible" class="calculator-modal">
                 <div class="calculator">
-                    <input type="text" v-model="input" readonly>
+                    <input type="text" v-model="displayInput" readonly>
                     <div class="buttons">
-                        <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'*',')','.',0,'=','/','DEL']"
+                        <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'X',')','.',0,'=','/','DEL']"
                                 @touchstart="handleTouchStart($event, n)"
                                 @touchend="handleTouchEnd($event, n)"
                                 @touchmove="handleTouchMove($event)"
                                 @click="press(n)"
                                 :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
                                 :key="n">
-                            {{ n === 'DEL' ? '⌫' : n }}
+                            {{ n === 'DEL' ? '⌫' : (n === 'X' ? '×' : n) }}
                         </button>
                     </div>
                     <div v-if="error" class="error-tip">{{ error }}</div>
@@ -83,8 +83,8 @@ export default {
             if (/[0-9]/.test(key)) {
                 this.press(parseInt(key));
                 processed = true;
-            } else if (['+', '-', '*', '/', '.', '(', ')'].includes(key)) {
-                this.press(key);
+            } else if (['+', '-', '*', '/', '.', '(', ')', 'X'].includes(key)) {
+                this.press(key === '*' ? 'X' : key);
                 processed = true;
             } else if (key === 'Enter') {
                 // 檢查是否為單純數值
@@ -169,16 +169,16 @@ export default {
                 this.input = this.input.slice(0, -1);
                 this.error = '';
                 this.lastCalculated = false;
-            } else if (['+', '-', '*', '/'].includes(val)) {
+            } else if (['+', '-', 'X', '/'].includes(val)) {
                 if (this.lastCalculated) {
-                    this.input += val.toString();
+                    this.input += (val === 'X' ? '*' : val).toString();
                     this.lastCalculated = false;
                 } else {
                     const lastChar = this.input.slice(-1);
                     if (['+', '-', '*', '/'].includes(lastChar)) {
-                        this.input = this.input.slice(0, -1) + val.toString();
+                        this.input = this.input.slice(0, -1) + (val === 'X' ? '*' : val).toString();
                     } else {
-                        this.input += val.toString();
+                        this.input += (val === 'X' ? '*' : val).toString();
                     }
                 }
                 this.error = '';
@@ -305,6 +305,11 @@ export default {
             }
             this.$emit('update:value', { path: this.targetPath, value: Number(value) });
             this.$emit('update:visible', false);
+        }
+    },
+    computed: {
+        displayInput() {
+            return this.input.replace(/\*/g, '×');
         }
     }
 };
