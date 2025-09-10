@@ -55,7 +55,7 @@ export default {
             touchStartX: 0,
             touchStartY: 0,
             isMoving: false,
-            touchThreshold: 5, // 定義輕微滑動的像素閾值，從 10 調整為 5，使其更靈敏
+            touchThreshold: 15, // 定義輕微滑動的像素閾值，從 10 調整為 5，使其更靈敏
             maxDigits: 14 // 定義最大允許的位數
         };
     },
