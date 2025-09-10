@@ -9,6 +9,7 @@ export function removeCommas(numberString) {
     return str.replace(/,/g, '');
 }
 
+// Vue.js 組件定義
 export default {
     name: 'CalculatorModal',
     template: `
@@ -40,7 +41,8 @@ export default {
     props: {
         visible: Boolean,
         initialValue: String,
-        targetPath: String
+        targetPath: String,
+        formatNumberOrExpression: Function // 新增一個 prop 來接收格式化函數
     },
     emits: ['update:visible', 'update:value'],
     data() {
@@ -174,8 +176,7 @@ export default {
                 navigator.vibrate(50);
             }
 
-            // 在處理任何輸入之前，移除現有 input 中的千位符號，確保內部運算正確
-            this.input = removeCommas(this.input);
+            // this.input = removeCommas(this.input); // 此行已移除，因為將在需要時才移除千位符號
 
             if (val === '=') {
                 this.tryEval();
@@ -196,7 +197,8 @@ export default {
                 this.updateRealtimeResult(); // DEL 後更新即時結果
             } else if (['+', '-', 'X', '÷'].includes(val)) {
                 if (this.lastCalculated) {
-                    this.input += (val === 'X' ? '*' : (val === '÷' ? '/' : val)).toString();
+                    const numVal = Number(removeCommas(this.input)); // 確保是純數字
+                    this.input = numVal + (val === 'X' ? '*' : (val === '÷' ? '/' : val)).toString();
                     this.lastCalculated = false;
                 } else {
                     const lastChar = this.input.slice(-1);
@@ -258,9 +260,11 @@ export default {
         normalizeNumberInput(inputString) {
             if (!inputString) return '';
 
+            const cleanInputString = removeCommas(inputString); // 在內部移除千位符號
+
             // 匹配數字、小數點或運算符/括號
             // 使用正則表達式捕獲每個數字/小數點序列或單個運算符/括號
-            const tokens = inputString.match(/(\d+\.?\d*|\.?\d+|[+\-*\/()])/g);
+            const tokens = cleanInputString.match(/(-?\d+\.?\d*|[+\-*\/()])/g);
             if (!tokens) return '';
 
             let normalizedTokens = [];
@@ -343,16 +347,16 @@ export default {
                 return;
             }
 
-            let value = this.input;
             let finalValue;
-            if (value === '' || value === '錯誤') {
+            if (this.input === '' || this.input === '錯誤') {
                 finalValue = 0;
             } else {
-                if (!/^-?\d+(\.\d+)?$/.test(value)) {
+                // 由於 this.input 在 tryEval 後已是純數字字串，可以直接轉換
+                if (!/^-?\d+(\.\d+)?$/.test(this.input)) {
                     this.error = '請先輸入正確算式';
                     return;
                 }
-                finalValue = Number(removeCommas(value));
+                finalValue = Number(this.input); // 直接轉換，因為 this.input 在 tryEval 後已是純數字字串
             }
             this.$emit('update:value', { path: this.targetPath, value: finalValue });
             this.$emit('update:visible', false);
@@ -365,15 +369,15 @@ export default {
             }
             try {
                 // 僅在輸入有效時嘗試評估，並清除可能的錯誤消息
-                if (/^[0-9+\-*\/().\s]+$/.test(this.input)) {
-                    let tempResult = eval(this.input);
+                if (/^[0-9+\-*\/().\s]+$/.test(removeCommas(this.input))) { // eval 前移除千位符號
+                    let tempResult = eval(removeCommas(this.input)); // eval 前移除千位符號
                     if (typeof tempResult === 'number' && isFinite(tempResult)) {
                         // 對結果進行四捨五入，最多保留10位小數
                         const realtimeResultString = round(tempResult, 10).toString();
                         if (realtimeResultString.replace(/[^0-9]/g, '').length > this.maxDigits) {
                             this.realtimeResult = ''; // 結果超過位數限制時清空
                         } else {
-                            this.realtimeResult = this.formatNumberForDisplay(realtimeResultString); // 格式化即時結果
+                            this.realtimeResult = this.formatNumberOrExpression(realtimeResultString); // 格式化即時結果
                         }
                     } else {
                         this.realtimeResult = ''; // 非法結果清空
@@ -387,17 +391,8 @@ export default {
         },
         getCurrentNumberString() {
             // 從輸入字串中提取最後一個數字或小數點之前的所有內容
-            const lastNumberMatch = this.input.match(/[0-9.]+$/);
+            const lastNumberMatch = this.input.match(/(-?\d+\.?\d*)$/);
             return lastNumberMatch ? lastNumberMatch[0] : '';
-        },
-        formatNumberForDisplay(value) {
-            // 使用 Intl.NumberFormat 來格式化數字
-            // 如果值不是有效的數字，則返回原始值 (例如，表示式字串)
-            const numValue = Number(value);
-            if (isNaN(numValue) || !isFinite(numValue)) {
-                return value;
-            }
-            return new Intl.NumberFormat('zh-TW').format(numValue);
         }
     },
     computed: {
@@ -406,7 +401,7 @@ export default {
             // 使用正規表達式匹配數字（包括負數和小數）
             processedInput = processedInput.replace(/(-?\d+\.?\d*)/g, (match) => {
                 // 只對數字部分進行格式化，並確保傳入的是數字類型
-                return this.formatNumberForDisplay(Number(match));
+                return this.formatNumberOrExpression(Number(match));
             });
             return processedInput;
         }

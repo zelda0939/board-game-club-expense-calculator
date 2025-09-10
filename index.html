@@ -117,6 +117,7 @@
             :target-path="calculatorState.targetPath"
             @update:visible="calculatorState.visible = $event"
             @update:value="updateValueFromCalculator"
+            :format-number-or-expression="formatNumberOrExpression" // 傳遞格式化函數給計算機模組
         ></calculator-modal>
 
     </div>
@@ -128,6 +129,40 @@
 
         console.log("CalculatorModal imported:", CalculatorModal);
 
+        // 定義初始數據結構
+        const initialData = {
+            reimbursable: {
+                me: {
+                    meal: 0,
+                    transport: 0
+                },
+                wife: {
+                    meal: 0,
+                    transport: 0
+                },
+                brother: {
+                    meal: 0,
+                    transport: 0,
+                    printer_3d: 0
+                }
+            },
+            our_own: {
+                me: {
+                    meal: 0,
+                    transport: 0
+                },
+                wife: {
+                    meal: 0,
+                    transport: 0
+                }
+            },
+            calculatorState: {
+                visible: false,
+                initialValue: '',
+                targetPath: ''
+            }
+        };
+
         // Vue.js 應用邏輯
         const {
             createApp
@@ -135,38 +170,7 @@
 
         const app = createApp({
             data() {
-                return {
-                    reimbursable: { // 代墊費用
-                        me: {
-                            meal: 0,
-                            transport: 0
-                        },
-                        wife: {
-                            meal: 0,
-                            transport: 0
-                        },
-                        brother: {
-                            meal: 0,
-                            transport: 0,
-                            printer_3d: 0
-                        } // 新增「哥」的欄位
-                    },
-                    our_own: { // 自家花費
-                        me: {
-                            meal: 0,
-                            transport: 0
-                        },
-                        wife: {
-                            meal: 0,
-                            transport: 0
-                        }
-                    },
-                    calculatorState: {
-                        visible: false,
-                        initialValue: '',
-                        targetPath: ''
-                    }
-                };
+                return JSON.parse(JSON.stringify(initialData)); // 深度複製初始數據
             },
             mounted() {
                 const savedData = localStorage.getItem('familyCostCalculator');
@@ -177,13 +181,14 @@
                 }
             },
             watch: {
-                reimbursable: {
+                // 合併 reimbursable 和 our_own 的 watch 監聽器
+                'reimbursable': { // 深度監聽 reimbursable
                     handler(newValue) {
                         localStorage.setItem('familyCostCalculator', JSON.stringify({ reimbursable: newValue, our_own: this.our_own }));
                     },
                     deep: true
                 },
-                our_own: {
+                'our_own': { // 深度監聽 our_own
                     handler(newValue) {
                         localStorage.setItem('familyCostCalculator', JSON.stringify({ reimbursable: this.reimbursable, our_own: newValue }));
                     },
@@ -246,31 +251,8 @@
             methods: {
                 // 清空所有輸入
                 clearInputs() {
-                    this.reimbursable = {
-                        me: {
-                            meal: 0,
-                            transport: 0
-                        },
-                        wife: {
-                            meal: 0,
-                            transport: 0
-                        },
-                        brother: {
-                            meal: 0,
-                            transport: 0,
-                            printer_3d: 0
-                        }
-                    };
-                    this.our_own = {
-                        me: {
-                            meal: 0,
-                            transport: 0
-                        },
-                        wife: {
-                            meal: 0,
-                            transport: 0
-                        }
-                    };
+                    // 使用初始數據結構重置所有欄位
+                    Object.assign(this.$data, JSON.parse(JSON.stringify(initialData)));
                     localStorage.removeItem('familyCostCalculator');
                 },
                 // 格式化貨幣顯示
@@ -279,16 +261,17 @@
                 },
                 removeCommas: removeCommas,
                 getFieldValue(fieldPath) {
-                    const parts = fieldPath.split('.');
-                    let value = this;
-                    for (const part of parts) {
-                        if (value && typeof value === 'object' && part in value) {
-                            value = value[part];
-                        } else {
-                            return 0; // 或者根據需求返回其他預設值
-                        }
+                    // 使用 reduce 方法簡化數據獲取
+                    return fieldPath.split('.').reduce((obj, key) => (obj && typeof obj === 'object' && key in obj) ? obj[key] : 0, this);
+                },
+                // 格式化數字或表達式以顯示在計算機中
+                formatNumberOrExpression(value) {
+                    // 如果值不是有效的數字，則返回原始值 (例如，表示式字串)
+                    const numValue = Number(value);
+                    if (isNaN(numValue) || !isFinite(numValue)) {
+                        return value;
                     }
-                    return value;
+                    return new Intl.NumberFormat('zh-TW').format(numValue);
                 },
                 openCalculator(fieldPath) {
                     this.calculatorState.targetPath = fieldPath;
