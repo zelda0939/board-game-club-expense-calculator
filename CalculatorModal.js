@@ -44,7 +44,7 @@ export default {
         targetPath: String,
         formatNumberOrExpression: Function // 新增一個 prop 來接收格式化函數
     },
-    emits: ['update:visible', 'update:value'],
+    emits: ['update:visible', 'update:value', 'tabPressed'], // 新增 tabPressed 事件
     data() {
         return {
             input: '',
@@ -121,6 +121,11 @@ export default {
             } else if (key === 'Escape') { // 新增對 Escape 鍵的處理
                 this.handleCancel();
                 processed = true;
+            } else if (key === 'Tab') { // 新增對 Tab 鍵的處理
+                // event.preventDefault(); // 移除：讓瀏覽器處理 Tab 的預設行為
+                // this.$emit('tabPressed', { shiftKey: event.shiftKey }); // 移除：不再發送事件
+                this.handleCancel(); // 關閉計算機
+                processed = false; // 不阻止預設行為
             } else if (key === 'NumpadAdd') { // 數字鍵盤 + 
                 this.press('+');
                 processed = true;
