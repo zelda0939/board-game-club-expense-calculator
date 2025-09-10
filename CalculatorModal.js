@@ -11,14 +11,14 @@ export default {
                 <div class="calculator">
                     <input type="text" v-model="displayInput" readonly>
                     <div class="buttons">
-                        <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'X',')','.',0,'=','/','DEL']"
+                        <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'X',')','.',0,'=','÷','DEL']"
                                 @touchstart="handleTouchStart($event, n)"
                                 @touchend="handleTouchEnd($event, n)"
                                 @touchmove="handleTouchMove($event)"
                                 @click="press(n)"
                                 :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
                                 :key="n">
-                            {{ n === 'DEL' ? '⌫' : (n === 'X' ? '×' : n) }}
+                            {{ n === 'DEL' ? '⌫' : (n === 'X' ? '×' : (n === '÷' ? '÷' : n)) }}
                         </button>
                     </div>
                     <div v-if="error" class="error-tip">{{ error }}</div>
@@ -83,8 +83,14 @@ export default {
             if (/[0-9]/.test(key)) {
                 this.press(parseInt(key));
                 processed = true;
-            } else if (['+', '-', '*', '/', '.', '(', ')', 'X'].includes(key)) {
-                this.press(key === '*' ? 'X' : key);
+            } else if (['+', '-', '*', '/', '.', '(', ')'].includes(key)) {
+                let pressVal = key;
+                if (key === '*') {
+                    pressVal = 'X';
+                } else if (key === '/') {
+                    pressVal = '÷';
+                }
+                this.press(pressVal);
                 processed = true;
             } else if (key === 'Enter') {
                 // 檢查是否為單純數值
@@ -107,10 +113,10 @@ export default {
                 this.press('-');
                 processed = true;
             } else if (key === 'NumpadMultiply') { // 數字鍵盤 * 
-                this.press('*');
+                this.press('X');
                 processed = true;
             } else if (key === 'NumpadDivide') { // 數字鍵盤 / 
-                this.press('/');
+                this.press('÷');
                 processed = true;
             } else if (key === 'NumpadDecimal') { // 數字鍵盤 .
                 this.press('.');
@@ -169,16 +175,16 @@ export default {
                 this.input = this.input.slice(0, -1);
                 this.error = '';
                 this.lastCalculated = false;
-            } else if (['+', '-', 'X', '/'].includes(val)) {
+            } else if (['+', '-', 'X', '÷'].includes(val)) {
                 if (this.lastCalculated) {
-                    this.input += (val === 'X' ? '*' : val).toString();
+                    this.input += (val === 'X' ? '*' : (val === '÷' ? '/' : val)).toString();
                     this.lastCalculated = false;
                 } else {
                     const lastChar = this.input.slice(-1);
                     if (['+', '-', '*', '/'].includes(lastChar)) {
-                        this.input = this.input.slice(0, -1) + (val === 'X' ? '*' : val).toString();
+                        this.input = this.input.slice(0, -1) + (val === 'X' ? '*' : (val === '÷' ? '/' : val)).toString();
                     } else {
-                        this.input += (val === 'X' ? '*' : val).toString();
+                        this.input += (val === 'X' ? '*' : (val === '÷' ? '/' : val)).toString();
                     }
                 }
                 this.error = '';
@@ -309,7 +315,7 @@ export default {
     },
     computed: {
         displayInput() {
-            return this.input.replace(/\*/g, '×');
+            return this.input.replace(/\*/g, '×').replace(/\//g, '÷');
         }
     }
 };
