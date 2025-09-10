@@ -116,6 +116,9 @@ export default {
             } else if (key.toLowerCase() === 'c') {
                 this.press('C');
                 processed = true;
+            } else if (key === 'Escape') { // 新增對 Escape 鍵的處理
+                this.handleCancel();
+                processed = true;
             } else if (key === 'NumpadAdd') { // 數字鍵盤 + 
                 this.press('+');
                 processed = true;
