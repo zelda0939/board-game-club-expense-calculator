@@ -3,30 +3,10 @@ function round(val, digits = 12) {
     return Math.round((val + Number.EPSILON) * p) / p;
 }
 
-// 新增的工具函數：將數字字串格式化為帶有千位符號的字串
-export function formatNumberWithCommas(numberString) {
-    // 如果是空字符串或只包含運算符，則不處理
-    if (!numberString || numberString.match(/^[+\-*\/().]*$/)) {
-        return numberString;
-    }
-
-    const parts = numberString.split('.');
-    const integerPart = parts[0];
-    const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
-
-    // 處理負號
-    const isNegative = integerPart.startsWith('-');
-    const absIntegerPart = isNegative ? integerPart.slice(1) : integerPart;
-
-    // 僅對整數部分添加千位符號
-    const formattedIntegerPart = absIntegerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-    return (isNegative ? '-' : '') + formattedIntegerPart + decimalPart;
-}
-
 // 新增的工具函數：移除字串中的千位符號
 export function removeCommas(numberString) {
-    return numberString.replace(/,/g, '');
+    const str = String(numberString); // 確保 numberString 始終是字串
+    return str.replace(/,/g, '');
 }
 
 export default {
@@ -390,7 +370,7 @@ export default {
                         if (realtimeResultString.replace(/[^0-9]/g, '').length > this.maxDigits) {
                             this.realtimeResult = ''; // 結果超過位數限制時清空
                         } else {
-                            this.realtimeResult = formatNumberWithCommas(realtimeResultString); // 格式化即時結果
+                            this.realtimeResult = this.formatNumberForDisplay(realtimeResultString); // 格式化即時結果
                         }
                     } else {
                         this.realtimeResult = ''; // 非法結果清空
@@ -406,11 +386,26 @@ export default {
             // 從輸入字串中提取最後一個數字或小數點之前的所有內容
             const lastNumberMatch = this.input.match(/[0-9.]+$/);
             return lastNumberMatch ? lastNumberMatch[0] : '';
+        },
+        formatNumberForDisplay(value) {
+            // 使用 Intl.NumberFormat 來格式化數字
+            // 如果值不是有效的數字，則返回原始值 (例如，表示式字串)
+            const numValue = Number(value);
+            if (isNaN(numValue) || !isFinite(numValue)) {
+                return value;
+            }
+            return new Intl.NumberFormat('zh-TW').format(numValue);
         }
     },
     computed: {
         displayInput() {
-            return formatNumberWithCommas(this.input.replace(/\*/g, '×').replace(/\//g, '÷'));
+            let processedInput = this.input.replace(/\*/g, '×').replace(/\//g, '÷');
+            // 使用正規表達式匹配數字（包括負數和小數）
+            processedInput = processedInput.replace(/(-?\d+\.?\d*)/g, (match) => {
+                // 只對數字部分進行格式化，並確保傳入的是數字類型
+                return this.formatNumberForDisplay(Number(match));
+            });
+            return processedInput;
         }
     }
 };

@@ -25,15 +25,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.me.meal').toString())" @input="updateValueFromInput({ path: 'reimbursable.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.meal')" readonly>
+                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.me.meal'))" @input="updateValueFromInput({ path: 'reimbursable.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.wife.meal').toString())" @input="updateValueFromInput({ path: 'reimbursable.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.meal')" readonly>
+                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.wife.meal'))" @input="updateValueFromInput({ path: 'reimbursable.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.brother.meal').toString())" @input="updateValueFromInput({ path: 'reimbursable.brother.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.meal')" readonly>
+                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.brother.meal'))" @input="updateValueFromInput({ path: 'reimbursable.brother.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.meal')" readonly>
                     </div>
                 </div>
             </div>
@@ -42,15 +42,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.me.transport').toString())" @input="updateValueFromInput({ path: 'reimbursable.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.transport')" readonly>
+                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.me.transport'))" @input="updateValueFromInput({ path: 'reimbursable.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.wife.transport').toString())" @input="updateValueFromInput({ path: 'reimbursable.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.transport')" readonly>
+                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.wife.transport'))" @input="updateValueFromInput({ path: 'reimbursable.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.brother.transport').toString())" @input="updateValueFromInput({ path: 'reimbursable.brother.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.transport')" readonly>
+                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.brother.transport'))" @input="updateValueFromInput({ path: 'reimbursable.brother.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.transport')" readonly>
                     </div>
                 </div>
             </div>
@@ -63,11 +63,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="text" :value="formatNumberWithCommas(getFieldValue('our_own.me.meal').toString())" @input="updateValueFromInput({ path: 'our_own.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.meal')" readonly>
+                        <input type="text" :value="formatCurrency(getFieldValue('our_own.me.meal'))" @input="updateValueFromInput({ path: 'our_own.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="text" :value="formatNumberWithCommas(getFieldValue('our_own.wife.meal').toString())" @input="updateValueFromInput({ path: 'our_own.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.meal')" readonly>
+                        <input type="text" :value="formatCurrency(getFieldValue('our_own.wife.meal'))" @input="updateValueFromInput({ path: 'our_own.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.meal')" readonly>
                     </div>
                 </div>
             </div>
@@ -76,11 +76,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="text" :value="formatNumberWithCommas(getFieldValue('our_own.me.transport').toString())" @input="updateValueFromInput({ path: 'our_own.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.transport')" readonly>
+                        <input type="text" :value="formatCurrency(getFieldValue('our_own.me.transport'))" @input="updateValueFromInput({ path: 'our_own.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="text" :value="formatNumberWithCommas(getFieldValue('our_own.wife.transport').toString())" @input="updateValueFromInput({ path: 'our_own.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.transport')" readonly>
+                        <input type="text" :value="formatCurrency(getFieldValue('our_own.wife.transport'))" @input="updateValueFromInput({ path: 'our_own.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.transport')" readonly>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
             <h2>其他花費</h2>
             <div class="input-group">
                 <label>哥 3D列印</label>
-                <input type="text" :value="formatNumberWithCommas(getFieldValue('reimbursable.brother.printer_3d').toString())" @input="updateValueFromInput({ path: 'reimbursable.brother.printer_3d', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.printer_3d')" readonly>
+                <input type="text" :value="formatCurrency(getFieldValue('reimbursable.brother.printer_3d'))" @input="updateValueFromInput({ path: 'reimbursable.brother.printer_3d', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.printer_3d')" readonly>
             </div>
         </div>
 
@@ -124,7 +124,7 @@
     <script type="module">
         // 引入 CalculatorModal 組件
         import CalculatorModal from './CalculatorModal.js';
-        import { formatNumberWithCommas, removeCommas } from './CalculatorModal.js';
+        import { removeCommas } from './CalculatorModal.js';
 
         console.log("CalculatorModal imported:", CalculatorModal);
 
@@ -277,7 +277,6 @@
                 formatCurrency(value) {
                     return new Intl.NumberFormat('zh-TW').format(value);
                 },
-                formatNumberWithCommas: formatNumberWithCommas,
                 removeCommas: removeCommas,
                 getFieldValue(fieldPath) {
                     const parts = fieldPath.split('.');
