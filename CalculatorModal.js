@@ -47,7 +47,8 @@ export default {
             touchStartX: 0,
             touchStartY: 0,
             isMoving: false,
-            touchThreshold: 5 // 定義輕微滑動的像素閾值，從 10 調整為 5，使其更靈敏
+            touchThreshold: 5, // 定義輕微滑動的像素閾值，從 10 調整為 5，使其更靈敏
+            maxDigits: 14 // 定義最大允許的位數
         };
     },
     mounted() {
@@ -222,6 +223,17 @@ export default {
                     this.input = (val === '.') ? '0.' : val.toString();
                     this.lastCalculated = false;
                 } else {
+                    // 獲取當前正在編輯的數字部分
+                    const currentNumber = this.getCurrentNumberString();
+                    // 檢查新輸入是否會超過最大位數限制
+                    if (currentNumber.replace(/[^0-9]/g, '').length >= this.maxDigits && val !== '.') {
+                        this.error = `當前數字最多只能輸入 ${this.maxDigits} 位數`;
+                        return;
+                    }
+                    // 如果是小數點，且當前輸入已經包含小數點，則不允許再次輸入
+                    if (val === '.' && currentNumber.includes('.')) {
+                        return;
+                    }
                     this.input += val.toString(); // 先直接追加
                 }
                 this.updateRealtimeResult(); // 數字或小數點輸入後更新即時結果
@@ -293,7 +305,13 @@ export default {
                     }
                     
                     if (typeof result === 'number' && isFinite(result)) {
-                        this.input = result.toString();
+                        const resultString = result.toString();
+                        if (resultString.replace(/[^0-9]/g, '').length > this.maxDigits) {
+                            this.error = `結果超過 ${this.maxDigits} 位數`;
+                            this.lastCalculated = false;
+                            return;
+                        }
+                        this.input = resultString;
                     } else {
                         this.error = '算式錯誤';
                         this.lastCalculated = false;
@@ -335,7 +353,12 @@ export default {
                     let tempResult = eval(this.input);
                     if (typeof tempResult === 'number' && isFinite(tempResult)) {
                         // 對結果進行四捨五入，最多保留10位小數
-                        this.realtimeResult = round(tempResult, 10).toString();
+                        const realtimeResultString = round(tempResult, 10).toString();
+                        if (realtimeResultString.replace(/[^0-9]/g, '').length > this.maxDigits) {
+                            this.realtimeResult = ''; // 結果超過位數限制時清空
+                        } else {
+                            this.realtimeResult = realtimeResultString;
+                        }
                     } else {
                         this.realtimeResult = ''; // 非法結果清空
                     }
@@ -345,6 +368,11 @@ export default {
             } catch (e) {
                 this.realtimeResult = ''; // 運算錯誤清空
             }
+        },
+        getCurrentNumberString() {
+            // 從輸入字串中提取最後一個數字或小數點之前的所有內容
+            const lastNumberMatch = this.input.match(/[0-9.]+$/);
+            return lastNumberMatch ? lastNumberMatch[0] : '';
         }
     },
     computed: {
