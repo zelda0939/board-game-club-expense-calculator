@@ -21,7 +21,7 @@ export default {
                     <div class="buttons">
                         <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'X',')','.',0,'=','÷','DEL']"
                                 @touchstart="handleTouchStart($event, n)"
-                                @touchend="handleTouchEnd(n)"
+                                @touchend="handleTouchEnd($event, n)"
                                 @touchmove="handleTouchMove($event)"
                                 @click="press(n)"
                                 :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
@@ -159,6 +159,7 @@ export default {
             event.preventDefault(); // 阻止默認的觸摸行為，例如滾動或縮放
             this.touchStartPos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
             this.touchStartTime = Date.now();
+            event.currentTarget.classList.add('touch-active'); // 添加 touch-active 類別
             this.press(value); // 在觸摸開始時就觸發按鈕點擊
         },
 
@@ -173,14 +174,21 @@ export default {
 
             // 如果移動距離超過閾值，則判斷為滑動，取消點擊狀態
             if (diffX > this.touchThreshold || diffY > this.touchThreshold) {
+                // 如果有 touch-active 類別，移除它
+                if (event.currentTarget && event.currentTarget.classList.contains('touch-active')) {
+                    event.currentTarget.classList.remove('touch-active');
+                }
                 this.touchStartPos = { x: 0, y: 0 }; // 重置觸摸起始位置
                 this.touchStartTime = 0; // 重置觸摸開始時間
             }
         },
 
-        handleTouchEnd(value) {
+        handleTouchEnd(event, value) { // 接收 event 參數
             // 處理觸摸結束事件
-            // 由於輸入已在 touchstart 處理，這裡僅重置狀態
+            // 由於輸入已在 touchstart 處理，這裡僅重置狀態並移除 touch-active 類別
+            if (event.currentTarget && event.currentTarget.classList.contains('touch-active')) {
+                event.currentTarget.classList.remove('touch-active');
+            }
             this.touchStartPos = { x: 0, y: 0 };
             this.touchStartTime = 0;
         },

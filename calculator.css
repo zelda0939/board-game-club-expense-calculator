@@ -71,7 +71,7 @@
     background: var(--primary-color);
     color: var(--secondary-color);
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s ease-out, box-shadow 0.1s ease-out; /* 新增 transform 和 box-shadow 過渡 */
     width: 100%;
     outline: none; /* 移除點擊時的焦點框 */
 }
@@ -84,8 +84,9 @@
 .calculator button:hover {
     background: #36a473;
 }
-.calculator button:active {
-    transform: translateY(1px); /* 按鈕下沉效果 */
+.calculator button:active,
+.calculator button.touch-active {
+    transform: translateY(1px) scale(0.98); /* 按鈕下沉並輕微縮小效果 */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 稍微改變陰影 */
     background-color: #308f65; /* 按住時背景色稍微變深 */
 }
@@ -95,9 +96,10 @@
 .calculator .action-btn:hover {
     background: #c0392b;
 }
-.calculator .action-btn:active {
+.calculator .action-btn:active,
+.calculator .action-btn.touch-active {
     background: #a73123;
-    transform: translateY(1px);
+    transform: translateY(1px) scale(0.98);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .calculator .del-btn {
@@ -106,9 +108,10 @@
 .calculator .del-btn:hover {
     background: #888;
 }
-.calculator .del-btn:active {
+.calculator .del-btn:active,
+.calculator .del-btn.touch-active {
     background: #777;
-    transform: translateY(1px);
+    transform: translateY(1px) scale(0.98);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .calculator .clear-btn {
@@ -117,9 +120,10 @@
 .calculator .clear-btn:hover {
     background: #e67e22;
 }
-.calculator .clear-btn:active {
+.calculator .clear-btn:active,
+.calculator .clear-btn.touch-active {
     background: #d35400;
-    transform: translateY(1px);
+    transform: translateY(1px) scale(0.98);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .calculator .error-tip {
