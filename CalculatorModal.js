@@ -3,6 +3,32 @@ function round(val, digits = 12) {
     return Math.round((val + Number.EPSILON) * p) / p;
 }
 
+// 新增的工具函數：將數字字串格式化為帶有千位符號的字串
+function formatNumberWithCommas(numberString) {
+    // 如果是空字符串或只包含運算符，則不處理
+    if (!numberString || numberString.match(/^[+\-*\/().]*$/)) {
+        return numberString;
+    }
+
+    const parts = numberString.split('.');
+    const integerPart = parts[0];
+    const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
+
+    // 處理負號
+    const isNegative = integerPart.startsWith('-');
+    const absIntegerPart = isNegative ? integerPart.slice(1) : integerPart;
+
+    // 僅對整數部分添加千位符號
+    const formattedIntegerPart = absIntegerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    return (isNegative ? '-' : '') + formattedIntegerPart + decimalPart;
+}
+
+// 新增的工具函數：移除字串中的千位符號
+function removeCommas(numberString) {
+    return numberString.replace(/,/g, '');
+}
+
 export default {
     name: 'CalculatorModal',
     template: `
@@ -165,6 +191,9 @@ export default {
                 navigator.vibrate(50);
             }
 
+            // 在處理任何輸入之前，移除現有 input 中的千位符號，確保內部運算正確
+            this.input = removeCommas(this.input);
+
             if (val === '=') {
                 this.tryEval();
                 this.lastCalculated = true;
@@ -223,7 +252,7 @@ export default {
                     this.input = (val === '.') ? '0.' : val.toString();
                     this.lastCalculated = false;
                 } else {
-                    // 獲取當前正在編輯的數字部分
+                    // 獲取當前正在編輯的數字部分 (已經移除了千位符號)
                     const currentNumber = this.getCurrentNumberString();
                     // 檢查新輸入是否會超過最大位數限制
                     if (currentNumber.replace(/[^0-9]/g, '').length >= this.maxDigits && val !== '.') {
@@ -234,7 +263,7 @@ export default {
                     if (val === '.' && currentNumber.includes('.')) {
                         return;
                     }
-                    this.input += val.toString(); // 先直接追加
+                    this.input += val.toString(); // 先直接追加，此時 input 已經是無千位符號的
                 }
                 this.updateRealtimeResult(); // 數字或小數點輸入後更新即時結果
             }
@@ -282,7 +311,7 @@ export default {
         },
         tryEval() {
             this.error = '';
-            const inputToEvaluate = this.input;
+            const inputToEvaluate = removeCommas(this.input); // 在運算前移除千位符號
             console.log('tryEval: Evaluating expression:', inputToEvaluate);
 
             if (inputToEvaluate.trim() === '') {
@@ -311,7 +340,7 @@ export default {
                             this.lastCalculated = false;
                             return;
                         }
-                        this.input = resultString;
+                        this.input = resultString; // 儲存無千位符號的結果
                     } else {
                         this.error = '算式錯誤';
                         this.lastCalculated = false;
@@ -338,7 +367,7 @@ export default {
                 this.error = '請先輸入正確算式';
                 return;
             }
-            this.$emit('update:value', { path: this.targetPath, value: Number(value) });
+            this.$emit('update:value', { path: this.targetPath, value: Number(removeCommas(value)) }); // 發送前移除千位符號
             this.$emit('update:visible', false);
             this.realtimeResult = ''; // 確定計算完成後清空即時結果
         },
@@ -349,7 +378,7 @@ export default {
             }
             try {
                 // 僅在輸入有效時嘗試評估，並清除可能的錯誤消息
-                if (/^[0-9+\-*/().\s]+$/.test(this.input)) {
+                if (/^[0-9+\-*\/().\s]+$/.test(this.input)) {
                     let tempResult = eval(this.input);
                     if (typeof tempResult === 'number' && isFinite(tempResult)) {
                         // 對結果進行四捨五入，最多保留10位小數
@@ -357,7 +386,7 @@ export default {
                         if (realtimeResultString.replace(/[^0-9]/g, '').length > this.maxDigits) {
                             this.realtimeResult = ''; // 結果超過位數限制時清空
                         } else {
-                            this.realtimeResult = realtimeResultString;
+                            this.realtimeResult = formatNumberWithCommas(realtimeResultString); // 格式化即時結果
                         }
                     } else {
                         this.realtimeResult = ''; // 非法結果清空
@@ -377,7 +406,7 @@ export default {
     },
     computed: {
         displayInput() {
-            return this.input.replace(/\*/g, '×').replace(/\//g, '÷');
+            return formatNumberWithCommas(this.input.replace(/\*/g, '×').replace(/\//g, '÷'));
         }
     }
 };
