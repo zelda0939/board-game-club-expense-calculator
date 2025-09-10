@@ -44,7 +44,7 @@ export default {
         targetPath: String,
         formatNumberOrExpression: Function // 新增一個 prop 來接收格式化函數
     },
-    emits: ['update:visible', 'update:value', 'tabPressed'], // 新增 tabPressed 事件
+    emits: ['update:visible', 'update:value'], // 移除 tabPressed 事件
     data() {
         return {
             input: '',
