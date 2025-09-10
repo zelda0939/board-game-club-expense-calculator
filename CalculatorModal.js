@@ -21,7 +21,7 @@ export default {
                     <div class="buttons">
                         <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'X',')','.',0,'=','÷','DEL']"
                                 @touchstart="handleTouchStart($event, n)"
-                                @touchend="handleTouchEnd($event, n)"
+                                @touchend="handleTouchEnd(n)"
                                 @touchmove="handleTouchMove($event)"
                                 @click="press(n)"
                                 :class="{'del-btn': n === 'DEL', 'clear-btn': n === 'C'}"
@@ -52,9 +52,8 @@ export default {
             lastCalculated: false,
             realtimeResult: '',
             // 新增觸控事件相關的數據
-            touchStartX: 0,
-            touchStartY: 0,
-            isMoving: false,
+            touchStartPos: { x: 0, y: 0 },
+            touchStartTime: 0,
             touchThreshold: 15, // 定義輕微滑動的像素閾值，從 10 調整為 5，使其更靈敏
             maxDigits: 14 // 定義最大允許的位數
         };
@@ -150,31 +149,40 @@ export default {
                 event.preventDefault(); // 阻止瀏覽器預設行為
             }
         },
-        // 新增觸控事件處理函數
-        handleTouchStart(event, val) {
-            this.isMoving = false;
-            if (event.touches.length > 0) {
-                this.touchStartX = event.touches[0].clientX;
-                this.touchStartY = event.touches[0].clientY;
-            }
-            // 阻止預設行為，以避免在按鈕上觸發瀏覽器自身的捲動
-            event.preventDefault();
+        handleMouseDown(value) {
+            // 處理滑鼠點擊事件，直接觸發 press 方法
+            this.press(value);
         },
+
+        handleTouchStart(event, value) {
+            // 處理觸摸開始事件
+            event.preventDefault(); // 阻止默認的觸摸行為，例如滾動或縮放
+            this.touchStartPos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+            this.touchStartTime = Date.now();
+            this.press(value); // 在觸摸開始時就觸發按鈕點擊
+        },
+
         handleTouchMove(event) {
-            if (event.touches.length > 0) {
-                const deltaX = Math.abs(event.touches[0].clientX - this.touchStartX);
-                const deltaY = Math.abs(event.touches[0].clientY - this.touchStartY);
-                if (deltaX > this.touchThreshold || deltaY > this.touchThreshold) {
-                    this.isMoving = true;
-                }
+            // 處理觸摸移動事件
+            if (!this.touchStartPos.x || !this.touchStartPos.y) return;
+
+            const currentX = event.touches[0].clientX;
+            const currentY = event.touches[0].clientY;
+            const diffX = Math.abs(currentX - this.touchStartPos.x);
+            const diffY = Math.abs(currentY - this.touchStartPos.y);
+
+            // 如果移動距離超過閾值，則判斷為滑動，取消點擊狀態
+            if (diffX > this.touchThreshold || diffY > this.touchThreshold) {
+                this.touchStartPos = { x: 0, y: 0 }; // 重置觸摸起始位置
+                this.touchStartTime = 0; // 重置觸摸開始時間
             }
         },
-        handleTouchEnd(event, val) {
-            if (!this.isMoving) {
-                // 只有在沒有明顯移動時才觸發 press
-                this.press(val);
-            }
-            this.isMoving = false; // 重置狀態
+
+        handleTouchEnd(value) {
+            // 處理觸摸結束事件
+            // 由於輸入已在 touchstart 處理，這裡僅重置狀態
+            this.touchStartPos = { x: 0, y: 0 };
+            this.touchStartTime = 0;
         },
         press(val) {
             if (navigator.vibrate) {
