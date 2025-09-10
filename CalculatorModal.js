@@ -361,13 +361,17 @@ export default {
             }
 
             let value = this.input;
+            let finalValue;
             if (value === '' || value === '錯誤') {
-                value = 0;
-            } else if (!/^-?\d+(\.\d+)?$/.test(value)) {
-                this.error = '請先輸入正確算式';
-                return;
+                finalValue = 0;
+            } else {
+                if (!/^-?\d+(\.\d+)?$/.test(value)) {
+                    this.error = '請先輸入正確算式';
+                    return;
+                }
+                finalValue = Number(removeCommas(value));
             }
-            this.$emit('update:value', { path: this.targetPath, value: Number(removeCommas(value)) }); // 發送前移除千位符號
+            this.$emit('update:value', { path: this.targetPath, value: finalValue });
             this.$emit('update:visible', false);
             this.realtimeResult = ''; // 確定計算完成後清空即時結果
         },
