@@ -127,8 +127,6 @@
         import CalculatorModal from './CalculatorModal.js';
         import { removeCommas } from './CalculatorModal.js';
 
-        console.log("CalculatorModal imported:", CalculatorModal);
-
         // 定義初始數據結構
         const initialData = {
             reimbursable: {
@@ -198,37 +196,25 @@
             computed: {
                 // 我們家應獲得差額
                 familyShouldReceive() {
-                    const myTotal = (this.reimbursable.me.meal || 0) + (this.reimbursable.me.transport || 0);
-                    const wifeTotal = (this.reimbursable.wife.meal || 0) + (this.reimbursable.wife.transport ||
-                        0);
-                    const brotherTotal = (this.reimbursable.brother.meal || 0) + (this.reimbursable.brother
-                        .transport || 0) + (this.reimbursable.brother.printer_3d || 0);
+                    const myTotal = this.calculateMemberTotal(this.reimbursable.me);
+                    const wifeTotal = this.calculateMemberTotal(this.reimbursable.wife);
+                    const brotherTotal = this.calculateMemberTotal(this.reimbursable.brother);
                     const result = myTotal + wifeTotal - brotherTotal;
-                    console.log('familyShouldReceive:', result);
                     return Math.round(result);
                 },
                 // 我應再給老婆
                 amountToGiveWife() {
                     // 1. 計算我的總支出
-                    const myTotalOwnExpense = (this.reimbursable.me.meal || 0) + (this.reimbursable.me
-                        .transport || 0) + (this.our_own.me.meal || 0) + (this.our_own.me.transport || 0);
-                    console.log('myTotalOwnExpense:', myTotalOwnExpense);
+                    const myTotalOwnExpense = this.calculateMemberTotal(this.reimbursable.me) + this.calculateMemberTotal(this.our_own.me);
                     // 2. 計算老婆的總支出
-                    const wifeTotalOwnExpense = (this.reimbursable.wife.meal || 0) + (this.reimbursable.wife
-                        .transport ||
-                        0) + (this.our_own.wife.meal || 0) + (this.our_own.wife.transport ||
-                        0);
-                    console.log('wifeTotalOwnExpense:', wifeTotalOwnExpense);
+                    const wifeTotalOwnExpense = this.calculateMemberTotal(this.reimbursable.wife) + this.calculateMemberTotal(this.our_own.wife);
                     // 3. 計算夫妻兩人總支出
                     const totalFamilyExpense = myTotalOwnExpense + wifeTotalOwnExpense - this.familyShouldReceive;
-                    console.log('totalFamilyExpense:', totalFamilyExpense);
                     // 4. 計算平均每人應支出
                     const averageExpense = totalFamilyExpense / 2;
-                    console.log('averageExpense:', averageExpense);
                     // 5. 計算我應給老婆的金額 (平均值 - 我的實際支出)
                     const result = averageExpense - (myTotalOwnExpense - this.familyShouldReceive) + (Math
-                        .floor(this.reimbursable.brother.printer_3d / 2) || 0);
-                    console.log('amountToGiveWife:', result);
+                        .floor(this.reimbursable.brother.printer_3d / 2));
                     return Math.round(result);
                 },
                 // 動態變更標題文字
@@ -301,6 +287,16 @@
                     }
                     // 移除千位符號並轉換為數字，如果輸入為空則設為 0
                     target[parts[parts.length - 1]] = Number(removeCommas(value) || 0);
+                },
+                // 計算單個成員的總支出
+                calculateMemberTotal(memberExpenses) {
+                    let total = 0;
+                    for (const key in memberExpenses) {
+                        if (Object.hasOwnProperty.call(memberExpenses, key) && typeof memberExpenses[key] === 'number') {
+                            total += memberExpenses[key];
+                        }
+                    }
+                    return total;
                 }
             },
             components: {
