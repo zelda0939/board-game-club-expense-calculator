@@ -39,7 +39,7 @@
     max-width: 100%;
     font-size: 1.3em;
     padding: 18px 16px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     text-align: right;
@@ -129,4 +129,18 @@
     margin-bottom: 0px;
     font-size: 0.9em;
     min-height: 1.2em; /* 預留空間防止佈局跳動 */
+}
+
+.realtime-result {
+    text-align: right;
+    font-size: 0.9em;
+    color: var(--text-color-secondary); /* 使用較不明顯的顏色 */
+    margin-bottom: 5px; /* 與按鈕保持適當距離 */
+    height: 20px; /* 確保固定高度 */
+    line-height: 20px; /* 確保文字垂直居中 */
+    transition: opacity 0.3s ease;
+}
+.realtime-result-hidden {
+    opacity: 0;
+    pointer-events: none;
 }

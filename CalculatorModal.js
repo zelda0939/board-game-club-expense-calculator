@@ -10,6 +10,7 @@ export default {
             <div v-if="visible" class="calculator-modal">
                 <div class="calculator">
                     <input type="text" v-model="displayInput" readonly>
+                    <div :class="{ 'realtime-result': true, 'realtime-result-hidden': !realtimeResult }">{{ realtimeResult }}</div>
                     <div class="buttons">
                         <button v-for="n in [7,8,9,'+','C',4,5,6,'-','(',1,2,3,'X',')','.',0,'=','÷','DEL']"
                                 @touchstart="handleTouchStart($event, n)"
@@ -41,6 +42,7 @@ export default {
             input: '',
             error: '',
             lastCalculated: false,
+            realtimeResult: '',
             // 新增觸控事件相關的數據
             touchStartX: 0,
             touchStartY: 0,
@@ -63,6 +65,7 @@ export default {
                 document.body.classList.add('no-scroll');
             } else {
                 document.body.classList.remove('no-scroll');
+                this.realtimeResult = ''; // 在計算機關閉時清空即時結果
             }
         }
     },
@@ -167,14 +170,17 @@ export default {
                 if(this.error) {
                     return;
                 }
+                this.realtimeResult = ''; // 等於計算完成後清空即時結果
             } else if (val === 'C') {
                 this.input = '';
                 this.error = '';
                 this.lastCalculated = false;
+                this.realtimeResult = ''; // C 按鈕按下後清空即時結果
             } else if (val === 'DEL') {
                 this.input = this.input.slice(0, -1);
                 this.error = '';
                 this.lastCalculated = false;
+                this.updateRealtimeResult(); // DEL 後更新即時結果
             } else if (['+', '-', 'X', '÷'].includes(val)) {
                 if (this.lastCalculated) {
                     this.input += (val === 'X' ? '*' : (val === '÷' ? '/' : val)).toString();
@@ -188,6 +194,7 @@ export default {
                     }
                 }
                 this.error = '';
+                this.updateRealtimeResult(); // 運算符輸入後更新即時結果
             } else if (val === '(') {
                 const lastChar = this.input.slice(-1);
                 if (lastChar && (/[0-9)]/.test(lastChar))) {
@@ -197,6 +204,7 @@ export default {
                 }
                 this.error = '';
                 this.lastCalculated = false;
+                this.updateRealtimeResult(); // 括號輸入後更新即時結果
             } else if (val === ')') {
                 const openParenthesesCount = (this.input.match(/\(/g) || []).length;
                 const closeParenthesesCount = (this.input.match(/\)/g) || []).length;
@@ -204,6 +212,7 @@ export default {
                     this.input += val.toString();
                     this.error = '';
                     this.lastCalculated = false;
+                    this.updateRealtimeResult(); // 括號輸入後更新即時結果
                 } else {
                     this.error = '算式錯誤';
                     return;
@@ -215,10 +224,12 @@ export default {
                 } else {
                     this.input += val.toString(); // 先直接追加
                 }
+                this.updateRealtimeResult(); // 數字或小數點輸入後更新即時結果
             }
             this.error = '';
             // 在所有輸入處理之後，進行正規化
             this.input = this.normalizeNumberInput(this.input);
+            // 移除了在所有輸入處理之後無條件呼叫 updateRealtimeResult() 的程式碼
         },
         normalizeNumberInput(inputString) {
             if (!inputString) return '';
@@ -311,6 +322,29 @@ export default {
             }
             this.$emit('update:value', { path: this.targetPath, value: Number(value) });
             this.$emit('update:visible', false);
+            this.realtimeResult = ''; // 確定計算完成後清空即時結果
+        },
+        updateRealtimeResult() {
+            if (this.input.trim() === '') {
+                this.realtimeResult = '';
+                return;
+            }
+            try {
+                // 僅在輸入有效時嘗試評估，並清除可能的錯誤消息
+                if (/^[0-9+\-*/().\s]+$/.test(this.input)) {
+                    let tempResult = eval(this.input);
+                    if (typeof tempResult === 'number' && isFinite(tempResult)) {
+                        // 對結果進行四捨五入，最多保留10位小數
+                        this.realtimeResult = round(tempResult, 10).toString();
+                    } else {
+                        this.realtimeResult = ''; // 非法結果清空
+                    }
+                } else {
+                    this.realtimeResult = ''; // 非法輸入清空
+                }
+            } catch (e) {
+                this.realtimeResult = ''; // 運算錯誤清空
+            }
         }
     },
     computed: {
