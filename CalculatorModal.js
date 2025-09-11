@@ -439,7 +439,16 @@ export default {
                 }
                 finalValue = Number(this.input); // 直接轉換，因為 this.input 在 tryEval 後已是純數字字串
             }
-            this.$emit('update:value', { path: this.targetPath, value: finalValue });
+            
+            // 根據 useThousandSeparator 決定是否格式化最終值
+            let emittedValue = finalValue;
+            if (this.useThousandSeparator) {
+                emittedValue = Number(finalValue).toLocaleString('zh-TW', { maximumFractionDigits: 10 });
+            } else {
+                emittedValue = finalValue.toString();
+            }
+            
+            this.$emit('update:value', { path: this.targetPath, value: emittedValue });
             this.$emit('update:visible', false);
             this.realtimeResult = ''; // 確定計算完成後清空即時結果
         },

@@ -25,15 +25,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.me.meal'))" @input="updateValueFromInput({ path: 'reimbursable.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.meal')" readonly>
+                        <input type="text" :value="getFieldValue('reimbursable.me.meal')" @input="updateValueFromInput({ path: 'reimbursable.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.wife.meal'))" @input="updateValueFromInput({ path: 'reimbursable.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.meal')" readonly>
+                        <input type="text" :value="getFieldValue('reimbursable.wife.meal')" @input="updateValueFromInput({ path: 'reimbursable.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.brother.meal'))" @input="updateValueFromInput({ path: 'reimbursable.brother.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.meal')" readonly>
+                        <input type="text" :value="getFieldValue('reimbursable.brother.meal')" @input="updateValueFromInput({ path: 'reimbursable.brother.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.meal')" readonly>
                     </div>
                 </div>
             </div>
@@ -42,15 +42,15 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.me.transport'))" @input="updateValueFromInput({ path: 'reimbursable.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.transport')" readonly>
+                        <input type="text" :value="getFieldValue('reimbursable.me.transport')" @input="updateValueFromInput({ path: 'reimbursable.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.wife.transport'))" @input="updateValueFromInput({ path: 'reimbursable.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.transport')" readonly>
+                        <input type="text" :value="getFieldValue('reimbursable.wife.transport')" @input="updateValueFromInput({ path: 'reimbursable.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>哥</span>
-                        <input type="text" :value="formatCurrency(getFieldValue('reimbursable.brother.transport'))" @input="updateValueFromInput({ path: 'reimbursable.brother.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.transport')" readonly>
+                        <input type="text" :value="getFieldValue('reimbursable.brother.transport')" @input="updateValueFromInput({ path: 'reimbursable.brother.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.transport')" readonly>
                     </div>
                 </div>
             </div>
@@ -63,11 +63,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="text" :value="formatCurrency(getFieldValue('our_own.me.meal'))" @input="updateValueFromInput({ path: 'our_own.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.meal')" readonly>
+                        <input type="text" :value="getFieldValue('our_own.me.meal')" @input="updateValueFromInput({ path: 'our_own.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.meal')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="text" :value="formatCurrency(getFieldValue('our_own.wife.meal'))" @input="updateValueFromInput({ path: 'our_own.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.meal')" readonly>
+                        <input type="text" :value="getFieldValue('our_own.wife.meal')" @input="updateValueFromInput({ path: 'our_own.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.meal')" readonly>
                     </div>
                 </div>
             </div>
@@ -76,11 +76,11 @@
                 <div class="input-row">
                     <div class="input-wrapper">
                         <span>我</span>
-                        <input type="text" :value="formatCurrency(getFieldValue('our_own.me.transport'))" @input="updateValueFromInput({ path: 'our_own.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.transport')" readonly>
+                        <input type="text" :value="getFieldValue('our_own.me.transport')" @input="updateValueFromInput({ path: 'our_own.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
                         <span>老婆</span>
-                        <input type="text" :value="formatCurrency(getFieldValue('our_own.wife.transport'))" @input="updateValueFromInput({ path: 'our_own.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.transport')" readonly>
+                        <input type="text" :value="getFieldValue('our_own.wife.transport')" @input="updateValueFromInput({ path: 'our_own.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.transport')" readonly>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
             <h2>其他花費</h2>
             <div class="input-group">
                 <label>哥 3D列印</label>
-                <input type="text" :value="formatCurrency(getFieldValue('reimbursable.brother.printer_3d'))" @input="updateValueFromInput({ path: 'reimbursable.brother.printer_3d', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.printer_3d')" readonly>
+                <input type="text" :value="getFieldValue('reimbursable.brother.printer_3d')" @input="updateValueFromInput({ path: 'reimbursable.brother.printer_3d', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.printer_3d')" readonly>
             </div>
         </div>
 
@@ -98,12 +98,12 @@
             <h2>計算結果</h2>
             <div class="result-item">
                 <span class="label">{{ familyShouldReceiveText }}</span>
-                <span class="value" :class="{'positive': familyShouldReceive > 0, 'negative': familyShouldReceive < 0, 'neutral': familyShouldReceive === 0}">{{ formatCurrency(Math.abs(familyShouldReceive)) }}</span>
+                <span class="value" :class="{'positive': familyShouldReceive > 0, 'negative': familyShouldReceive < 0, 'neutral': familyShouldReceive === 0}">{{ Math.abs(familyShouldReceive) }}</span>
             </div>
             <div class="result-item">
                 <span class="label">{{ amountToGiveWifeText }}</span>
                 <span class="value" :class="{'negative': amountToGiveWife > 0, 'positive': amountToGiveWife < 0, 'neutral': amountToGiveWife === 0}">
-                    {{ formatCurrency(Math.abs(amountToGiveWife)) }}
+                    {{ Math.abs(amountToGiveWife) }}
                 </span>
             </div>
         </div>
@@ -125,12 +125,6 @@
     <script type="module">
         // 引入 CalculatorModal 組件
         import CalculatorModal from './CalculatorModal.js';
-        // 新增的工具函數：移除字串中的千位符號
-        function removeCommas(numberString) {
-            const str = String(numberString); // 確保 numberString 始終是字串
-            return str.replace(/,/g, '');
-        }
-
         // 定義初始數據結構
         const initialData = {
             reimbursable: {
@@ -247,10 +241,7 @@
                     Object.assign(this.$data, JSON.parse(JSON.stringify(initialData)));
                     localStorage.removeItem('familyCostCalculator');
                 },
-                // 格式化貨幣顯示
-                formatCurrency(value) {
-                    return new Intl.NumberFormat('zh-TW', { maximumFractionDigits: 10 }).format(value);
-                },
+                // 移除了 formatCurrency 方法，因為計算機模組會提供格式化後的數值
                 getFieldValue(fieldPath) {
                     const { target, key } = this.getTargetObjectAndKey(fieldPath);
                     return (target && typeof target === 'object' && key in target) ? target[key] : 0;
@@ -264,23 +255,22 @@
                     }
                     return { target, key: parts[parts.length - 1] };
                 },
-                // 移除了 formatNumberOrExpression 方法，因為已整合到 CalculatorModal 內部
                 openCalculator(fieldPath) {
                     this.calculatorState.targetPath = fieldPath;
                     // 獲取當前欄位的值作為初始值，並在傳遞給計算機之前移除千位分隔符號
                     const { target, key } = this.getTargetObjectAndKey(fieldPath);
                     const currentValue = target[key];
-                    this.calculatorState.initialValue = (currentValue !== undefined && currentValue !== null) ? removeCommas(currentValue.toString()) : '';
+                    this.calculatorState.initialValue = (currentValue !== undefined && currentValue !== null) ? currentValue.toString().replace(/,/g, '') : '';
                     this.calculatorState.visible = true;
                 },
                 updateValueFromCalculator({ path, value }) {
                     const { target, key } = this.getTargetObjectAndKey(path);
-                    target[key] = value; // 直接賦值，因為 CalculatorModal 已經處理了數字轉換
+                    target[key] = value; // 直接賦值，因為 CalculatorModal 已經處理了格式化
                 },
                 updateValueFromInput({ path, value }) {
                     const { target, key } = this.getTargetObjectAndKey(path);
                     // 移除千位符號並轉換為數字，如果輸入為空則設為 0
-                    target[key] = Number(removeCommas(value) || 0);
+                    target[key] = Number(value.replace(/,/g, '') || 0);
                 },
                 // 計算單個成員的總支出
                 calculateMemberTotal(memberExpenses) {
