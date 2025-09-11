@@ -8,6 +8,7 @@
     --shadow-color: rgba(0, 0, 0, 0.1);
     --danger-color: #e74c3c;
     --success-color: #2ecc71;
+    --text-color-secondary: #7f8c8d; /* 新增次要文字顏色 */
 }
 
 body {

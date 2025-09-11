@@ -100,8 +100,6 @@
 .calculator .action-btn:active,
 .calculator .action-btn.touch-active {
     background: #952b1f;
-    transform: translateY(1px) scale(0.92);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 .calculator .del-btn {
     background: #aaa;
@@ -112,8 +110,6 @@
 .calculator .del-btn:active,
 .calculator .del-btn.touch-active {
     background: #666;
-    transform: translateY(1px) scale(0.92);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 .calculator .clear-btn {
     background: #f39c12; /* 歸零按鈕的顏色 */
@@ -124,8 +120,6 @@
 .calculator .clear-btn:active,
 .calculator .clear-btn.touch-active {
     background: #c24b00;
-    transform: translateY(1px) scale(0.92);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 .calculator .error-tip {
     color: var(--danger-color);
