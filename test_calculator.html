@@ -57,11 +57,8 @@
 
                 const handleCalculatorUpdate = ({ path, value }) => {
                     if (path === 'testValue') {
-                        if (localUseThousandSeparator.value) {
-                            testValue.value = Number(value).toLocaleString('zh-TW', { maximumFractionDigits: 10 });
-                        } else {
-                            testValue.value = Number(value).toString();
-                        }
+                        // CalculatorModal 現在發出格式化後的字串，直接賦值
+                        testValue.value = value;
                     }
                 };
 
