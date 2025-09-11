@@ -115,6 +115,7 @@
             :visible="calculatorState.visible"
             :initial-value="calculatorState.initialValue"
             :target-path="calculatorState.targetPath"
+            :use-thousand-separator="true"
             @update:visible="calculatorState.visible = $event"
             @update:value="updateValueFromCalculator"
         ></calculator-modal>
