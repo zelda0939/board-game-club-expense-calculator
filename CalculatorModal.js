@@ -186,91 +186,154 @@ export default {
             this.touchStartPos = { x: 0, y: 0 };
             this.touchStartTime = 0;
         },
+        // 新增輔助方法來清除所有輸入和錯誤狀態
+        clearAll() {
+            this.input = '';
+            this.error = '';
+            this.lastCalculated = false;
+            this.realtimeResult = '';
+        },
+        deleteLastInput() {
+            this.input = this.input.slice(0, -1);
+            this.error = '';
+            this.lastCalculated = false;
+            this.updateRealtimeResult(); // 修正：DEL 後更新即時結果
+        },
+        // 新增輔助方法來處理運算符輸入
+        handleOperator(op) {
+            const operator = (op === 'X' ? '*' : (op === '÷' ? '/' : op));
+            if (this.lastCalculated) {
+                const numVal = Number(this.input); // 確保是純數字
+                this.input = numVal.toString() + operator;
+                this.lastCalculated = false;
+            } else {
+                const lastChar = this.input.slice(-1);
+                if (['+', '-', '*', '/'].includes(lastChar)) {
+                    this.input = this.input.slice(0, -1) + operator;
+                } else {
+                    this.input += operator;
+                }
+            }
+            this.error = '';
+        },
+        // 新增輔助方法來處理開括號輸入
+        handleOpenParenthesis() {
+            const lastChar = this.input.slice(-1);
+            if (lastChar && (/[0-9)]/.test(lastChar))) {
+                this.input += '*(';
+            } else {
+                this.input += '(';
+            }
+            this.error = '';
+            this.lastCalculated = false;
+        },
+        // 新增輔助方法來處理閉括號輸入
+        handleCloseParenthesis() {
+            const openParenthesesCount = (this.input.match(/\(/g) || []).length;
+            const closeParenthesesCount = (this.input.match(/\)/g) || []).length;
+            if (openParenthesesCount > closeParenthesesCount) {
+                this.input += ')';
+                this.error = '';
+                this.lastCalculated = false;
+            } else {
+                this.error = '算式錯誤';
+                return true; // 表示有錯誤發生，需要阻止後續處理
+            }
+            return false; // 表示沒有錯誤
+        },
+        // 新增輔助方法來處理數字或小數點輸入
+        handleNumberOrDecimal(digit) {
+            if (this.lastCalculated) {
+                this.input = (digit === '.') ? '0.' : digit;
+                this.lastCalculated = false;
+            } else {
+                // 獲取當前正在編輯的數字部分 (已經移除了千位符號)
+                const currentNumber = this.getCurrentNumberString();
+                // 檢查新輸入是否會超過最大位數限制
+                if (currentNumber.replace(/[^0-9]/g, '').length >= this.maxDigits && digit !== '.') {
+                    this.error = `當前數字最多只能輸入 ${this.maxDigits} 位數`;
+                    return true; // 表示有錯誤發生，需要阻止後續處理
+                }
+                // 如果是小數點，且當前輸入已經包含小數點，則不允許再次輸入
+                if (digit === '.' && currentNumber.includes('.')) {
+                    return true; // 表示有錯誤發生，需要阻止後續處理
+                }
+                this.input += digit; // 先直接追加，此時 input 已經是無千位符號的
+            }
+            return false; // 表示沒有錯誤
+        },
         press(val) {
             if (navigator.vibrate) {
                 navigator.vibrate(50);
             }
 
-            // this.input = removeCommas(this.input); // 此行已移除，因為將在需要時才移除千位符號
+            // 確保 val 始終為字串以便於比較
+            const pressVal = val.toString(); 
 
-            if (val === '=') {
-                this.tryEval();
-                this.lastCalculated = true;
-                if(this.error) {
-                    return;
-                }
-                this.realtimeResult = ''; // 等於計算完成後清空即時結果
-            } else if (val === 'C') {
-                this.input = '';
-                this.error = '';
-                this.lastCalculated = false;
-                this.realtimeResult = ''; // C 按鈕按下後清空即時結果
-            } else if (val === 'DEL') {
-                this.input = this.input.slice(0, -1);
-                this.error = '';
-                this.lastCalculated = false;
-                this.updateRealtimeResult(); // DEL 後更新即時結果
-            } else if (['+', '-', 'X', '÷'].includes(val)) {
-                if (this.lastCalculated) {
-                    const numVal = Number(this.input); // 確保是純數字
-                    this.input = numVal + (val === 'X' ? '*' : (val === '÷' ? '/' : val)).toString();
-                    this.lastCalculated = false;
-                } else {
-                    const lastChar = this.input.slice(-1);
-                    if (['+', '-', '*', '/'].includes(lastChar)) {
-                        this.input = this.input.slice(0, -1) + (val === 'X' ? '*' : (val === '÷' ? '/' : val)).toString();
-                    } else {
-                        this.input += (val === 'X' ? '*' : (val === '÷' ? '/' : val)).toString();
-                    }
-                }
-                this.error = '';
-                this.updateRealtimeResult(); // 運算符輸入後更新即時結果
-            } else if (val === '(') {
-                const lastChar = this.input.slice(-1);
-                if (lastChar && (/[0-9)]/.test(lastChar))) {
-                    this.input += '*(';
-                } else {
-                    this.input += '(';
-                }
-                this.error = '';
-                this.lastCalculated = false;
-                this.updateRealtimeResult(); // 括號輸入後更新即時結果
-            } else if (val === ')') {
-                const openParenthesesCount = (this.input.match(/\(/g) || []).length;
-                const closeParenthesesCount = (this.input.match(/\)/g) || []).length;
-                if (openParenthesesCount > closeParenthesesCount) {
-                    this.input += val.toString();
-                    this.error = '';
-                    this.lastCalculated = false;
-                    this.updateRealtimeResult(); // 括號輸入後更新即時結果
-                } else {
-                    this.error = '算式錯誤';
-                    return;
-                }
-            } else if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(val.toString()) || val === '.') { // 處理數字或小數點
-                if (this.lastCalculated) {
-                    this.input = (val === '.') ? '0.' : val.toString();
-                    this.lastCalculated = false;
-                } else {
-                    // 獲取當前正在編輯的數字部分 (已經移除了千位符號)
-                    const currentNumber = this.getCurrentNumberString();
-                    // 檢查新輸入是否會超過最大位數限制
-                    if (currentNumber.replace(/[^0-9]/g, '').length >= this.maxDigits && val !== '.') {
-                        this.error = `當前數字最多只能輸入 ${this.maxDigits} 位數`;
+            // 在所有輸入處理之後，進行正規化。在 switch 語句之前執行
+            // this.input = this.normalizeNumberInput(this.input); // 移至每個邏輯的末尾
+
+            switch (pressVal) {
+                case '=':
+                    this.tryEval();
+                    this.lastCalculated = true;
+                    if (this.error) {
                         return;
                     }
-                    // 如果是小數點，且當前輸入已經包含小數點，則不允許再次輸入
-                    if (val === '.' && currentNumber.includes('.')) {
+                    this.realtimeResult = ''; // 等於計算完成後清空即時結果
+                    break;
+                case 'C':
+                    this.clearAll(); // 呼叫新的 clearAll 方法
+                    break;
+                case 'DEL':
+                    this.deleteLastInput(); // 呼叫新的 deleteLastInput 方法
+                    break;
+                case '+':
+                case '-':
+                case 'X':
+                case '÷':
+                    this.handleOperator(pressVal); // 呼叫新的 handleOperator 方法
+                    break;
+                case '(':
+                    this.handleOpenParenthesis(); // 呼叫新的 handleOpenParenthesis 方法
+                    break;
+                case ')':
+                    if (this.handleCloseParenthesis()) { // 呼叫新的 handleCloseParenthesis 方法並檢查是否有錯誤
                         return;
                     }
-                    this.input += val.toString(); // 先直接追加，此時 input 已經是無千位符號的
-                }
-                this.updateRealtimeResult(); // 數字或小數點輸入後更新即時結果
+                    break;
+                case '.':
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    if (this.handleNumberOrDecimal(pressVal)) { // 呼叫新的 handleNumberOrDecimal 方法並檢查是否有錯誤
+                        return;
+                    }
+                    break;
+                default:
+                    // 處理未知按鈕，例如防止不必要的錯誤或行為
+                    this.error = '未知輸入';
+                    return;
             }
-            this.error = '';
+            // 統一在此處處理錯誤清除，除非有特定錯誤發生
+            if (this.error === '未知輸入') { // 只有當錯誤是未知輸入時才清除，避免清除其他有意義的錯誤
+                this.error = '';
+            }
+
             // 在所有輸入處理之後，進行正規化
             this.input = this.normalizeNumberInput(this.input);
             // 移除了在所有輸入處理之後無條件呼叫 updateRealtimeResult() 的程式碼
+            // 統一在非等於運算後更新即時結果，並確保沒有錯誤
+            if (pressVal !== '=' && pressVal !== 'C' && !this.error) { 
+                this.updateRealtimeResult(); 
+            }
         },
         normalizeNumberInput(inputString) {
             if (!inputString) return '';
