@@ -250,8 +250,8 @@
                     return new Intl.NumberFormat('zh-TW').format(value);
                 },
                 getFieldValue(fieldPath) {
-                    // 使用 reduce 方法簡化數據獲取
-                    return fieldPath.split('.').reduce((obj, key) => (obj && typeof obj === 'object' && key in obj) ? obj[key] : 0, this);
+                    const { target, key } = this.getTargetObjectAndKey(fieldPath);
+                    return (target && typeof target === 'object' && key in target) ? target[key] : 0;
                 },
                 // 輔助函式：根據路徑獲取目標物件和最終屬性鍵
                 getTargetObjectAndKey(path) {
