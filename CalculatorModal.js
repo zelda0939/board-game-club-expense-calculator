@@ -82,65 +82,66 @@ export default {
             }
 
             const key = event.key;
-            let processed = false;
 
-            // 數字和運算符
-            if (/[0-9]/.test(key)) {
-                this.press(parseInt(key));
-                processed = true;
-            } else if (['+', '-', '*', '/', '.', '(', ')'].includes(key)) {
-                let pressVal = key;
-                if (key === '*') {
-                    pressVal = 'X';
-                } else if (key === '/') {
-                    pressVal = '÷';
-                }
-                this.press(pressVal);
-                processed = true;
-            } else if (key === 'Enter') {
-                // 檢查是否為單純數值
-                if (/^-?\d+(\.\d+)?$/.test(this.input.trim())) {
-                    this.confirmAndClose(); // 如果是單純數值，則直接確認並關閉
-                } else {
-                    this.press('='); // 否則，執行等於操作
-                }
-                processed = true;
-            } else if (key === 'Backspace') {
-                this.press('DEL');
-                processed = true;
-            } else if (key.toLowerCase() === 'c') {
-                this.press('C');
-                processed = true;
-            } else if (key === 'Escape') { // 新增對 Escape 鍵的處理
-                this.handleCancel();
-                processed = true;
-            } else if (key === 'Tab') { // 新增對 Tab 鍵的處理
-                // event.preventDefault(); // 移除：讓瀏覽器處理 Tab 的預設行為
-                // this.$emit('tabPressed', { shiftKey: event.shiftKey }); // 移除：不再發送事件
-                this.handleCancel(); // 關閉計算機
-                processed = false; // 不阻止預設行為
-            } else if (key === 'NumpadAdd') { // 數字鍵盤 + 
-                this.press('+');
-                processed = true;
-            } else if (key === 'NumpadSubtract') { // 數字鍵盤 - 
-                this.press('-');
-                processed = true;
-            } else if (key === 'NumpadMultiply') { // 數字鍵盤 * 
-                this.press('X');
-                processed = true;
-            } else if (key === 'NumpadDivide') { // 數字鍵盤 / 
-                this.press('÷');
-                processed = true;
-            } else if (key === 'NumpadDecimal') { // 數字鍵盤 .
-                this.press('.');
-                processed = true;
-            } else if (key === 'NumpadEnter') { // 數字鍵盤 Enter
-                this.press('=');
-                processed = true;
+            const keyMap = {
+                '+': '+', '-': '-', '.': '.', '(': '(', ')': ')',
+                '0': 0, '1': 1, '2': 2, '3': 3, '4': 4,
+                '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
+                '*': 'X', '/': '÷' // 新增對常規鍵盤 * 和 / 的處理
+            };
+
+            const numpadKeyMap = {
+                'NumpadAdd': '+',
+                'NumpadSubtract': '-',
+                'NumpadDecimal': '.',
+                'NumpadMultiply': 'X',
+                'NumpadDivide': '÷',
+                'NumpadEnter': '='
+            };
+
+            if (keyMap[key] !== undefined) {
+                this.press(keyMap[key]);
+                event.preventDefault();
+                return;
             }
 
-            if (processed) {
-                event.preventDefault(); // 阻止瀏覽器預設行為
+            if (numpadKeyMap[key] !== undefined) {
+                this.press(numpadKeyMap[key]);
+                event.preventDefault();
+                return;
+            }
+
+            // 使用 switch 語句處理特殊按鍵
+            switch (key) {
+                case 'Enter':
+                    const inputTrimmed = this.input.trim();
+                    if (inputTrimmed === '' || /^-?\d+(\.\d+)?$/.test(inputTrimmed)) {
+                        this.confirmAndClose();
+                    } else {
+                        this.press('=');
+                    }
+                    event.preventDefault();
+                    break;
+                case 'Backspace':
+                    this.press('DEL');
+                    event.preventDefault();
+                    break;
+                case 'c':
+                case 'C':
+                    this.press('C');
+                    event.preventDefault();
+                    break;
+                case 'Escape':
+                    this.handleCancel();
+                    event.preventDefault();
+                    break;
+                case 'Tab':
+                    this.handleCancel();
+                    // 不阻止 Tab 的預設行為，讓瀏覽器處理焦點切換
+                    break;
+                default:
+                    // 對於未處理的按鍵不做任何操作
+                    break;
             }
         },
         handleMouseDown(value) {
