@@ -125,7 +125,11 @@
     <script type="module">
         // 引入 CalculatorModal 組件
         import CalculatorModal from './CalculatorModal.js';
-        import { removeCommas } from './CalculatorModal.js';
+        // 新增的工具函數：移除字串中的千位符號
+        function removeCommas(numberString) {
+            const str = String(numberString); // 確保 numberString 始終是字串
+            return str.replace(/,/g, '');
+        }
 
         // 定義初始數據結構
         const initialData = {
@@ -245,7 +249,6 @@
                 formatCurrency(value) {
                     return new Intl.NumberFormat('zh-TW').format(value);
                 },
-                removeCommas: removeCommas,
                 getFieldValue(fieldPath) {
                     // 使用 reduce 方法簡化數據獲取
                     return fieldPath.split('.').reduce((obj, key) => (obj && typeof obj === 'object' && key in obj) ? obj[key] : 0, this);

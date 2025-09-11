@@ -3,12 +3,6 @@ function round(val, digits = 12) {
     return Math.round((val + Number.EPSILON) * p) / p;
 }
 
-// 新增的工具函數：移除字串中的千位符號
-export function removeCommas(numberString) {
-    const str = String(numberString); // 確保 numberString 始終是字串
-    return str.replace(/,/g, '');
-}
-
 // Vue.js 組件定義
 export default {
     name: 'CalculatorModal',
@@ -218,7 +212,7 @@ export default {
                 this.updateRealtimeResult(); // DEL 後更新即時結果
             } else if (['+', '-', 'X', '÷'].includes(val)) {
                 if (this.lastCalculated) {
-                    const numVal = Number(removeCommas(this.input)); // 確保是純數字
+                    const numVal = Number(this.input); // 確保是純數字
                     this.input = numVal + (val === 'X' ? '*' : (val === '÷' ? '/' : val)).toString();
                     this.lastCalculated = false;
                 } else {
@@ -281,11 +275,9 @@ export default {
         normalizeNumberInput(inputString) {
             if (!inputString) return '';
 
-            const cleanInputString = removeCommas(inputString); // 在內部移除千位符號
-
             // 匹配數字、小數點或運算符/括號
             // 使用正則表達式捕獲每個數字/小數點序列或單個運算符/括號
-            const tokens = cleanInputString.match(/(-?\d+\.?\d*|[+\-*\/()])/g);
+            const tokens = inputString.match(/(-?\d+\.?\d*|[+\-*\/()])/g);
             if (!tokens) return '';
 
             let normalizedTokens = [];
@@ -319,7 +311,7 @@ export default {
         },
         tryEval() {
             this.error = '';
-            const inputToEvaluate = removeCommas(this.input); // 在運算前移除千位符號
+            const inputToEvaluate = this.input; // 在運算前移除千位符號
             console.log('tryEval: Evaluating expression:', inputToEvaluate);
 
             if (inputToEvaluate.trim() === '') {
@@ -390,8 +382,8 @@ export default {
             }
             try {
                 // 僅在輸入有效時嘗試評估，並清除可能的錯誤消息
-                if (/^[0-9+\-*\/().\s]+$/.test(removeCommas(this.input))) { // eval 前移除千位符號
-                    let tempResult = eval(removeCommas(this.input)); // eval 前移除千位符號
+                if (/^[0-9+\-*\/().\s]+$/.test(this.input)) { // eval 前移除千位符號
+                    let tempResult = eval(this.input); // eval 前移除千位符號
                     if (typeof tempResult === 'number' && isFinite(tempResult)) {
                         // 對結果進行四捨五入，最多保留10位小數
                         const realtimeResultString = round(tempResult, 10).toString();
