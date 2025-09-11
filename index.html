@@ -250,6 +250,15 @@
                     // 使用 reduce 方法簡化數據獲取
                     return fieldPath.split('.').reduce((obj, key) => (obj && typeof obj === 'object' && key in obj) ? obj[key] : 0, this);
                 },
+                // 輔助函式：根據路徑獲取目標物件和最終屬性鍵
+                getTargetObjectAndKey(path) {
+                    const parts = path.split('.');
+                    let target = this;
+                    for (let i = 0; i < parts.length - 1; i++) {
+                        target = target[parts[i]];
+                    }
+                    return { target, key: parts[parts.length - 1] };
+                },
                 // 格式化數字或表達式以顯示在計算機中
                 formatNumberOrExpression(value) {
                     // 如果值不是有效的數字，則返回原始值 (例如，表示式字串)
@@ -272,21 +281,13 @@
                     this.calculatorState.visible = true;
                 },
                 updateValueFromCalculator({ path, value }) {
-                    const parts = path.split('.');
-                    let target = this;
-                    for (let i = 0; i < parts.length - 1; i++) {
-                        target = target[parts[i]];
-                    }
-                    target[parts[parts.length - 1]] = value; // 直接賦值，因為 CalculatorModal 已經處理了數字轉換
+                    const { target, key } = this.getTargetObjectAndKey(path);
+                    target[key] = value; // 直接賦值，因為 CalculatorModal 已經處理了數字轉換
                 },
                 updateValueFromInput({ path, value }) {
-                    const parts = path.split('.');
-                    let target = this;
-                    for (let i = 0; i < parts.length - 1; i++) {
-                        target = target[parts[i]];
-                    }
+                    const { target, key } = this.getTargetObjectAndKey(path);
                     // 移除千位符號並轉換為數字，如果輸入為空則設為 0
-                    target[parts[parts.length - 1]] = Number(removeCommas(value) || 0);
+                    target[key] = Number(removeCommas(value) || 0);
                 },
                 // 計算單個成員的總支出
                 calculateMemberTotal(memberExpenses) {
