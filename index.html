@@ -179,19 +179,19 @@
                 }
             },
             watch: {
-                // 合併 reimbursable 和 our_own 的 watch 監聽器
-                'reimbursable': { // 深度監聽 reimbursable
+                // 新增一個監聽器來監聽整個數據對象的變化
+                // 這樣可以避免重複的 localStorage.setItem 調用
+                '$data': {
                     handler(newValue) {
-                        localStorage.setItem('familyCostCalculator', JSON.stringify({ reimbursable: newValue, our_own: this.our_own }));
+                        localStorage.setItem('familyCostCalculator', JSON.stringify({
+                            reimbursable: newValue.reimbursable,
+                            our_own: newValue.our_own
+                        }));
                     },
-                    deep: true
-                },
-                'our_own': { // 深度監聽 our_own
-                    handler(newValue) {
-                        localStorage.setItem('familyCostCalculator', JSON.stringify({ reimbursable: this.reimbursable, our_own: newValue }));
-                    },
-                    deep: true
-                }
+                    deep: true,
+                    // 在初始加載時不執行，因為 mounted 已經處理了初始化
+                    immediate: false
+                }       
             },
             computed: {
                 // 我們家應獲得差額
