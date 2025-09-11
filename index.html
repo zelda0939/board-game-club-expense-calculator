@@ -117,7 +117,6 @@
             :target-path="calculatorState.targetPath"
             @update:visible="calculatorState.visible = $event"
             @update:value="updateValueFromCalculator"
-            :format-number-or-expression="formatNumberOrExpression" // 傳遞格式化函數給計算機模組
         ></calculator-modal>
 
     </div>
@@ -172,7 +171,9 @@
 
         const app = createApp({
             data() {
-                return JSON.parse(JSON.stringify(initialData)); // 深度複製初始數據
+                return {
+                    ...JSON.parse(JSON.stringify(initialData)), // 深度複製初始數據
+                };
             },
             mounted() {
                 const savedData = localStorage.getItem('familyCostCalculator');
@@ -189,7 +190,7 @@
                     handler(newValue) {
                         localStorage.setItem('familyCostCalculator', JSON.stringify({
                             reimbursable: newValue.reimbursable,
-                            our_own: newValue.our_own
+                            our_own: newValue.our_own,
                         }));
                     },
                     deep: true,
@@ -247,7 +248,7 @@
                 },
                 // 格式化貨幣顯示
                 formatCurrency(value) {
-                    return new Intl.NumberFormat('zh-TW').format(value);
+                    return new Intl.NumberFormat('zh-TW', { maximumFractionDigits: 10 }).format(value);
                 },
                 getFieldValue(fieldPath) {
                     const { target, key } = this.getTargetObjectAndKey(fieldPath);
@@ -262,21 +263,13 @@
                     }
                     return { target, key: parts[parts.length - 1] };
                 },
-                // 格式化數字或表達式以顯示在計算機中
-                formatNumberOrExpression(value) {
-                    // 如果值不是有效的數字，則返回原始值 (例如，表示式字串)
-                    const numValue = Number(value);
-                    if (isNaN(numValue) || !isFinite(numValue)) {
-                        return value;
-                    }
-                    return new Intl.NumberFormat('zh-TW').format(numValue);
-                },
+                // 移除了 formatNumberOrExpression 方法，因為已整合到 CalculatorModal 內部
                 openCalculator(fieldPath) {
                     this.calculatorState.targetPath = fieldPath;
-                    // 獲取當前欄位的值作為初始值
+                    // 獲取當前欄位的值作為初始值，並在傳遞給計算機之前移除千位分隔符號
                     const { target, key } = this.getTargetObjectAndKey(fieldPath);
                     const currentValue = target[key];
-                    this.calculatorState.initialValue = (currentValue !== undefined && currentValue !== null) ? currentValue.toString() : '';
+                    this.calculatorState.initialValue = (currentValue !== undefined && currentValue !== null) ? removeCommas(currentValue.toString()) : '';
                     this.calculatorState.visible = true;
                 },
                 updateValueFromCalculator({ path, value }) {

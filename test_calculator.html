@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Modal Test</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="calculator.css">
+</head>
+<body>
+    <div id="app">
+        <h1>Calculator Modal Test Page</h1>
+        <div>
+            <label for="test-input">測試輸入:</label>
+            <input type="text" id="test-input" v-model="testValue" readonly>
+            <button @click="showCalculator('testValue', testValue)">開啟計算機</button>
+        </div>
+        <div style="margin-top: 10px;">
+            <label>
+                <input type="checkbox" v-model="localUseThousandSeparator"> 使用千位分隔符號
+            </label>
+        </div>
+
+        <calculator-modal
+            :visible="calculatorVisible"
+            :initial-value="calculatorInitialValue"
+            :target-path="calculatorTargetPath"
+            :use-thousand-separator="localUseThousandSeparator"
+            @update:visible="calculatorVisible = $event"
+            @update:value="handleCalculatorUpdate"
+        ></calculator-modal>
+    </div>
+
+    <script type="module">
+        import CalculatorModal from './CalculatorModal.js';
+
+        const { createApp, ref, reactive } = Vue;
+
+        createApp({
+            components: {
+                CalculatorModal
+            },
+            setup() {
+                const testValue = ref('123.45');
+                const calculatorVisible = ref(false);
+                const calculatorInitialValue = ref('');
+                const calculatorTargetPath = ref('');
+                const localUseThousandSeparator = ref(true); // 新增控制千位分隔符號的狀態
+
+                const showCalculator = (path, initialValue) => {
+                    calculatorTargetPath.value = path;
+                    // 在傳遞給計算機之前，移除千位分隔符號
+                    calculatorInitialValue.value = initialValue.toString().replace(/,/g, '');
+                    calculatorVisible.value = true;
+                };
+
+                const handleCalculatorUpdate = ({ path, value }) => {
+                    if (path === 'testValue') {
+                        if (localUseThousandSeparator.value) {
+                            testValue.value = Number(value).toLocaleString('zh-TW', { maximumFractionDigits: 10 });
+                        } else {
+                            testValue.value = Number(value).toString();
+                        }
+                    }
+                };
+
+                return {
+                    testValue,
+                    calculatorVisible,
+                    calculatorInitialValue,
+                    calculatorTargetPath,
+                    localUseThousandSeparator, // 暴露給模板
+                    showCalculator,
+                    handleCalculatorUpdate,
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

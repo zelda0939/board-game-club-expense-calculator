@@ -36,7 +36,11 @@ export default {
         visible: Boolean,
         initialValue: String,
         targetPath: String,
-        formatNumberOrExpression: Function // 新增一個 prop 來接收格式化函數
+        useThousandSeparator: { // 新增參數來控制千位分隔符號
+            type: Boolean,
+            default: true
+        }
+        // 移除了 formatNumberOrExpression prop
     },
     emits: ['update:visible', 'update:value'], // 移除 tabPressed 事件
     data() {
@@ -454,7 +458,7 @@ export default {
                         if (realtimeResultString.replace(/[^0-9]/g, '').length > this.maxDigits) {
                             this.realtimeResult = ''; // 結果超過位數限制時清空
                         } else {
-                            this.realtimeResult = this.formatNumberOrExpression(realtimeResultString); // 格式化即時結果
+                            this.realtimeResult = this._formatDisplayValue(realtimeResultString); // 格式化即時結果
                         }
                     } else {
                         this.realtimeResult = ''; // 非法結果清空
@@ -470,17 +474,43 @@ export default {
             // 從輸入字串中提取最後一個數字或小數點之前的所有內容
             const lastNumberMatch = this.input.match(/(-?\d+\.?\d*)$/);
             return lastNumberMatch ? lastNumberMatch[0] : '';
+        },
+        // 新增內部方法來處理顯示值的格式化
+        _formatDisplayValue(inputString) {
+            if (!inputString) return '';
+
+            // 替換運算符 * 和 /
+            let processedInput = inputString.replace(/\*/g, '×').replace(/\//g, '÷');
+
+            // 使用正規表達式匹配數字（包括負數和小數）和運算符/括號
+            const tokens = processedInput.match(/(-?\d+\.?\d*|[+\-×÷()])/g);
+            if (!tokens) return '';
+
+            let formattedTokens = [];
+            for (let i = 0; i < tokens.length; i++) {
+                let token = tokens[i];
+                if (/[+\-×÷()]/.test(token)) { // 運算符或括號
+                    formattedTokens.push(token);
+                } else { // 數字部分
+                    const numberValue = parseFloat(token);
+                    if (!isNaN(numberValue) && isFinite(numberValue)) {
+                        if (this.useThousandSeparator) { // 根據參數決定是否使用千位分隔符號
+                            formattedTokens.push(numberValue.toLocaleString('zh-TW', { maximumFractionDigits: 10 }));
+                        } else {
+                            formattedTokens.push(numberValue.toString());
+                        }
+                    } else {
+                        formattedTokens.push(token); // Fallback for any unparseable number string
+                    }
+                }
+            }
+            return formattedTokens.join('');
         }
     },
     computed: {
         displayInput() {
-            let processedInput = this.input.replace(/\*/g, '×').replace(/\//g, '÷');
-            // 使用正規表達式匹配數字（包括負數和小數）
-            processedInput = processedInput.replace(/(-?\d+\.?\d*)/g, (match) => {
-                // 只對數字部分進行格式化，並確保傳入的是數字類型
-                return this.formatNumberOrExpression(Number(match));
-            });
-            return processedInput;
+            // 使用內部格式化函數處理顯示輸入
+            return this._formatDisplayValue(this.input);
         }
     }
 };
