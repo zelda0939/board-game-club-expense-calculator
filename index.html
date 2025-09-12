@@ -301,7 +301,7 @@
                     const details = [];
                     // 代墊餐費
                     this.reimbursable.me.meal.forEach((meal, index) => {
-                        if (Number(meal.amount) > 0) { // 只顯示金額大於0的項目
+                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
                             details.push({
                                 category: '代墊餐費',
                                 member: 'Zelda',
@@ -311,7 +311,7 @@
                         }
                     });
                     this.reimbursable.wife.meal.forEach((meal, index) => {
-                        if (Number(meal.amount) > 0) { // 只顯示金額大於0的項目
+                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
                             details.push({
                                 category: '代墊餐費',
                                 member: 'Emma',
@@ -321,7 +321,7 @@
                         }
                     });
                     this.reimbursable.brother.meal.forEach((meal, index) => {
-                        if (Number(meal.amount) > 0) { // 只顯示金額大於0的項目
+                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
                             details.push({
                                 category: '代墊餐費',
                                 member: 'Andrew',
@@ -332,7 +332,7 @@
                     });
                     // 自家餐費
                     this.our_own.me.meal.forEach((meal, index) => {
-                        if (Number(meal.amount) > 0) { // 只顯示金額大於0的項目
+                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
                             details.push({
                                 category: '自家餐費',
                                 member: 'Zelda',
@@ -342,7 +342,7 @@
                         }
                     });
                     this.our_own.wife.meal.forEach((meal, index) => {
-                        if (Number(meal.amount) > 0) { // 只顯示金額大於0的項目
+                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
                             details.push({
                                 category: '自家餐費',
                                 member: 'Emma',
@@ -365,7 +365,7 @@
                                 if (Array.isArray(sourceObj[key])) {
                                     // 如果 source meal 已經是陣列，使用它，確保 amount/note 結構
                                     targetObj[key] = sourceObj[key].map(item => ({
-                                        amount: Number(item.amount || 0),
+                                        amount: Number(item.amount.toString().replace(/,/g, '') || 0),
                                         note: item.note || ''
                                     }));
                                     if (targetObj[key].length === 0) { // 確保如果為空，至少有一個空項目
@@ -373,7 +373,7 @@
                                     }
                                 } else if (typeof sourceObj[key] === 'number' || typeof sourceObj[key] === 'string') {
                                     // 如果舊的 meal 數據是數字/字串，轉換為新的陣列結構
-                                    targetObj[key] = [{ amount: Number(sourceObj[key]) || 0, note: '' }];
+                                    targetObj[key] = [{ amount: Number(sourceObj[key].toString().replace(/,/g, '')) || 0, note: '' }];
                                 } else {
                                     // 如果 source 數據缺失或 meal 無效，預設為空項目
                                     targetObj[key] = [{ amount: 0, note: '' }];
@@ -383,7 +383,7 @@
                                 this.assignSavedData(targetObj[key], sourceObj[key] || {});
                             } else if (sourceObj[key] !== undefined) {
                                 // 對於其他簡單屬性 (例如 transport, printer_3d)，直接賦值 (確保為數字)
-                                targetObj[key] = Number(sourceObj[key]) || 0;
+                                targetObj[key] = Number(sourceObj[key].toString().replace(/,/g, '')) || 0;
                             }
                         }
                     }
@@ -408,7 +408,8 @@
                 },
                 getFieldValue(fieldPath) {
                     const { target, key } = this.getTargetObjectAndKey(fieldPath);
-                    return (target && typeof target === 'object' && key in target) ? target[key] : '0'; // 直接返回字串
+                    // 在回傳前使用 formatCurrency 格式化
+                    return this.formatCurrency((target && typeof target === 'object' && key in target) ? target[key] : '0');
                 },
                 // 輔助函式：根據路徑獲取目標物件和最終屬性鍵
                 getTargetObjectAndKey(path) {
@@ -483,7 +484,8 @@
                 // 獲取餐費項目的金額值
                 getMealAmountFieldValue(memberPath, index) {
                     const { target, key } = this.getTargetObjectAndKey(memberPath);
-                    return target[key][index].amount;
+                    // 在回傳前使用 formatCurrency 格式化
+                    return this.formatCurrency(target[key][index].amount);
                 },
                 // 更新餐費項目的金額值
                 updateMealAmountFromInput({ path, index, value }) {
