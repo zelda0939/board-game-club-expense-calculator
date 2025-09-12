@@ -299,58 +299,45 @@
                 // 餐費明細
                 allMealDetails() {
                     const details = [];
-                    // 代墊餐費
-                    this.reimbursable.me.meal.forEach((meal, index) => {
-                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
-                            details.push({
-                                category: '代墊餐費',
-                                member: 'Zelda',
-                                amount: meal.amount,
-                                note: meal.note
-                            });
+
+                    // 定義類別名稱的映射
+                    const categoriesMap = {
+                        reimbursable: '代墊餐費',
+                        our_own: '自家餐費'
+                    };
+
+                    // 定義成員名稱的映射
+                    const membersMap = {
+                        me: 'Zelda',
+                        wife: 'Emma',
+                        brother: 'Andrew'
+                    };
+
+                    // 遍歷主要類別 (reimbursable, our_own)
+                    for (const categoryKey in categoriesMap) {
+                        if (Object.hasOwnProperty.call(this, categoryKey)) {
+                            const categoryName = categoriesMap[categoryKey];
+                            const categoryData = this[categoryKey]; // 取得該類別下的所有成員資料
+
+                            // 遍歷該類別下的每個成員 (me, wife, brother)
+                            for (const memberKey in categoryData) {
+                                if (Object.hasOwnProperty.call(categoryData, memberKey) && categoryData[memberKey].meal) {
+                                    const memberName = membersMap[memberKey];
+                                    // 遍歷該成員的餐費陣列
+                                    categoryData[memberKey].meal.forEach(meal => {
+                                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
+                                            details.push({
+                                                category: categoryName,
+                                                member: memberName,
+                                                amount: meal.amount,
+                                                note: meal.note
+                                            });
+                                        }
+                                    });
+                                }
+                            }
                         }
-                    });
-                    this.reimbursable.wife.meal.forEach((meal, index) => {
-                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
-                            details.push({
-                                category: '代墊餐費',
-                                member: 'Emma',
-                                amount: meal.amount,
-                                note: meal.note
-                            });
-                        }
-                    });
-                    this.reimbursable.brother.meal.forEach((meal, index) => {
-                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
-                            details.push({
-                                category: '代墊餐費',
-                                member: 'Andrew',
-                                amount: meal.amount,
-                                note: meal.note
-                            });
-                        }
-                    });
-                    // 自家餐費
-                    this.our_own.me.meal.forEach((meal, index) => {
-                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
-                            details.push({
-                                category: '自家餐費',
-                                member: 'Zelda',
-                                amount: meal.amount,
-                                note: meal.note
-                            });
-                        }
-                    });
-                    this.our_own.wife.meal.forEach((meal, index) => {
-                        if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
-                            details.push({
-                                category: '自家餐費',
-                                member: 'Emma',
-                                amount: meal.amount,
-                                note: meal.note
-                            });
-                        }
-                    });
+                    }
                     return details;
                 }
             },
