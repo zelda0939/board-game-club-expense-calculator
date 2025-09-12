@@ -8,7 +8,7 @@ export default {
     name: 'CalculatorModal',
     template: `
         <Transition name="modal">
-            <div v-if="visible" class="calculator-modal">
+            <div v-if="visible" class="calculator-modal" @click.self="handleBackgroundClick">
                 <div class="calculator">
                     <input type="text" v-model="displayInput" readonly>
                     <div :class="{ 'realtime-result': true, 'realtime-result-hidden': !realtimeResult }">{{ realtimeResult }}</div>
@@ -78,6 +78,9 @@ export default {
     methods: {
         handleCancel() {
             this.$emit('update:visible', false);
+        },
+        handleBackgroundClick() {
+            this.handleCancel();
         },
         // 新增鍵盤事件處理函數
         handleKeyDown(event) {
