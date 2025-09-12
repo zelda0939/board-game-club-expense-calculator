@@ -17,7 +17,21 @@
 
     <div id="app" v-cloak>
         <h1>桌遊社花費分攤計算機</h1>
-        <button @click="clearInputs" class="clear-button">清空所有欄位</button>
+        <div class="top-controls">
+            <div class="save-load-controls">
+                <button @click="saveCurrentData" class="save-button">保存當前數據</button>
+                <select v-model="selectedSaveEntry" @change="loadSelectedData" class="load-dropdown">
+                    <option value="">選擇要載入的數據</option>
+                    <option v-for="entry in savedEntries" :key="entry.date" :value="entry.date">
+                        {{ entry.date }}
+                    </option>
+                </select>
+                <button @click="clearInputs" class="clear-button">清空所有欄位</button>
+            </div>
+        </div>
+        <div v-if="loadMessage" class="message-display">
+            {{ loadMessage }}
+        </div>
         <div class="card">
             <h2>代墊費用</h2>
             <div class="input-group">
@@ -230,6 +244,9 @@
             data() {
                 return {
                     ...JSON.parse(JSON.stringify(initialData)), // 深度複製初始數據
+                    savedEntries: [], // 新增用於儲存載入的數據
+                    selectedSaveEntry: '', // 新增用於選擇載入的數據
+                    loadMessage: '' // 新增用於顯示載入/保存提示訊息
                 };
             },
             mounted() {
@@ -239,22 +256,34 @@
                     // 使用新的 assignSavedData 方法來處理載入的數據
                     this.assignSavedData(this.reimbursable, parsedData.reimbursable);
                     this.assignSavedData(this.our_own, parsedData.our_own);
+                } else {
+                    // this.loadSavedEntries(); // 移除這行
                 }
+                this.loadSavedEntries(); // 在 mounted 時載入已保存的數據，確保總是執行
             },
             watch: {
-                // 新增一個監聽器來監聽整個數據對象的變化
-                // 這樣可以避免重複的 localStorage.setItem 調用
-                '$data': {
+                // 監聽 reimbursable 變化，自動保存當前數據
+                'reimbursable': {
                     handler(newValue) {
                         localStorage.setItem('familyCostCalculator', JSON.stringify({
-                            reimbursable: newValue.reimbursable,
-                            our_own: newValue.our_own,
+                            reimbursable: newValue,
+                            our_own: this.our_own,
                         }));
                     },
                     deep: true,
-                    // 在初始加載時不執行，因為 mounted 已經處理了初始化
                     immediate: false
-                }       
+                },
+                // 監聽 our_own 變化，自動保存當前數據
+                'our_own': {
+                    handler(newValue) {
+                        localStorage.setItem('familyCostCalculator', JSON.stringify({
+                            reimbursable: this.reimbursable,
+                            our_own: newValue,
+                        }));
+                    },
+                    deep: true,
+                    immediate: false
+                }
             },
             computed: {
                 // 我們家應獲得差額
@@ -380,6 +409,10 @@
                     // 使用初始數據結構重置所有欄位
                     Object.assign(this.$data, JSON.parse(JSON.stringify(initialData)));
                     localStorage.removeItem('familyCostCalculator');
+                    this.selectedSaveEntry = '';
+                    // 重新載入保存的項目，確保下拉選單更新但數據不被清除
+                    this.loadSavedEntries(); 
+                    this.selectedSaveEntry = ''; // 再次確保 selectedSaveEntry 為空，覆蓋 loadSavedEntries 的預設選擇
                 },
                 // 格式化貨幣顯示 (固定顯示千位分隔符號)
                 formatCurrency(value) {
@@ -486,6 +519,69 @@
                     this.calculatorState.targetPath = `${memberPath}.${index}.amount`;
                     this.calculatorState.initialValue = meal.amount.toString().replace(/,/g, '');
                     this.calculatorState.visible = true;
+                },
+                // 新增：保存當前數據
+                saveCurrentData() {
+                    const today = new Date().toISOString().slice(0, 10); // 使用 ISO 格式的日期，例如 "2025-09-12"
+                    let currentData = {
+                        reimbursable: JSON.parse(JSON.stringify(this.reimbursable)),
+                        our_own: JSON.parse(JSON.stringify(this.our_own)),
+                        date: today
+                    };
+
+                    // 檢查是否已存在當天數據，如果存在則更新，否則新增
+                    const existingIndex = this.savedEntries.findIndex(entry => entry.date === today);
+                    if (existingIndex !== -1) {
+                        this.savedEntries[existingIndex] = currentData;
+                        this.showTempMessage(`數據已更新至 ${today}。`);
+                    } else {
+                        // 如果超過20筆，移除最舊的一筆
+                        if (this.savedEntries.length >= 20) {
+                            this.savedEntries.shift(); // 移除第一個元素（最舊的）
+                        }
+                        this.savedEntries.push(currentData);
+                        this.showTempMessage(`數據已保存至 ${today}。`);
+                    }
+                    localStorage.setItem('familyCostCalculatorSavedEntries', JSON.stringify(this.savedEntries));
+                    // 保存後更新 selectedSaveEntry 到當前日期
+                    this.selectedSaveEntry = today;
+                },
+                // 新增：載入選擇的數據
+                loadSelectedData() {
+                    if (this.selectedSaveEntry) {
+                        const savedData = this.savedEntries.find(entry => entry.date === this.selectedSaveEntry);
+                        if (savedData) {
+                            // 使用 Object.assign 深度複製以確保 Vue 的響應性
+                            Object.assign(this.reimbursable, JSON.parse(JSON.stringify(savedData.reimbursable)));
+                            Object.assign(this.our_own, JSON.parse(JSON.stringify(savedData.our_own)));
+                            this.showTempMessage(`已載入 ${this.selectedSaveEntry} 的數據。`);
+                            this.selectedSaveEntry = ''; // 載入後重置為空
+                        } else {
+                            this.showTempMessage('未找到該日期或數據。');
+                            this.selectedSaveEntry = ''; // 未找到也重置為空
+                        }
+                    } else {
+                        // 如果 selectedSaveEntry 是空的，也確保重置當前數據但不清除已保存記錄
+                        // 這裡不需要額外操作，因為用戶只是選中了空選項，沒有實際載入操作
+                    }
+                },
+                // 新增：載入已保存的數據
+                loadSavedEntries() {
+                    const savedEntries = localStorage.getItem('familyCostCalculatorSavedEntries');
+                    if (savedEntries) {
+                        this.savedEntries = JSON.parse(savedEntries);
+                    }
+                    this.selectedSaveEntry = ''; // 確保初始載入時為空
+                },
+                // 新增：顯示短暫的提示訊息
+                showTempMessage(message) {
+                    this.loadMessage = message;
+                    if (this.messageTimeout) {
+                        clearTimeout(this.messageTimeout);
+                    }
+                    this.messageTimeout = setTimeout(() => {
+                        this.loadMessage = '';
+                    }, 3000); // 3秒後消失
                 }
             },
             components: {

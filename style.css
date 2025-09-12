@@ -33,11 +33,11 @@ h1 {
 }
 
 .card {
-    background-color: var(--secondary-color);
-    border-radius: 12px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 12px var(--shadow-color);
 }
 
 .card h2 {
@@ -129,21 +129,81 @@ input::-webkit-inner-spin-button {
 }
 
 .clear-button {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
-    font-size: 1.1em;
-    font-weight: bold;
-    color: var(--secondary-color);
-    background-color: var(--primary-color);
+    background-color: #f44336;
+    color: white;
     border: none;
-    border-radius: 8px;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
 .clear-button:hover {
-    background-color: #36a473;
+    background-color: #d32f2f;
+}
+
+.top-controls {
+    display: flex;
+    justify-content: center; /* 將子元素置中排列 */
+    align-items: center; /* 垂直居中對齊 */
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* 允許換行，適用於小螢幕 */
+    gap: 15px; /* 元素間的最小間距 */
+}
+
+.save-load-controls {
+    display: flex;
+    gap: 10px; /* 按鈕和下拉選單之間的間距 */
+    align-items: center; /* 垂直居中對齊 */
+    flex-wrap: wrap; /* 允許換行，適用於小螢幕 */
+    justify-content: center; /* 讓內部元素在小螢幕上也能置中 */
+}
+
+.save-button, .load-dropdown, .clear-button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    white-space: nowrap; /* 防止按鈕文字換行 */
+    height: 40px; /* 設定統一高度 */
+    line-height: 20px; /* 設定統一的行高以垂直居中文字 */
+}
+
+.save-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+    background-color: #45a049;
+}
+
+.load-dropdown {
+    border: 1px solid #ccc;
+    background-color: white;
+    min-width: 180px; /* 讓下拉選單有足夠的寬度 */
+}
+
+.message-display {
+    position: fixed; /* 讓訊息浮動 */
+    top: 20px; /* 改為從頂部20px */
+    left: 50%; /* 水平置中 */
+    transform: translateX(-50%); /* 只在水平方向置中 */
+    background-color: rgba(66, 133, 244, 0.9); /* 更柔和的藍色 */
+    color: white;
+    padding: 12px 25px; /* 增加內邊距 */
+    border-radius: 8px; /* 稍微圓一點的邊角 */
+    text-align: center;
+    font-size: 1.2em; /* 稍微大一點的字體 */
+    font-weight: bold;
+    z-index: 1000; /* 確保在其他元素之上 */
+    width: auto; /* 寬度自適應內容 */
+    max-width: 80%; /* 最大寬度，避免過長 */
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
 }
 
 .footer-note {
