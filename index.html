@@ -22,34 +22,66 @@
             <h2>代墊費用</h2>
             <div class="input-group">
                 <label>代墊餐費</label>
-                <div class="input-row">
-                    <div class="input-wrapper">
-                        <span>我</span>
-                        <input type="text" :value="getFieldValue('reimbursable.me.meal')" @input="updateValueFromInput({ path: 'reimbursable.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.meal')" readonly>
+                <!-- 移除 input-row 容器，讓餐費區塊垂直堆疊 -->
+                <div class="input-wrapper meal-entries">
+                    <span>Zelda</span>
+                    <div v-for="(meal, index) in reimbursable.me.meal" :key="index" class="meal-entry">
+                        <input type="text"
+                               :value="getMealAmountFieldValue('reimbursable.me.meal', index)"
+                               @input="updateMealAmountFromInput({ path: 'reimbursable.me.meal', index: index, value: $event.target.value })"
+                               @focus="openCalculatorForMeal('reimbursable.me.meal', index)"
+                               placeholder="0" readonly>
+                        <input type="text"
+                               v-model="meal.note"
+                               placeholder="備註">
+                        <button @click="removeMealEntry('reimbursable.me.meal', index)" class="remove-meal-btn">－</button>
                     </div>
-                    <div class="input-wrapper">
-                        <span>老婆</span>
-                        <input type="text" :value="getFieldValue('reimbursable.wife.meal')" @input="updateValueFromInput({ path: 'reimbursable.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.meal')" readonly>
+                    <button @click="addMealEntry('reimbursable.me.meal')" class="add-meal-btn">＋ 新增餐費</button>
+                </div>
+                <div class="input-wrapper meal-entries">
+                    <span>Emma</span>
+                    <div v-for="(meal, index) in reimbursable.wife.meal" :key="index" class="meal-entry">
+                        <input type="text"
+                               :value="getMealAmountFieldValue('reimbursable.wife.meal', index)"
+                               @input="updateMealAmountFromInput({ path: 'reimbursable.wife.meal', index: index, value: $event.target.value })"
+                               @focus="openCalculatorForMeal('reimbursable.wife.meal', index)"
+                               placeholder="0" readonly>
+                        <input type="text"
+                               v-model="meal.note"
+                               placeholder="備註">
+                        <button @click="removeMealEntry('reimbursable.wife.meal', index)" class="remove-meal-btn">－</button>
                     </div>
-                    <div class="input-wrapper">
-                        <span>哥</span>
-                        <input type="text" :value="getFieldValue('reimbursable.brother.meal')" @input="updateValueFromInput({ path: 'reimbursable.brother.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.meal')" readonly>
+                    <button @click="addMealEntry('reimbursable.wife.meal')" class="add-meal-btn">＋ 新增餐費</button>
+                </div>
+                <div class="input-wrapper meal-entries">
+                    <span>Andrew</span>
+                    <div v-for="(meal, index) in reimbursable.brother.meal" :key="index" class="meal-entry">
+                        <input type="text"
+                               :value="getMealAmountFieldValue('reimbursable.brother.meal', index)"
+                               @input="updateMealAmountFromInput({ path: 'reimbursable.brother.meal', index: index, value: $event.target.value })"
+                               @focus="openCalculatorForMeal('reimbursable.brother.meal', index)"
+                               placeholder="0" readonly>
+                        <input type="text"
+                               v-model="meal.note"
+                               placeholder="備註">
+                        <button @click="removeMealEntry('reimbursable.brother.meal', index)" class="remove-meal-btn">－</button>
                     </div>
+                    <button @click="addMealEntry('reimbursable.brother.meal')" class="add-meal-btn">＋ 新增餐費</button>
                 </div>
             </div>
             <div class="input-group">
                 <label>代墊車費</label>
                 <div class="input-row">
                     <div class="input-wrapper">
-                        <span>我</span>
+                        <span>Zelda</span>
                         <input type="text" :value="getFieldValue('reimbursable.me.transport')" @input="updateValueFromInput({ path: 'reimbursable.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
-                        <span>老婆</span>
+                        <span>Emma</span>
                         <input type="text" :value="getFieldValue('reimbursable.wife.transport')" @input="updateValueFromInput({ path: 'reimbursable.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
-                        <span>哥</span>
+                        <span>Andrew</span>
                         <input type="text" :value="getFieldValue('reimbursable.brother.transport')" @input="updateValueFromInput({ path: 'reimbursable.brother.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.transport')" readonly>
                     </div>
                 </div>
@@ -60,26 +92,47 @@
             <h2>自家花費</h2>
             <div class="input-group">
                 <label>自家餐費</label>
-                <div class="input-row">
-                    <div class="input-wrapper">
-                        <span>我</span>
-                        <input type="text" :value="getFieldValue('our_own.me.meal')" @input="updateValueFromInput({ path: 'our_own.me.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.meal')" readonly>
+                <!-- 移除 input-row 容器，讓餐費區塊垂直堆疊 -->
+                <div class="input-wrapper meal-entries">
+                    <span>Zelda</span>
+                    <div v-for="(meal, index) in our_own.me.meal" :key="index" class="meal-entry">
+                        <input type="text"
+                               :value="getMealAmountFieldValue('our_own.me.meal', index)"
+                               @input="updateMealAmountFromInput({ path: 'our_own.me.meal', index: index, value: $event.target.value })"
+                               @focus="openCalculatorForMeal('our_own.me.meal', index)"
+                               placeholder="0" readonly>
+                        <input type="text"
+                               v-model="meal.note"
+                               placeholder="備註">
+                        <button @click="removeMealEntry('our_own.me.meal', index)" class="remove-meal-btn">－</button>
                     </div>
-                    <div class="input-wrapper">
-                        <span>老婆</span>
-                        <input type="text" :value="getFieldValue('our_own.wife.meal')" @input="updateValueFromInput({ path: 'our_own.wife.meal', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.meal')" readonly>
+                    <button @click="addMealEntry('our_own.me.meal')" class="add-meal-btn">＋ 新增餐費</button>
+                </div>
+                <div class="input-wrapper meal-entries">
+                    <span>Emma</span>
+                    <div v-for="(meal, index) in our_own.wife.meal" :key="index" class="meal-entry">
+                        <input type="text"
+                               :value="getMealAmountFieldValue('our_own.wife.meal', index)"
+                               @input="updateMealAmountFromInput({ path: 'our_own.wife.meal', index: index, value: $event.target.value })"
+                               @focus="openCalculatorForMeal('our_own.wife.meal', index)"
+                               placeholder="0" readonly>
+                        <input type="text"
+                               v-model="meal.note"
+                               placeholder="備註">
+                        <button @click="removeMealEntry('our_own.wife.meal', index)" class="remove-meal-btn">－</button>
                     </div>
+                    <button @click="addMealEntry('our_own.wife.meal')" class="add-meal-btn">＋ 新增餐費</button>
                 </div>
             </div>
             <div class="input-group">
                 <label>自家車費</label>
                 <div class="input-row">
                     <div class="input-wrapper">
-                        <span>我</span>
+                        <span>Zelda</span>
                         <input type="text" :value="getFieldValue('our_own.me.transport')" @input="updateValueFromInput({ path: 'our_own.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.transport')" readonly>
                     </div>
                     <div class="input-wrapper">
-                        <span>老婆</span>
+                        <span>Emma</span>
                         <input type="text" :value="getFieldValue('our_own.wife.transport')" @input="updateValueFromInput({ path: 'our_own.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.transport')" readonly>
                     </div>
                 </div>
@@ -89,7 +142,7 @@
         <div class="card">
             <h2>其他花費</h2>
             <div class="input-group">
-                <label>哥 3D列印</label>
+                <label>Andrew 3D列印</label>
                 <input type="text" :value="getFieldValue('reimbursable.brother.printer_3d')" @input="updateValueFromInput({ path: 'reimbursable.brother.printer_3d', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.printer_3d')" readonly>
             </div>
         </div>
@@ -106,6 +159,15 @@
                     {{ formatCurrency(Math.abs(amountToGiveWife)) }}
                 </span>
             </div>
+        </div>
+
+        <div class="card detail-card" v-if="allMealDetails.length > 0">
+            <h2>餐費明細</h2>
+            <ul>
+                <li v-for="(detail, index) in allMealDetails" :key="index">
+                    {{ detail.category }} - {{ detail.member }}: {{ formatCurrency(detail.amount) }}{{ detail.note ? ' (' + detail.note + ')' : '' }}
+                </li>
+            </ul>
         </div>
 
         <p class="footer-note">註：金額為綠色代表你應收的錢，紅色代表你應付的錢。</p>
@@ -129,26 +191,26 @@
         const initialData = {
             reimbursable: {
                 me: {
-                    meal: 0,
+                    meal: [{ amount: 0, note: '' }], // 將餐費改為陣列，用於儲存多個餐費項目
                     transport: 0
                 },
                 wife: {
-                    meal: 0,
+                    meal: [{ amount: 0, note: '' }], // 將餐費改為陣列
                     transport: 0
                 },
                 brother: {
-                    meal: 0,
+                    meal: [{ amount: 0, note: '' }], // 將餐費改為陣列
                     transport: 0,
                     printer_3d: 0
                 }
             },
             our_own: {
                 me: {
-                    meal: 0,
+                    meal: [{ amount: 0, note: '' }], // 將餐費改為陣列
                     transport: 0
                 },
                 wife: {
-                    meal: 0,
+                    meal: [{ amount: 0, note: '' }], // 將餐費改為陣列
                     transport: 0
                 }
             },
@@ -174,8 +236,9 @@
                 const savedData = localStorage.getItem('familyCostCalculator');
                 if (savedData) {
                     const parsedData = JSON.parse(savedData);
-                    this.reimbursable = parsedData.reimbursable;
-                    this.our_own = parsedData.our_own;
+                    // 使用新的 assignSavedData 方法來處理載入的數據
+                    this.assignSavedData(this.reimbursable, parsedData.reimbursable);
+                    this.assignSavedData(this.our_own, parsedData.our_own);
                 }
             },
             watch: {
@@ -202,17 +265,17 @@
                     const result = myTotal + wifeTotal - brotherTotal;
                     return Math.round(result);
                 },
-                // 我應再給老婆
+                // 我應再給Emma
                 amountToGiveWife() {
                     // 1. 計算我的總支出
                     const myTotalOwnExpense = this.calculateMemberTotal(this.reimbursable.me) + this.calculateMemberTotal(this.our_own.me);
-                    // 2. 計算老婆的總支出
+                    // 2. 計算Emma的總支出
                     const wifeTotalOwnExpense = this.calculateMemberTotal(this.reimbursable.wife) + this.calculateMemberTotal(this.our_own.wife);
                     // 3. 計算夫妻兩人總支出
                     const totalFamilyExpense = myTotalOwnExpense + wifeTotalOwnExpense - this.familyShouldReceive;
                     // 4. 計算平均每人應支出
                     const averageExpense = totalFamilyExpense / 2;
-                    // 5. 計算我應給老婆的金額 (平均值 - 我的實際支出)
+                    // 5. 計算我應給Emma的金額 (平均值 - 我的實際支出)
                     const printer3dValue = Number(this.reimbursable.brother.printer_3d.toString().replace(/,/g, '') || 0);
                     const result = averageExpense - (myTotalOwnExpense - this.familyShouldReceive) + (Math.floor(printer3dValue / 2));
                     return Math.round(result);
@@ -220,9 +283,9 @@
                 // 動態變更標題文字
                 amountToGiveWifeText() {
                     if (this.amountToGiveWife >= 0) {
-                        return "我應再給老婆";
+                        return "Zelda應再給Emma";
                     } else {
-                        return "老婆應再給我";
+                        return "Emma應再給Zelda";
                     }
                 },
                 // 動態變更我們家應獲得差額的標題文字
@@ -232,9 +295,99 @@
                     } else {
                         return "我們家應付出差額";
                     }
+                },
+                // 餐費明細
+                allMealDetails() {
+                    const details = [];
+                    // 代墊餐費
+                    this.reimbursable.me.meal.forEach((meal, index) => {
+                        if (Number(meal.amount) > 0) { // 只顯示金額大於0的項目
+                            details.push({
+                                category: '代墊餐費',
+                                member: 'Zelda',
+                                amount: meal.amount,
+                                note: meal.note
+                            });
+                        }
+                    });
+                    this.reimbursable.wife.meal.forEach((meal, index) => {
+                        if (Number(meal.amount) > 0) { // 只顯示金額大於0的項目
+                            details.push({
+                                category: '代墊餐費',
+                                member: 'Emma',
+                                amount: meal.amount,
+                                note: meal.note
+                            });
+                        }
+                    });
+                    this.reimbursable.brother.meal.forEach((meal, index) => {
+                        if (Number(meal.amount) > 0) { // 只顯示金額大於0的項目
+                            details.push({
+                                category: '代墊餐費',
+                                member: 'Andrew',
+                                amount: meal.amount,
+                                note: meal.note
+                            });
+                        }
+                    });
+                    // 自家餐費
+                    this.our_own.me.meal.forEach((meal, index) => {
+                        if (Number(meal.amount) > 0) { // 只顯示金額大於0的項目
+                            details.push({
+                                category: '自家餐費',
+                                member: 'Zelda',
+                                amount: meal.amount,
+                                note: meal.note
+                            });
+                        }
+                    });
+                    this.our_own.wife.meal.forEach((meal, index) => {
+                        if (Number(meal.amount) > 0) { // 只顯示金額大於0的項目
+                            details.push({
+                                category: '自家餐費',
+                                member: 'Emma',
+                                amount: meal.amount,
+                                note: meal.note
+                            });
+                        }
+                    });
+                    return details;
                 }
             },
             methods: {
+                // 新增：處理從 localStorage 載入數據時的結構轉換
+                assignSavedData(targetObj, sourceObj) {
+                    if (!sourceObj) return;
+
+                    for (const key in targetObj) {
+                        if (Object.hasOwnProperty.call(targetObj, key)) {
+                            if (key === 'meal') {
+                                if (Array.isArray(sourceObj[key])) {
+                                    // 如果 source meal 已經是陣列，使用它，確保 amount/note 結構
+                                    targetObj[key] = sourceObj[key].map(item => ({
+                                        amount: Number(item.amount || 0),
+                                        note: item.note || ''
+                                    }));
+                                    if (targetObj[key].length === 0) { // 確保如果為空，至少有一個空項目
+                                        targetObj[key].push({ amount: 0, note: '' });
+                                    }
+                                } else if (typeof sourceObj[key] === 'number' || typeof sourceObj[key] === 'string') {
+                                    // 如果舊的 meal 數據是數字/字串，轉換為新的陣列結構
+                                    targetObj[key] = [{ amount: Number(sourceObj[key]) || 0, note: '' }];
+                                } else {
+                                    // 如果 source 數據缺失或 meal 無效，預設為空項目
+                                    targetObj[key] = [{ amount: 0, note: '' }];
+                                }
+                            } else if (typeof targetObj[key] === 'object' && targetObj[key] !== null) {
+                                // 遞迴處理巢狀物件 (例如 me, wife, brother)
+                                this.assignSavedData(targetObj[key], sourceObj[key] || {});
+                            } else if (sourceObj[key] !== undefined) {
+                                // 對於其他簡單屬性 (例如 transport, printer_3d)，直接賦值 (確保為數字)
+                                targetObj[key] = Number(sourceObj[key]) || 0;
+                            }
+                        }
+                    }
+                },
                 // 清空所有輸入
                 clearInputs() {
                     // 使用初始數據結構重置所有欄位
@@ -275,8 +428,25 @@
                     this.calculatorState.visible = true;
                 },
                 updateValueFromCalculator({ path, value }) {
-                    const { target, key } = this.getTargetObjectAndKey(path);
-                    target[key] = value; // 直接賦值為字串 (已由 CalculatorModal 格式化)
+                    const pathParts = path.split('.');
+                    // 檢查 path 是否包含數字索引，判斷是否為餐費項目
+                    const isMealEntry = !isNaN(parseInt(pathParts[pathParts.length - 2]));
+
+                    if (isMealEntry) {
+                        const lastPart = pathParts.pop(); // 應該是 'amount'
+                        const index = parseInt(pathParts.pop()); // 應該是餐費的索引
+                        const actualPath = pathParts.join('.'); // 應該是 'reimbursable.me.meal' 等
+
+                        const { target, key } = this.getTargetObjectAndKey(actualPath);
+
+                        if (target && Array.isArray(target[key]) && target[key][index]) {
+                            target[key][index][lastPart] = value; // 更新 amount
+                        }
+                    } else {
+                        // 如果不是餐費項目，則走原有邏輯 (例如車費或3D列印費)
+                        const { target, key } = this.getTargetObjectAndKey(path);
+                        target[key] = value; // 直接賦值為字串 (已由 CalculatorModal 格式化)
+                    }
                 },
                 updateValueFromInput({ path, value }) {
                     const { target, key } = this.getTargetObjectAndKey(path);
@@ -288,11 +458,45 @@
                     let total = 0;
                     for (const key in memberExpenses) {
                         if (Object.hasOwnProperty.call(memberExpenses, key)) {
-                            // 將儲存的字串轉換為數字進行計算
-                            total += Number(memberExpenses[key].toString().replace(/,/g, '') || 0);
+                            if (key === 'meal' && Array.isArray(memberExpenses[key])) {
+                                memberExpenses[key].forEach(meal => {
+                                    total += Number(meal.amount.toString().replace(/,/g, '') || 0);
+                                });
+                            } else {
+                                // 將儲存的字串轉換為數字進行計算
+                                total += Number(memberExpenses[key].toString().replace(/,/g, '') || 0);
+                            }
                         }
                     }
                     return total;
+                },
+                // 新增餐費項目
+                addMealEntry(memberPath) {
+                    const { target, key } = this.getTargetObjectAndKey(memberPath);
+                    target[key].push({ amount: 0, note: '' });
+                },
+                // 移除餐費項目
+                removeMealEntry(memberPath, index) {
+                    const { target, key } = this.getTargetObjectAndKey(memberPath);
+                    target[key].splice(index, 1);
+                },
+                // 獲取餐費項目的金額值
+                getMealAmountFieldValue(memberPath, index) {
+                    const { target, key } = this.getTargetObjectAndKey(memberPath);
+                    return target[key][index].amount;
+                },
+                // 更新餐費項目的金額值
+                updateMealAmountFromInput({ path, index, value }) {
+                    const { target, key } = this.getTargetObjectAndKey(path);
+                    target[key][index].amount = value;
+                },
+                // 為餐費項目開啟計算機
+                openCalculatorForMeal(memberPath, index) {
+                    const { target, key } = this.getTargetObjectAndKey(memberPath);
+                    const meal = target[key][index];
+                    this.calculatorState.targetPath = `${memberPath}.${index}.amount`;
+                    this.calculatorState.initialValue = meal.amount.toString().replace(/,/g, '');
+                    this.calculatorState.visible = true;
                 }
             },
             components: {

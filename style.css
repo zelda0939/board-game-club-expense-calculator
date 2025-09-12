@@ -167,3 +167,60 @@ body.no-scroll {
 [v-cloak] {
     display: none;
 }
+
+/* 餐費輸入區塊 */
+.meal-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* 項目之間的間距 */
+    margin-bottom: 15px; /* 增加每個成員餐費區塊之間的垂直間距 */
+}
+
+.meal-entry {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.meal-entry input[type="text"] {
+    flex: 1; /* 金額輸入框佔據更多空間 */
+}
+
+.meal-entry input[type="text"][placeholder="備註"] {
+    flex: 2; /* 備註輸入框佔據更多空間 */
+}
+
+.remove-meal-btn,
+.add-meal-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.remove-meal-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.add-meal-btn {
+    background-color: #28a745;
+    color: white;
+    margin-top: 10px; /* 與上方餐費項目的間距 */
+}
+
+/* 明細清單 */
+.detail-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.detail-card li {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-card li:last-child {
+    border-bottom: none;
+}
