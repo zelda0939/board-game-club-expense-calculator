@@ -218,7 +218,7 @@
         </div>
 
         <!-- 變更日期模態框 -->
-        <div v-if="dateChangeModal.visible" class="custom-modal-overlay">
+        <div v-if="dateChangeModal.visible" class="custom-modal-overlay" @click.self="cancelDateChange">
             <div class="date-change-modal-content">
                 <h3>修改數據日期</h3>
                 <p>將 <span style="font-weight: bold;">{{ dateChangeModal.originalDate }}</span> 的數據修改為：</p>
