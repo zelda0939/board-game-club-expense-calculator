@@ -1,3 +1,9 @@
+/**
+ * @file script.js
+ * @description 這個檔案是 Vue.js 應用程式的主要入口點。
+ * 它負責初始化 Vue 實例，整合所有模組化的功能（如數據持久化、計算機交互、模態框處理、餐費條目管理和計算邏輯）。
+ * 此外，它還定義了應用程式的響應式數據、生命週期鉤子、監聽器、計算屬性和組件。
+ */
 // 引入 CalculatorModal 組件
 import CalculatorModal from './CalculatorModal.js';
 import { initialData, default as dataPersistence } from './dataPersistence.js';

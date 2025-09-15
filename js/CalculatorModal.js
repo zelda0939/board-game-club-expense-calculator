@@ -1,3 +1,9 @@
+/**
+ * @file CalculatorModal.js
+ * @description 這個模組定義了 `CalculatorModal` Vue 組件，提供一個可交互的計算機模態框。
+ * 它處理數字和運算符的輸入、即時計算結果顯示、錯誤處理，並支援鍵盤和觸控操作。
+ * 此外，它還提供了金額格式化的功能。
+ */
 function round(val, digits = 12) {
     const p = 10 ** digits;
     return Math.round((val + Number.EPSILON) * p) / p;
