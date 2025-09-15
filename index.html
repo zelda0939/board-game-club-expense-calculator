@@ -749,7 +749,6 @@
                     }
                     // 根據訊息長度自動調整顯示時間
                     const messageLength = message.length; // 訊息字數
-                    console.log(messageLength);
                     const readingSpeed = 18; // 每秒閱讀字數 (例如 4 個中文字/秒)
                     let displayDuration = Math.ceil(messageLength / readingSpeed) * 1000; // 計算毫秒數
 
@@ -758,7 +757,7 @@
                     const maxDuration = 5000; // 5 秒
 
                     displayDuration = Math.max(minDuration, Math.min(displayDuration, maxDuration));
-                    console.log(displayDuration);
+
                     this.messageTimeout = setTimeout(() => {
                         this.tempMessageModal.visible = false;
                     }, displayDuration); // 根據計算出的時間消失
