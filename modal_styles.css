@@ -136,6 +136,12 @@
     background: #007bff; /* Blue color for change date */
 }
 
+/* Overwrite Confirm Modal Button */
+.custom-modal-actions button.overwrite-btn {
+    background: #FFC107; /* Orange color for overwrite */
+    color: #333; /* Darker text for better contrast */
+}
+
 /* Date Change Modal Styles */
 .date-change-modal-content {
     background: #fff;
