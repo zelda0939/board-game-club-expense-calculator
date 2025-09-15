@@ -11,6 +11,134 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="style.css"> <!-- 引入獨立的 style.css -->
     <link rel="stylesheet" href="calculator.css">
+    <style>
+        /* Custom Modal Styles */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .custom-modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 90%;
+            width: 350px;
+            animation: fadeInScale 0.3s ease-out forwards;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+        }
+
+        .custom-modal-content h3 {
+            margin-top: 0;
+            color: #4CAF50;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .custom-modal-content p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .custom-modal-actions button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin: 0 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            min-width: 100px;
+        }
+
+        .custom-modal-actions button.cancel-btn {
+            background: #f44336;
+        }
+
+        .custom-modal-actions button:hover {
+            transform: translateY(-2px);
+        }
+
+        .custom-modal-actions button:active {
+            transform: translateY(0);
+        }
+
+        /* Temporary Message Modal */
+        .temp-message-modal .custom-modal-content {
+            background: #333;
+            color: white;
+            padding: 20px;
+            width: 280px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: fadeInOut 2.5s forwards;
+        }
+
+        .temp-message-modal p {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            90% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .custom-modal-content {
+                padding: 20px;
+                width: 300px;
+            }
+
+            .custom-modal-actions button {
+                padding: 10px 20px;
+                font-size: 1em;
+                margin: 0 5px;
+                min-width: 80px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -19,14 +147,14 @@
         <h1>桌遊社花費分攤計算機</h1>
         <div class="top-controls">
             <div class="save-load-controls">
-                <button @click="saveCurrentData" class="save-button">保存當前數據</button>
-                <select v-model="selectedSaveEntry" @change="loadSelectedData" class="load-dropdown">
+                <button @click="saveCurrentData" class="save-button">保存</button>
+                <select v-model="selectedSaveEntry" @change="handleSaveEntrySelection" class="load-dropdown">
                     <option value="">選擇要載入的數據</option>
                     <option v-for="entry in savedEntries" :key="entry.date" :value="entry.date">
                         {{ entry.date }}
                     </option>
                 </select>
-                <button @click="clearInputs" class="clear-button">清空所有欄位</button>
+                <button @click="clearInputs" class="clear-button">清空</button>
             </div>
         </div>
         <div v-if="loadMessage" class="message-display">
@@ -196,6 +324,25 @@
             @update:value="updateValueFromCalculator"
         ></calculator-modal>
 
+        <!-- 自定義模態框 -->
+        <div v-if="customModal.visible" class="custom-modal-overlay">
+            <div class="custom-modal-content">
+                <h3>{{ customModal.title }}</h3>
+                <p>{{ customModal.message }}</p>
+                <div v-if="customModal.type === 'confirm'" class="custom-modal-actions">
+                    <button @click="confirmAction(true)">載入</button>
+                    <button @click="confirmAction(false)" class="cancel-btn">刪除</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 短暫提示訊息模態框 -->
+        <div v-if="tempMessageModal.visible" class="custom-modal-overlay temp-message-modal">
+            <div class="custom-modal-content">
+                <p>{{ tempMessageModal.message }}</p>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -246,7 +393,18 @@
                     ...JSON.parse(JSON.stringify(initialData)), // 深度複製初始數據
                     savedEntries: [], // 新增用於儲存載入的數據
                     selectedSaveEntry: '', // 新增用於選擇載入的數據
-                    loadMessage: '' // 新增用於顯示載入/保存提示訊息
+                    loadMessage: '', // 新增用於顯示載入/保存提示訊息
+                    customModal: { // 新增自定義模態框狀態
+                        visible: false,
+                        title: '',
+                        message: '',
+                        type: 'confirm' // 'confirm' 或 'info'
+                    },
+                    tempMessageModal: { // 新增短暫提示訊息模態框狀態
+                        visible: false,
+                        message: ''
+                    },
+                    pendingSaveEntry: '' // 新增用於暫存載入/刪除選擇的日期
                 };
             },
             mounted() {
@@ -540,29 +698,56 @@
                             this.savedEntries.shift(); // 移除第一個元素（最舊的）
                         }
                         this.savedEntries.push(currentData);
-                        this.showTempMessage(`數據已保存至 ${today}。`);
+                        this.showTempMessage(`保存成功：${today}。`);
                     }
                     localStorage.setItem('familyCostCalculatorSavedEntries', JSON.stringify(this.savedEntries));
-                    // 保存後更新 selectedSaveEntry 到當前日期
-                    this.selectedSaveEntry = today;
+                    this.selectedSaveEntry = ''; // 保存後重置下拉選單為空
                 },
-                // 新增：載入選擇的數據
-                loadSelectedData() {
-                    if (this.selectedSaveEntry) {
-                        const savedData = this.savedEntries.find(entry => entry.date === this.selectedSaveEntry);
-                        if (savedData) {
-                            // 使用 Object.assign 深度複製以確保 Vue 的響應性
-                            Object.assign(this.reimbursable, JSON.parse(JSON.stringify(savedData.reimbursable)));
-                            Object.assign(this.our_own, JSON.parse(JSON.stringify(savedData.our_own)));
-                            this.showTempMessage(`已載入 ${this.selectedSaveEntry} 的數據。`);
-                            this.selectedSaveEntry = ''; // 載入後重置為空
-                        } else {
-                            this.showTempMessage('未找到該日期或數據。');
-                            this.selectedSaveEntry = ''; // 未找到也重置為空
-                        }
+                // 新增：處理載入/刪除選擇 (顯示自定義模態框)
+                handleSaveEntrySelection() {
+                    if (!this.selectedSaveEntry) {
+                        return; // 如果沒有選擇任何項目，直接返回
+                    }
+                    this.customModal.title = '操作確認';
+                    this.customModal.message = `您想對 ${this.selectedSaveEntry} 的數據執行什麼操作？`;
+                    this.customModal.type = 'confirm';
+                    this.customModal.visible = true;
+                    // 將選擇的日期暫存起來，待模態框確認後使用
+                    this.pendingSaveEntry = this.selectedSaveEntry;
+                },
+                // 處理模態框確認後的載入/刪除邏輯
+                processSaveEntrySelection(action) {
+                    const entryDate = this.pendingSaveEntry;
+                    if (!entryDate) return; // 沒有待處理的選擇
+
+                    if (action === 'load') {
+                        this.loadDataByDate(entryDate);
+                    } else if (action === 'delete') {
+                        this.deleteDataByDate(entryDate);
+                    }
+                    this.pendingSaveEntry = ''; // 清空待處理的選擇
+                    this.selectedSaveEntry = ''; // 重置下拉選單
+                },
+                // 載入指定日期的數據
+                loadDataByDate(date) {
+                    const savedData = this.savedEntries.find(entry => entry.date === date);
+                    if (savedData) {
+                        Object.assign(this.reimbursable, JSON.parse(JSON.stringify(savedData.reimbursable)));
+                        Object.assign(this.our_own, JSON.parse(JSON.stringify(savedData.our_own)));
+                        this.showTempMessage(`已載入 ${date} 數據。`);
                     } else {
-                        // 如果 selectedSaveEntry 是空的，也確保重置當前數據但不清除已保存記錄
-                        // 這裡不需要額外操作，因為用戶只是選中了空選項，沒有實際載入操作
+                        this.showTempMessage('未找到數據。');
+                    }
+                },
+                // 新增：刪除指定日期的數據
+                deleteDataByDate(date) {
+                    const initialLength = this.savedEntries.length;
+                    this.savedEntries = this.savedEntries.filter(entry => entry.date !== date);
+                    if (this.savedEntries.length < initialLength) {
+                        localStorage.setItem('familyCostCalculatorSavedEntries', JSON.stringify(this.savedEntries));
+                        this.showTempMessage(`已刪除 ${date} 數據。`);
+                    } else {
+                        this.showTempMessage('未找到數據可刪除。');
                     }
                 },
                 // 新增：載入已保存的數據
@@ -575,13 +760,23 @@
                 },
                 // 新增：顯示短暫的提示訊息
                 showTempMessage(message) {
-                    this.loadMessage = message;
+                    this.tempMessageModal.message = message;
+                    this.tempMessageModal.visible = true;
                     if (this.messageTimeout) {
                         clearTimeout(this.messageTimeout);
                     }
                     this.messageTimeout = setTimeout(() => {
-                        this.loadMessage = '';
-                    }, 3000); // 3秒後消失
+                        this.tempMessageModal.visible = false;
+                    }, 1500); // 1.5秒後消失
+                },
+                // 自定義模態框確認動作
+                confirmAction(confirmed) {
+                    this.customModal.visible = false;
+                    if (confirmed) {
+                        this.processSaveEntrySelection('load'); // 點擊「確定」表示載入
+                    } else {
+                        this.processSaveEntrySelection('delete'); // 點擊「取消」表示刪除
+                    }
                 }
             },
             components: {
