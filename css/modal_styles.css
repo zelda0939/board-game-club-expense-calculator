@@ -210,11 +210,11 @@
 .login-actions .firebase-button {
     width: 100%;
     padding: 12px 25px;
-    border: none;
+    border: 2px solid var(--primary-color); /* 登入按鈕增加邊框 */
     border-radius: 8px;
     cursor: pointer;
     font-size: 1.1em;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
     color: white;
     background-color: var(--primary-color); /* 登入按鈕預設為主要顏色 */
 }
@@ -222,6 +222,7 @@
 .login-actions .firebase-button:hover {
     filter: brightness(1.1);
     transform: translateY(-2px);
+    border-color: #36a46e; /* Hover 時邊框顏色變深 */
 }
 
 .login-actions .firebase-button:active {
@@ -229,10 +230,14 @@
 }
 
 .login-actions .signup-button {
-    background-color: var(--success-color); /* 註冊按鈕為成功顏色 (綠色) */
+    background-color: transparent; /* 註冊按鈕背景透明 */
+    color: var(--success-color); /* 註冊按鈕文字顏色 */
+    border: 2px solid var(--success-color); /* 註冊按鈕邊框 */
 }
 
 .login-actions .signup-button:hover {
+    background-color: var(--success-color); /* Hover 時背景填滿 */
+    color: white; /* Hover 時文字變白 */
     filter: brightness(1.1);
 }
 

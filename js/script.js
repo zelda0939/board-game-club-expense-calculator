@@ -72,7 +72,7 @@ const app = createApp({
         // this.loadSavedEntries(); // 在 mounted 時載入已保存的數據，確保總是執行
 
         // 監聽 Firebase 認證狀態變化
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             this.user = user;
             if (user) {
                 console.log("Vue 應用程式中：使用者已登入", user.displayName);
