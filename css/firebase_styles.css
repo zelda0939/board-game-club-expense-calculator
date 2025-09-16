@@ -90,3 +90,18 @@
 .firebase-button.auto-backup-off:hover {
     background-color: #5a6268;
 }
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px 5px; /* 在手機版上縮小左右內邊距 */
+    }
+
+    .navbar-buttons {
+        gap: 5px; /* 進一步縮小按鈕間距 */
+    }
+
+    .firebase-button {
+        padding: 6px 10px; /* 縮小按鈕內邊距 */
+        font-size: 0.8em; /* 縮小字體大小 */
+    }
+}
