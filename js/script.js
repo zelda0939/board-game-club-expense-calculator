@@ -11,9 +11,8 @@ import calculatorAndInput from './calculatorAndInput.js';
 import modalHandlers from './modalHandlers.js';
 import mealEntryHelpers from './mealEntryHelpers.js';
 import calculationHelpers from './calculationHelpers.js';
-import { onAuthStateChanged, createUser, signInWithEmail, firebaseSignInWithGoogle, signOutUser, sendEmailLink, isSignInWithEmailLink } from './firebaseAuth.js';
+import { onAuthStateChanged, createUser, signInWithEmail, signOutUser } from './firebaseAuth.js';
 import { auth } from './firebaseAuth.js';
-import { signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import firebaseHelpers from './firebaseHelpers.js';
 // 定義初始數據結構 (已移至 dataPersistence.js)
 // const initialData = { ... };
@@ -59,10 +58,6 @@ const app = createApp({
             loginEmail: '', // 綁定電子郵件輸入
             loginPassword: '', // 綁定密碼輸入
             loginError: '', // 登入錯誤訊息
-            actionCodeSettings: {
-                url: window.location.href, // 當前頁面作為重定向 URL
-                handleCodeInApp: true, // 必須為 true
-            },
         };
     },
     mounted() {
@@ -87,32 +82,6 @@ const app = createApp({
                 console.log("Vue 應用程式中：使用者已登出");
             }
         });
-
-        // 處理電子郵件連結登入 (無密碼登入)
-        if (isSignInWithEmailLink(auth, window.location.href)) {
-            let email = window.localStorage.getItem('emailForSignIn');
-            if (!email) {
-                // 如果沒有 email，可能是使用者直接點擊連結，需要讓他們輸入 email
-                email = prompt('請輸入您的電子郵件以完成登入：');
-            }
-            if (email) {
-                signInWithEmailLink(auth, email, window.location.href)
-                    .then((result) => {
-                        console.log("無密碼登入成功", result.user);
-                        this.showTempMessage("無密碼登入成功！");
-                        window.localStorage.removeItem('emailForSignIn');
-                        this.user = result.user;
-                    })
-                    .catch((error) => {
-                        console.error("無密碼登入失敗", error);
-                        this.loginError = error.message;
-                        this.showTempMessage("無密碼登入失敗，請重試。", 'error');
-                    });
-            } else {
-                this.loginError = "請提供電子郵件以完成無密碼登入。";
-                this.showTempMessage("無密碼登入失敗：請提供電子郵件。", 'error');
-            }
-        }
     },
     watch: {
         // 監聽 reimbursable 變化，自動保存當前數據
@@ -282,51 +251,12 @@ const app = createApp({
                 this.loginError = error.message;
             }
         },
-        // 處理 Google 登入
-        async signInWithGoogle() {
-            try {
-                this.loginError = '';
-                const user = await firebaseSignInWithGoogle(); // 呼叫匯出的 Google 登入函式
-                if (user) {
-                    this.showTempMessage("Google 登入成功！");
-                    this.cancelLoginModal();
-                    this.user = user;
-                } else {
-                    this.loginError = "Google 登入失敗。";
-                }
-            } catch (error) {
-                console.error("Google 登入錯誤:", error);
-                this.loginError = error.message;
-            }
-        },
         // 處理登出
         async firebaseSignOut() {
             await signOutUser();
             this.user = null;
             this.showTempMessage("已登出。");
         },
-        // 處理無密碼登入 (發送連結)
-        async handlePasswordlessSignIn() {
-            try {
-                this.loginError = '';
-                if (!this.loginEmail) {
-                    this.loginError = "請輸入您的電子郵件以發送登入連結。";
-                    return;
-                }
-                // 將 email 儲存在 localStorage，以便在連結跳轉後使用
-                window.localStorage.setItem('emailForSignIn', this.loginEmail);
-                const success = await sendEmailLink(this.loginEmail, this.actionCodeSettings);
-                if (success) {
-                    this.showTempMessage("登入連結已發送至您的電子郵件！請檢查收件箱。", 'info', 5000);
-                    this.cancelLoginModal();
-                } else {
-                    this.loginError = "發送登入連結失敗，請檢查電子郵件地址。";
-                }
-            } catch (error) {
-                console.error("發送登入連結錯誤:", error);
-                this.loginError = error.message;
-            }
-        }
     },
     components: {
         CalculatorModal

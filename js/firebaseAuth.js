@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendSignInLinkToEmail, isSignInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // Your web app's Firebase configuration
@@ -19,7 +19,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
 
 let currentUser = null; // 用於追蹤當前登入的使用者
 
@@ -32,18 +31,6 @@ onAuthStateChanged(auth, (user) => {
     console.log("使用者已登出");
   }
 });
-
-async function firebaseSignInWithGoogle() {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    console.log("登入成功", user);
-    return user;
-  } catch (error) {
-    console.error("登入失敗", error);
-    return null;
-  }
-}
 
 async function signOutUser() {
   try {
@@ -112,18 +99,6 @@ async function signInWithEmail(email, password) {
   }
 }
 
-// 無密碼登入：發送連結到電子郵件
-async function sendEmailLink(email, actionCodeSettings) {
-  try {
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-    console.log("登入連結已發送至", email);
-    return true;
-  } catch (error) {
-    console.error("發送登入連結失敗", error);
-    return false;
-  }
-}
-
 export {
   auth,
   currentUser,
@@ -133,7 +108,4 @@ export {
   onAuthStateChanged,
   createUser,
   signInWithEmail,
-  firebaseSignInWithGoogle,
-  sendEmailLink,
-  isSignInWithEmailLink
 };

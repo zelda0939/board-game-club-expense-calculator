@@ -40,7 +40,7 @@
                 <input type="password" v-model="loginPassword" placeholder="密碼" class="login-input">
                 <div class="login-actions">
                     <button @click="handleEmailSignIn" class="firebase-button">登入</button>
-                    <button @click="handleEmailSignUp" class="firebase-button">註冊</button>
+                    <button @click="handleEmailSignUp" class="firebase-button signup-button">註冊</button>
                 </div>
                 <p v-if="loginError" class="login-error-message">{{ loginError }}</p>
             </div>

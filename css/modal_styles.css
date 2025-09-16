@@ -216,7 +216,7 @@
     font-size: 1.1em;
     transition: background-color 0.3s ease, transform 0.2s ease;
     color: white;
-    background-color: var(--primary-color); /* 預設為主要顏色 */
+    background-color: var(--primary-color); /* 登入按鈕預設為主要顏色 */
 }
 
 .login-actions .firebase-button:hover {
@@ -226,6 +226,14 @@
 
 .login-actions .firebase-button:active {
     transform: translateY(0);
+}
+
+.login-actions .signup-button {
+    background-color: var(--success-color); /* 註冊按鈕為成功顏色 (綠色) */
+}
+
+.login-actions .signup-button:hover {
+    filter: brightness(1.1);
 }
 
 .login-actions .google-login-button {

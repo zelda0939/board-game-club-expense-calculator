@@ -3,7 +3,7 @@
  * 它包含了使用者登入/登出、資料備份到雲端、從雲端還原資料以及自動備份功能的切換。
  * 導入了 firebaseAuth.js 中的認證和資料持久化函數。
  */
-import { firebaseSignInWithGoogle, signOutUser, uploadUserData, downloadUserData } from './firebaseAuth.js';
+import { signOutUser, uploadUserData, downloadUserData } from './firebaseAuth.js';
 
 export default {
     async firebaseSignOut() {
