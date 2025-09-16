@@ -4,8 +4,9 @@
  */
 export default {
     // 新增：顯示短暫的提示訊息
-    showTempMessage(message) {
+    showTempMessage(message, type = 'info', duration) {
         this.tempMessageModal.message = message;
+        this.tempMessageModal.type = type; // 新增類型，用於樣式區分
         this.tempMessageModal.visible = true;
         if (this.messageTimeout) {
             clearTimeout(this.messageTimeout);
@@ -13,7 +14,7 @@ export default {
         // 根據訊息長度自動調整顯示時間
         const messageLength = message.length; // 訊息字數
         const readingSpeed = 18; // 每秒閱讀字數 (例如 4 個中文字/秒)
-        let displayDuration = Math.ceil(messageLength / readingSpeed) * 1000; // 計算毫秒數
+        let displayDuration = duration || (Math.ceil(messageLength / readingSpeed) * 1000); // 計算毫秒數
 
         // 設定最小和最大顯示時間
         const minDuration = 1500; // 1.5 秒

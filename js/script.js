@@ -14,6 +14,7 @@ import calculationHelpers from './calculationHelpers.js';
 import { onAuthStateChanged, createUser, signInWithEmail, signOutUser } from './firebaseAuth.js';
 import { auth } from './firebaseAuth.js';
 import firebaseHelpers from './firebaseHelpers.js';
+import authHandlers from './authHandlers.js';
 // 定義初始數據結構 (已移至 dataPersistence.js)
 // const initialData = { ... };
 
@@ -72,7 +73,7 @@ const app = createApp({
         // this.loadSavedEntries(); // 在 mounted 時載入已保存的數據，確保總是執行
 
         // 監聽 Firebase 認證狀態變化
-        onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, (user) => {
             this.user = user;
             if (user) {
                 console.log("Vue 應用程式中：使用者已登入", user.displayName);
@@ -205,58 +206,7 @@ const app = createApp({
         ...mealEntryHelpers,
         ...calculationHelpers,
         ...firebaseHelpers,
-        // 顯示登入模態框
-        showLoginModal() {
-            this.loginModalVisible = true;
-            this.loginError = ''; // 清空錯誤訊息
-        },
-        // 隱藏登入模態框
-        cancelLoginModal() {
-            this.loginModalVisible = false;
-            this.loginEmail = '';
-            this.loginPassword = '';
-            this.loginError = '';
-        },
-        // 處理電子郵件/密碼登入
-        async handleEmailSignIn() {
-            try {
-                this.loginError = '';
-                const user = await signInWithEmail(this.loginEmail, this.loginPassword);
-                if (user) {
-                    this.showTempMessage("登入成功！");
-                    this.cancelLoginModal();
-                    this.user = user;
-                } else {
-                    this.loginError = "登入失敗，請檢查您的電子郵件和密碼。";
-                }
-            } catch (error) {
-                console.error("電子郵件登入錯誤:", error);
-                this.loginError = error.message;
-            }
-        },
-        // 處理電子郵件/密碼註冊
-        async handleEmailSignUp() {
-            try {
-                this.loginError = '';
-                const user = await createUser(this.loginEmail, this.loginPassword);
-                if (user) {
-                    this.showTempMessage("註冊成功！您已自動登入。");
-                    this.cancelLoginModal();
-                    this.user = user;
-                } else {
-                    this.loginError = "註冊失敗，請重試。";
-                }
-            } catch (error) {
-                console.error("電子郵件註冊錯誤:", error);
-                this.loginError = error.message;
-            }
-        },
-        // 處理登出
-        async firebaseSignOut() {
-            await signOutUser();
-            this.user = null;
-            this.showTempMessage("已登出。");
-        },
+        ...authHandlers,
     },
     components: {
         CalculatorModal
