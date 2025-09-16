@@ -179,3 +179,73 @@
 .date-change-modal-content .modal-actions button.cancel-btn {
     background: #f44336;
 }
+
+/* Login Modal Styles */
+.login-modal-content {
+    padding: 30px;
+}
+
+.login-modal-content h3 {
+    color: var(--primary-color);
+}
+
+.login-input {
+    width: calc(100% - 20px);
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1.1em;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.login-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.login-actions .firebase-button {
+    width: 100%;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    color: white;
+    background-color: var(--primary-color); /* 預設為主要顏色 */
+}
+
+.login-actions .firebase-button:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+.login-actions .firebase-button:active {
+    transform: translateY(0);
+}
+
+.login-actions .google-login-button {
+    background-color: #db4437; /* Google 品牌色 */
+}
+
+.login-actions .google-login-button:hover {
+    background-color: #c0392b;
+}
+
+.login-actions .passwordless-login-button {
+    background-color: #3498db; /* 藍色 */
+}
+
+.login-actions .passwordless-login-button:hover {
+    background-color: #2980b9;
+}
+
+.login-error-message {
+    color: var(--danger-color);
+    margin-top: 15px;
+    font-size: 0.95em;
+}

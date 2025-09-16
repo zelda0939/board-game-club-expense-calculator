@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendSignInLinkToEmail, isSignInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // Your web app's Firebase configuration
@@ -33,7 +33,7 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-async function signInWithGoogle() {
+async function firebaseSignInWithGoogle() {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
@@ -88,12 +88,52 @@ async function downloadUserData(userId) {
   }
 }
 
+async function createUser(email, password) {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    console.log("註冊成功", user);
+    return user;
+  } catch (error) {
+    console.error("註冊失敗", error);
+    return null;
+  }
+}
+
+async function signInWithEmail(email, password) {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    console.log("登入成功", user);
+    return user;
+  } catch (error) {
+    console.error("登入失敗", error);
+    return null;
+  }
+}
+
+// 無密碼登入：發送連結到電子郵件
+async function sendEmailLink(email, actionCodeSettings) {
+  try {
+    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    console.log("登入連結已發送至", email);
+    return true;
+  } catch (error) {
+    console.error("發送登入連結失敗", error);
+    return false;
+  }
+}
+
 export {
   auth,
   currentUser,
-  signInWithGoogle,
   signOutUser,
   uploadUserData,
   downloadUserData,
-  onAuthStateChanged
+  onAuthStateChanged,
+  createUser,
+  signInWithEmail,
+  firebaseSignInWithGoogle,
+  sendEmailLink,
+  isSignInWithEmailLink
 };

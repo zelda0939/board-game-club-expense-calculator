@@ -22,7 +22,7 @@
             <div class="navbar-brand"></div>
             <div class="navbar-buttons">
                 <span v-if="user" class="user-info"></span>
-                <button v-if="!user" @click="firebaseSignIn" class="firebase-button login-button">登入</button>
+                <button v-if="!user" @click="showLoginModal" class="firebase-button login-button">登入</button>
                 <button v-if="user" @click="firebaseSignOut" class="firebase-button logout-button">登出</button>
                 <button v-if="user" @click="toggleAutoBackup" :class="{'firebase-button': true, 'auto-backup-on': enableAutoBackup, 'auto-backup-off': !enableAutoBackup}">
                     {{ enableAutoBackup ? '自動備份: 開啟' : '自動備份: 關閉' }}
@@ -31,6 +31,21 @@
                 <button v-if="user" @click="restoreFromCloud" class="firebase-button restore-button">還原</button>
             </div>
         </nav>
+
+        <!-- 登入模態框 -->
+        <div v-if="loginModalVisible" class="custom-modal-overlay" @click.self="cancelLoginModal">
+            <div class="custom-modal-content login-modal-content">
+                <h3>登入 / 註冊</h3>
+                <input type="email" v-model="loginEmail" placeholder="電子郵件" class="login-input">
+                <input type="password" v-model="loginPassword" placeholder="密碼" class="login-input">
+                <div class="login-actions">
+                    <button @click="handleEmailSignIn" class="firebase-button">登入</button>
+                    <button @click="handleEmailSignUp" class="firebase-button">註冊</button>
+                </div>
+                <p v-if="loginError" class="login-error-message">{{ loginError }}</p>
+            </div>
+        </div>
+
         <h1>桌遊社花費分攤計算機</h1>
         <div class="top-controls">
             <div class="save-load-controls">
