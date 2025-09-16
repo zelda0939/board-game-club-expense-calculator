@@ -52,7 +52,7 @@ const app = createApp({
             },
             user: null, // 新增使用者狀態
             isSyncing: false, // 標誌是否正在同步數據
-            enableAutoBackup: false, // 新增自動備份開關，預設為關閉
+            enableAutoBackup: localStorage.getItem('autoBackupEnabled') === 'true', // 新增自動備份開關，從 localStorage 載入，預設為關閉
         };
     },
     mounted() {
@@ -86,7 +86,7 @@ const app = createApp({
                     our_own: this.our_own,
                 }));
                 if (this.user && !this.isSyncing && this.enableAutoBackup) {
-                    this.backupToCloud();
+                    this.backupToCloud(true);
                 }
             },
             deep: true,
@@ -100,7 +100,7 @@ const app = createApp({
                     our_own: newValue,
                 }));
                 if (this.user && !this.isSyncing && this.enableAutoBackup) {
-                    this.backupToCloud();
+                    this.backupToCloud(true);
                 }
             },
             deep: true,
@@ -214,7 +214,7 @@ const app = createApp({
                 this.showTempMessage("登出失敗，請重試！", 2000);
             }
         },
-        async backupToCloud() {
+        async backupToCloud(isAutoBackup = false) {
             if (this.user) {
                 this.isSyncing = true;
                 const currentData = {
@@ -224,7 +224,9 @@ const app = createApp({
                 };
                 const success = await uploadUserData(this.user.uid, currentData);
                 if (success) {
-                    this.showTempMessage("資料已成功備份至雲端！", 2000);
+                    if (!isAutoBackup) {
+                        this.showTempMessage("資料已成功備份至雲端！", 2000);
+                    }
                 } else {
                     this.showTempMessage("資料備份至雲端失敗！", 2000);
                 }
@@ -257,10 +259,11 @@ const app = createApp({
         },
         toggleAutoBackup() {
             this.enableAutoBackup = !this.enableAutoBackup;
+            localStorage.setItem('autoBackupEnabled', this.enableAutoBackup);
             this.showTempMessage(`自動備份已${this.enableAutoBackup ? '開啟' : '關閉'}！`, 2000);
             // 可以選擇在此處觸發一次備份，如果開啟了自動備份
             if (this.enableAutoBackup && this.user) {
-                this.backupToCloud();
+                this.backupToCloud(true);
             }
         },
     },
