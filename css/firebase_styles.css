@@ -1,0 +1,92 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f8f8; /* 淺灰色背景 */
+    padding: 10px 20px;
+    border-bottom: 1px solid #eee;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+.navbar-brand {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.navbar-buttons {
+    display: flex;
+    gap: 10px; /* 按鈕間距 */
+    align-items: center;
+}
+
+.user-info {
+    margin-right: 10px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.firebase-button {
+    background-color: #007bff; /* 藍色按鈕 */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.firebase-button:hover {
+    background-color: #0056b3;
+}
+
+.firebase-button.login-button {
+    background-color: #28a745; /* 綠色登入按鈕 */
+}
+
+.firebase-button.login-button:hover {
+    background-color: #218838;
+}
+
+.firebase-button.logout-button {
+    background-color: #dc3545; /* 紅色登出按鈕 */
+}
+
+.firebase-button.logout-button:hover {
+    background-color: #c82333;
+}
+
+.firebase-button.backup-button {
+    background-color: #ffc107; /* 黃色備份按鈕 */
+    color: #333;
+}
+
+.firebase-button.backup-button:hover {
+    background-color: #e0a800;
+}
+
+.firebase-button.restore-button {
+    background-color: #17a2b8; /* 青色還原按鈕 */
+}
+
+.firebase-button.restore-button:hover {
+    background-color: #138496;
+}
+
+.firebase-button.auto-backup-on {
+    background-color: #28a745; /* 綠色，表示開啟 */
+}
+
+.firebase-button.auto-backup-on:hover {
+    background-color: #218838;
+}
+
+.firebase-button.auto-backup-off {
+    background-color: #6c757d; /* 灰色，表示關閉 */
+}
+
+.firebase-button.auto-backup-off:hover {
+    background-color: #5a6268;
+}

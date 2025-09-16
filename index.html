@@ -12,11 +12,25 @@
     <link rel="stylesheet" href="./css/style.css"> <!-- 引入獨立的 style.css -->
     <link rel="stylesheet" href="./css/calculator.css">
     <link rel="stylesheet" href="./css/modal_styles.css"> <!-- 引入新的模態框樣式 -->
+    <link rel="stylesheet" href="./css/firebase_styles.css"> <!-- 引入 Firebase 樣式 -->
 </head>
 
 <body>
 
     <div id="app" v-cloak>
+        <nav class="navbar">
+            <div class="navbar-brand"></div>
+            <div class="navbar-buttons">
+                <span v-if="user" class="user-info">歡迎, {{ user.displayName }}!</span>
+                <button v-if="!user" @click="firebaseSignIn" class="firebase-button login-button">登入 Firebase</button>
+                <button v-if="user" @click="firebaseSignOut" class="firebase-button logout-button">登出 Firebase</button>
+                <button v-if="user" @click="toggleAutoBackup" :class="{'firebase-button': true, 'auto-backup-on': enableAutoBackup, 'auto-backup-off': !enableAutoBackup}">
+                    {{ enableAutoBackup ? '自動備份: 開啟' : '自動備份: 關閉' }}
+                </button>
+                <button v-if="user" @click="backupToCloud" class="firebase-button backup-button">備份至雲端</button>
+                <button v-if="user" @click="restoreFromCloud" class="firebase-button restore-button">從雲端還原</button>
+            </div>
+        </nav>
         <h1>桌遊社花費分攤計算機</h1>
         <div class="top-controls">
             <div class="save-load-controls">

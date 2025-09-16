@@ -11,6 +11,8 @@ import calculatorAndInput from './calculatorAndInput.js';
 import modalHandlers from './modalHandlers.js';
 import mealEntryHelpers from './mealEntryHelpers.js';
 import calculationHelpers from './calculationHelpers.js';
+import { signInWithGoogle, signOutUser, uploadUserData, downloadUserData, onAuthStateChanged } from './firebaseAuth.js';
+import { auth } from './firebaseAuth.js';
 // 定義初始數據結構 (已移至 dataPersistence.js)
 // const initialData = { ... };
 
@@ -47,7 +49,10 @@ const app = createApp({
                 originalDate: '',
                 newDate: '',
                 message: ''
-            }
+            },
+            user: null, // 新增使用者狀態
+            isSyncing: false, // 標誌是否正在同步數據
+            enableAutoBackup: false, // 新增自動備份開關，預設為關閉
         };
     },
     mounted() {
@@ -59,26 +64,44 @@ const app = createApp({
             this.assignSavedData(this.our_own, parsedData.our_own);
         }
         this.loadSavedEntries(); // 在 mounted 時載入已保存的數據，確保總是執行
+
+        // 監聽 Firebase 認證狀態變化
+        onAuthStateChanged(auth, (user) => {
+            this.user = user;
+            if (user) {
+                console.log("Vue 應用程式中：使用者已登入", user.displayName);
+                // 登入後觸發一次完整備份
+                // this.backupToCloud(); // 根據使用者要求，取消登入後自動備份
+            } else {
+                console.log("Vue 應用程式中：使用者已登出");
+            }
+        });
     },
     watch: {
         // 監聽 reimbursable 變化，自動保存當前數據
         'reimbursable': {
-            handler(newValue) {
+            handler(newValue, oldValue) {
                 localStorage.setItem('familyCostCalculator', JSON.stringify({
                     reimbursable: newValue,
                     our_own: this.our_own,
                 }));
+                if (this.user && !this.isSyncing && this.enableAutoBackup) {
+                    this.backupToCloud();
+                }
             },
             deep: true,
             immediate: false
         },
         // 監聽 our_own 變化，自動保存當前數據
         'our_own': {
-            handler(newValue) {
+            handler(newValue, oldValue) {
                 localStorage.setItem('familyCostCalculator', JSON.stringify({
                     reimbursable: this.reimbursable,
                     our_own: newValue,
                 }));
+                if (this.user && !this.isSyncing && this.enableAutoBackup) {
+                    this.backupToCloud();
+                }
             },
             deep: true,
             immediate: false
@@ -175,6 +198,71 @@ const app = createApp({
         ...modalHandlers,
         ...mealEntryHelpers,
         ...calculationHelpers,
+        async firebaseSignIn() {
+            const user = await signInWithGoogle();
+            if (user) {
+                this.showTempMessage("登入成功！正在備份資料...", 2000);
+            } else {
+                this.showTempMessage("登入失敗，請重試！", 2000);
+            }
+        },
+        async firebaseSignOut() {
+            const success = await signOutUser();
+            if (success) {
+                this.showTempMessage("登出成功！", 2000);
+            } else {
+                this.showTempMessage("登出失敗，請重試！", 2000);
+            }
+        },
+        async backupToCloud() {
+            if (this.user) {
+                this.isSyncing = true;
+                const currentData = {
+                    reimbursable: this.reimbursable,
+                    our_own: this.our_own,
+                    savedEntries: this.savedEntries // 也備份 savedEntries
+                };
+                const success = await uploadUserData(this.user.uid, currentData);
+                if (success) {
+                    this.showTempMessage("資料已成功備份至雲端！", 2000);
+                } else {
+                    this.showTempMessage("資料備份至雲端失敗！", 2000);
+                }
+                this.isSyncing = false;
+            } else {
+                this.showTempMessage("請先登入才能備份資料！", 2000);
+            }
+        },
+        async restoreFromCloud() {
+            if (this.user) {
+                this.showTempMessage("正在從雲端下載資料...", 1000);
+                const cloudData = await downloadUserData(this.user.uid);
+                if (cloudData) {
+                    // 將下載的數據應用到本地狀態
+                    this.assignSavedData(this.reimbursable, cloudData.reimbursable);
+                    this.assignSavedData(this.our_own, cloudData.our_own);
+                    this.savedEntries = cloudData.savedEntries || []; // 還原 savedEntries
+                    localStorage.setItem('familyCostCalculator', JSON.stringify({
+                        reimbursable: this.reimbursable,
+                        our_own: this.our_own,
+                    }));
+                    localStorage.setItem('savedEntries', JSON.stringify(this.savedEntries)); // 更新 savedEntries 到 localStorage
+                    this.showTempMessage("資料已成功從雲端還原！", 2000);
+                } else {
+                    this.showTempMessage("從雲端還原資料失敗或雲端無資料！", 2000);
+                }
+            } else {
+                this.showTempMessage("請先登入才能還原資料！", 2000);
+            }
+        },
+        toggleAutoBackup() {
+            this.enableAutoBackup = !this.enableAutoBackup;
+            this.showTempMessage(`自動備份已${this.enableAutoBackup ? '開啟' : '關閉'}！`, 2000);
+            // 可以選擇在此處觸發一次備份，如果開啟了自動備份
+            if (this.enableAutoBackup && this.user) {
+                this.backupToCloud();
+            }
+        },
     },
     components: {
         CalculatorModal
