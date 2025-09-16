@@ -206,8 +206,8 @@ export default {
     loadDataByDate(date) {
         const savedData = this.savedEntries.find(entry => entry.date === date);
         if (savedData) {
-            Object.assign(this.reimbursable, JSON.parse(JSON.stringify(savedData.reimbursable)));
-            Object.assign(this.our_own, JSON.parse(JSON.stringify(savedData.our_own)));
+            this.assignSavedData(this.reimbursable, savedData.reimbursable);
+            this.assignSavedData(this.our_own, savedData.our_own);
             this.showTempMessage(`已載入 ${date} 數據。`);
         } else {
             this.showTempMessage('未找到數據。');

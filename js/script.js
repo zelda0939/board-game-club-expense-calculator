@@ -25,7 +25,7 @@ const app = createApp({
     data() {
         return {
             ...JSON.parse(JSON.stringify(initialData)), // 深度複製初始數據
-            savedEntries: [], // 新增用於儲存載入的數據
+            savedEntries: JSON.parse(localStorage.getItem('familyCostCalculatorSavedEntries') || '[]'), // 新增用於儲存載入的數據，從 localStorage 載入
             selectedSaveEntry: '', // 新增用於選擇載入的數據
             loadMessage: '', // 新增用於顯示載入/保存提示訊息
             customModal: { // 新增自定義模態框狀態
@@ -63,7 +63,8 @@ const app = createApp({
             this.assignSavedData(this.reimbursable, parsedData.reimbursable);
             this.assignSavedData(this.our_own, parsedData.our_own);
         }
-        this.loadSavedEntries(); // 在 mounted 時載入已保存的數據，確保總是執行
+        // 移除 mounted 時的 loadSavedEntries 呼叫，因為已在 data() 中初始化
+        // this.loadSavedEntries(); // 在 mounted 時載入已保存的數據，確保總是執行
 
         // 監聽 Firebase 認證狀態變化
         onAuthStateChanged(auth, (user) => {
@@ -244,7 +245,7 @@ const app = createApp({
                         reimbursable: this.reimbursable,
                         our_own: this.our_own,
                     }));
-                    localStorage.setItem('savedEntries', JSON.stringify(this.savedEntries)); // 更新 savedEntries 到 localStorage
+                    localStorage.setItem('familyCostCalculatorSavedEntries', JSON.stringify(this.savedEntries)); // 更新 savedEntries 到 localStorage
                     this.showTempMessage("資料已成功從雲端還原！", 2000);
                 } else {
                     this.showTempMessage("從雲端還原資料失敗或雲端無資料！", 2000);
