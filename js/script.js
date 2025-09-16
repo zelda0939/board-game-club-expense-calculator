@@ -200,17 +200,13 @@ const app = createApp({
         ...calculationHelpers,
         async firebaseSignIn() {
             const user = await signInWithGoogle();
-            if (user) {
-                this.showTempMessage("登入成功！正在備份資料...", 2000);
-            } else {
+            if (!user){
                 this.showTempMessage("登入失敗，請重試！", 2000);
             }
         },
         async firebaseSignOut() {
             const success = await signOutUser();
-            if (success) {
-                this.showTempMessage("登出成功！", 2000);
-            } else {
+            if (!success) {
                 this.showTempMessage("登出失敗，請重試！", 2000);
             }
         },
