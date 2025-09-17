@@ -45,12 +45,24 @@ export default {
                 this.showTempMessage("註冊成功！您已自動登入。");
                 this.cancelLoginModal();
                 this.user = user;
-            } else {
-                this.loginError = "註冊失敗，請重試。";
             }
         } catch (error) {
-            console.error("電子郵件註冊錯誤:", error);
-            this.loginError = error.message;
+            console.log("Caught error in handleEmailSignUp:", error.code, error.message);
+            if (error.code === 'auth/email-already-in-use') {
+                this.loginError = "該電子郵件已被註冊。";
+            } else if (error.code === 'auth/weak-password') {
+                this.loginError = "密碼強度不足，請輸入至少 6 個字元。";
+            } else if (error.code === 'auth/invalid-email') {
+                this.loginError = "電子郵件格式不正確。";
+            } else if (error.code === 'auth/missing-password') {
+                this.loginError = "請輸入密碼。";
+            } else if (error.code === 'auth/network-request-failed') {
+                this.loginError = "網路連線失敗，請檢查您的網路並重試。";
+            } else {
+                console.error("電子郵件註冊錯誤:", error);
+                this.loginError = error.message; // 顯示更詳細的錯誤訊息
+            }
+            console.log("loginError after setting:", this.loginError);
         }
     },
     // 處理登出
