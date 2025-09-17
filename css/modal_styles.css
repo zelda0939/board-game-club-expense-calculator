@@ -51,12 +51,12 @@
     background: #4CAF50;
     color: white;
     border: none;
-    padding: 14px 28px;
+    padding: 16px 30px; /* 調整內邊距 */
     border-radius: 28px;
     cursor: pointer;
-    font-size: 1.1em;
+    font-size: 22px; /* 調整字體大小 */
     transition: all 0.3s ease-in-out;
-    min-width: 120px;
+    height: 52px; /* 設置固定高度 */
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -207,9 +207,9 @@
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
-    .custom-modal-overlay {
+    /* .custom-modal-overlay { */
         /* padding: 0 15px; 移除此行以確保水平置中 */
-    }
+    /* } */
 
     .custom-modal-content {
         padding: 20px;
@@ -251,10 +251,10 @@
     }
 
     .custom-modal-actions button {
-        padding: 10px 18px;
-        font-size: 0.95em;
+        padding: 12px 20px;
+        font-size: 1em;
         margin: 5px;
-        min-width: 90px;
+        height: auto;
     }
 
     .date-change-modal-content,
@@ -309,9 +309,9 @@
     }
 
     .custom-modal-actions button {
-        padding: 8px 15px;
-        font-size: 0.9em;
-        min-width: 70px;
+        padding: 12px 20px;
+        font-size: 1em;
+        height: auto;
     }
 
     .login-input {
