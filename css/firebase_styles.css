@@ -2,52 +2,61 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f8f8f8; /* 淺灰色背景 */
-    padding: 10px 20px;
-    border-bottom: 1px solid #eee;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
+    background-color: #ffffff; /* 更現代的白色背景 */
+    padding: 12px 25px;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08); /* 更明顯的陰影 */
+    margin-bottom: 25px;
 }
 
 .navbar-brand {
-    font-size: 1.2em;
+    font-size: 1.3em;
     font-weight: bold;
     color: #333;
 }
 
 .navbar-buttons {
     display: flex;
-    gap: 10px; /* 按鈕間距 */
+    gap: 12px; /* 增加按鈕間距 */
     align-items: center;
 }
 
 .user-info {
     margin-right: 10px;
-    font-size: 0.9em;
+    font-size: 1em; /* 稍微放大字體 */
     color: #555;
 }
 
 .firebase-button {
-    background-color: #007bff; /* 藍色按鈕 */
+    background-color: #4CAF50; /* 綠色按鈕 */
     color: white;
     border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
+    padding: 10px 18px;
+    border-radius: 25px; /* 更圓潤的按鈕 */
     cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s ease-in-out;
+    font-size: 0.95em;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 添加輕微陰影 */
 }
 
 .firebase-button:hover {
-    background-color: #0056b3;
+    background-color: #45a049; /* 懸停時顏色變深 */
+    transform: translateY(-1px); /* 輕微上浮效果 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.firebase-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .firebase-button.login-button {
-    background-color: #28a745; /* 綠色登入按鈕 */
+    background-color: #007bff; /* 藍色登入按鈕 */
 }
 
 .firebase-button.login-button:hover {
-    background-color: #218838;
+    background-color: #0069d9;
 }
 
 .firebase-button.logout-button {
@@ -60,7 +69,7 @@
 
 .firebase-button.backup-button {
     background-color: #ffc107; /* 黃色備份按鈕 */
-    color: #333;
+    color: #333; /* 深色文字 */
 }
 
 .firebase-button.backup-button:hover {
@@ -93,15 +102,26 @@
 
 @media (max-width: 768px) {
     .navbar {
-        padding: 10px 5px; /* 在手機版上縮小左右內邊距 */
+        padding: 10px 15px;
+        margin-bottom: 20px;
     }
 
     .navbar-buttons {
-        gap: 5px; /* 進一步縮小按鈕間距 */
+        flex-wrap: wrap; /* 允許按鈕換行 */
+        justify-content: flex-end; /* 右對齊 */
+        gap: 6px; /* 縮小按鈕間距 */
     }
 
     .firebase-button {
-        padding: 6px 10px; /* 縮小按鈕內邊距 */
-        font-size: 0.8em; /* 縮小字體大小 */
+        padding: 7px 10px;
+        font-size: 0.8em;
+        border-radius: 20px; /* 稍微減小圓角 */
+    }
+
+    .user-info {
+        order: -1; /* 將用戶訊息移到最前面 */
+        width: 100%; /* 讓用戶訊息佔滿一行 */
+        text-align: right;
+        margin-bottom: 5px; /* 與按鈕保持距離 */
     }
 }
