@@ -3,6 +3,30 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// 內部變數來儲存 Firebase 函數，以便在測試時可以被替換
+let _signOut = signOut;
+let _onAuthStateChanged = onAuthStateChanged;
+let _createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+let _signInWithEmailAndPassword = signInWithEmailAndPassword;
+let _setDoc = setDoc;
+let _doc = doc;
+let _getDoc = getDoc;
+let _getAuth = getAuth;
+let _getFirestore = getFirestore;
+
+// 用於測試的依賴注入函數
+export function setFirebaseMocks(mocks) {
+    _signOut = mocks.signOut || signOut;
+    _onAuthStateChanged = mocks.onAuthStateChanged || onAuthStateChanged;
+    _createUserWithEmailAndPassword = mocks.createUserWithEmailAndPassword || createUserWithEmailAndPassword;
+    _signInWithEmailAndPassword = mocks.signInWithEmailAndPassword || signInWithEmailAndPassword;
+    _setDoc = mocks.setDoc || setDoc;
+    _doc = mocks.doc || doc;
+    _getDoc = mocks.getDoc || getDoc;
+    _getAuth = mocks.getAuth || getAuth;
+    _getFirestore = mocks.getFirestore || getFirestore;
+}
+
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -17,12 +41,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const auth = _getAuth(app);
+const db = _getFirestore(app);
 
 let currentUser = null; // 用於追蹤當前登入的使用者
 
-onAuthStateChanged(auth, (user) => {
+_onAuthStateChanged(auth, (user) => {
   currentUser = user;
   if (user) {
     console.log("使用者已登入:", user.displayName);
@@ -34,7 +58,7 @@ onAuthStateChanged(auth, (user) => {
 
 async function signOutUser() {
   try {
-    await signOut(auth);
+    await _signOut(auth);
     console.log("登出成功");
     return true;
   } catch (error) {
@@ -45,7 +69,7 @@ async function signOutUser() {
 
 async function uploadUserData(userId, data) {
   try {
-    await setDoc(doc(db, "users", userId), {
+    await _setDoc(_doc(db, "users", userId), {
       data: data,
       lastUpdated: new Date()
     });
@@ -59,8 +83,8 @@ async function uploadUserData(userId, data) {
 
 async function downloadUserData(userId) {
   try {
-    const docRef = doc(db, "users", userId);
-    const docSnap = await getDoc(docRef);
+    const docRef = _doc(db, "users", userId);
+    const docSnap = await _getDoc(docRef);
 
     if (docSnap.exists()) {
       console.log("資料下載成功:", docSnap.data());
@@ -77,7 +101,7 @@ async function downloadUserData(userId) {
 
 async function createUser(email, password) {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await _createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     console.log("註冊成功", user);
     return user;
@@ -89,7 +113,7 @@ async function createUser(email, password) {
 
 async function signInWithEmail(email, password) {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await _signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     console.log("登入成功", user);
     return user;
@@ -108,4 +132,5 @@ export {
   onAuthStateChanged,
   createUser,
   signInWithEmail,
+  setFirebaseMocks // 導出用於測試的函數
 };

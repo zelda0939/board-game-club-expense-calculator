@@ -3,76 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator Modal Test</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/calculator.css">
+    <title>單元測試 - 桌遊社花費分攤計算機</title>
+    <!-- QUnit 框架 -->
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.20.1.css">
 </head>
 <body>
-    <div id="app">
-        <h1>Calculator Modal Test Page</h1>
-        <div>
-            <label for="test-input">測試輸入:</label>
-            <input type="text" id="test-input" v-model="testValue" readonly>
-            <button @click="showCalculator('testValue', testValue)">開啟計算機</button>
-        </div>
-        <div style="margin-top: 10px;">
-            <label>
-                <input type="checkbox" v-model="localUseThousandSeparator"> 使用千位分隔符號
-            </label>
-        </div>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
 
-        <calculator-modal
-            :visible="calculatorVisible"
-            :initial-value="calculatorInitialValue"
-            :target-path="calculatorTargetPath"
-            :use-thousand-separator="localUseThousandSeparator"
-            @update:visible="calculatorVisible = $event"
-            @update:value="handleCalculatorUpdate"
-        ></calculator-modal>
-    </div>
-
-    <script type="module">
-        import CalculatorModal from './js/CalculatorModal.js';
-
-        const { createApp, ref, reactive } = Vue;
-
-        createApp({
-            components: {
-                CalculatorModal
-            },
-            setup() {
-                const testValue = ref('123.45');
-                const calculatorVisible = ref(false);
-                const calculatorInitialValue = ref('');
-                const calculatorTargetPath = ref('');
-                const localUseThousandSeparator = ref(true); // 新增控制千位分隔符號的狀態
-
-                const showCalculator = (path, initialValue) => {
-                    calculatorTargetPath.value = path;
-                    // 在傳遞給計算機之前，移除千位分隔符號
-                    calculatorInitialValue.value = initialValue.toString().replace(/,/g, '');
-                    calculatorVisible.value = true;
-                };
-
-                const handleCalculatorUpdate = ({ path, value }) => {
-                    if (path === 'testValue') {
-                        // CalculatorModal 現在發出格式化後的字串，直接賦值
-                        testValue.value = value;
-                    }
-                };
-
-                return {
-                    testValue,
-                    calculatorVisible,
-                    calculatorInitialValue,
-                    calculatorTargetPath,
-                    localUseThousandSeparator, // 暴露給模板
-                    showCalculator,
-                    handleCalculatorUpdate,
-                };
-            }
-        }).mount('#app');
-    </script>
+    <!-- QUnit 框架 -->
+    <script src="https://code.jquery.com/qunit/qunit-2.20.1.js"></script>
+    <!-- 你的測試腳本將會在這裡被引入 -->
+    <script type="module" src="./js/tests/calculationHelpers.test.js"></script>
+    <script type="module" src="./js/tests/dataPersistence.test.js"></script>
+    <script type="module" src="./js/tests/firebaseHelpers.test.js"></script>
+    <script type="module" src="./js/tests/firebaseAuth.test.js"></script>
 </body>
 </html>
