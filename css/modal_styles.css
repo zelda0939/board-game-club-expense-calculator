@@ -76,30 +76,52 @@
 }
 
 /* Temporary Message Modal */
+.temp-message-modal {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%; /* 為了讓內部內容可以水平置中 */
+    max-width: 500px; /* 限制 toast 的最大寬度 */
+    height: auto;
+    background: none;
+    backdrop-filter: none;
+    display: flex; /* 使用 flexbox 讓內容水平置中 */
+    justify-content: center;
+    align-items: flex-start; /* 讓內容靠上對齊 */
+    z-index: 1050; /* 比其他模態框更高的 z-index */
+    pointer-events: none; /* 讓滑鼠事件穿透此層 */
+    animation: toastSlideInFadeOut 3s forwards ease-out; /* 應用新的動畫 */
+}
+
 .temp-message-modal .custom-modal-content {
-    background: #333;
-    color: white;
-    padding: 20px 25px; /* 調整 padding，上下 20px，左右 25px */
+    background-color: rgba(33, 37, 41, 0.85); /* 類似 Bootstrap 的深色背景 */
+    color: #fff; /* 白色文字 */
+    padding: 0.75rem 1.25rem; /* 類似 Bootstrap 的內邊距 */
+    max-width: 100%; /* 確保內容框不會超出外部容器 */
+    min-width: 250px; /* 最小寬度 */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center; /* 確保文本水平置中 */
-    border-radius: 28px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    animation: fadeInOut 2.5s forwards;
-    box-sizing: border-box; /* 確保 padding 不會導致內容超出 */
-    margin-left: auto; /* 水平置中 */
-    margin-right: auto; /* 水平置中 */
+    text-align: center;
+    border-radius: 0.25rem; /* 類似 Bootstrap 的圓角 */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* 更柔和的陰影 */
+    box-sizing: border-box;
+    pointer-events: auto; /* 讓訊息框本身可互動 */
+    animation: none; /* 移除舊的動畫，由外層容器控制 */
+    margin: 0; /* 移除任何可能影響定位的 margin */
 }
 
 .temp-message-modal p {
-    margin: 0;
-    font-size: 1.15em;
-    flex-grow: 1; /* 讓文字內容區塊佔滿可用空間 */
-    display: flex;
-    align-items: center; /* 垂直置中 */
-    justify-content: center; /* 水平置中 */
+    margin: 0; /* 確保 margin 為 0 */
+    font-size: 1.0rem;
+    /* 移除 flex 相關屬性，讓父容器控制對齊 */
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
+    /* 移除 line-height，讓瀏覽器處理預設 */
+    /* line-height: 1.2; */
 }
 
 @keyframes fadeInScale {
@@ -132,6 +154,57 @@
     }
 }
 
+@keyframes slideInFadeOut {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px) translateX(-50%);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-50px) translateX(-50%);
+    }
+}
+
+@keyframes toastSlideInFadeOut {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%) translateX(-50%);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100%) translateX(-50%);
+    }
+}
+
+/* 訊息類型樣式 (類似 Bootstrap 的顏色) */
+.temp-message-modal .custom-modal-content.success {
+    background-color: #28a745; /* Bootstrap success green */
+}
+
+.temp-message-modal .custom-modal-content.error {
+    background-color: #dc3545; /* Bootstrap danger red */
+}
+
+.temp-message-modal .custom-modal-content.info {
+    background-color: #17a2b8; /* Bootstrap info cyan */
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
     .custom-modal-overlay {
@@ -145,9 +218,18 @@
         /* margin: 20px auto; 移除此行，讓 .custom-modal-overlay 負責垂直置中 */
     }
 
+    .custom-modal-overlay.temp-message-modal {
+        top: 10px; /* 手機版從頂部 10px 開始 */
+        max-width: calc(100% - 20px); /* 在手機上留出左右各 10px 的間距 */
+    }
+
     .temp-message-modal .custom-modal-content {
-        width: calc(100% - 40px); /* 預留左右各 20px 的間距 */
-        margin: 10px auto; /* 上下 10px 間距並水平置中 */
+        padding: 0.4rem 0.6rem; /* 手機版調整 padding，更緊湊 */
+        font-size: 0.9rem; /* 手機版調整字體大小 */
+        min-width: 180px;
+        /* 移除 min-height，讓高度由內容決定 */
+        height: auto; /* 明確設定高度自適應 */
+        /* 移除 flex-shrink，簡化樣式 */
     }
 
     .custom-modal-content h3 {
@@ -155,9 +237,16 @@
         margin-bottom: 20px;
     }
 
-    .custom-modal-content p {
-        font-size: 1em;
-        margin-bottom: 20px;
+    /* 調整手機版 p 標籤樣式，確保行高和邊距 */
+    .temp-message-modal p {
+        display: block; /* 讓 p 標籤作為塊級元素 */
+        /* 移除 vertical-align，因為已是 block 元素 */
+        line-height: 1.2; /* 較為平衡的行高 */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 0; /* 確保 padding 為 0 */
+        margin: 0; /* 確保 margin 為 0 */
     }
 
     .custom-modal-actions button {
