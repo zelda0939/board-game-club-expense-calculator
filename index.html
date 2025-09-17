@@ -9,6 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <title>桌遊社花費分攤計算機</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./css/style.css"> <!-- 引入獨立的 style.css -->
     <link rel="stylesheet" href="./css/calculator.css">
     <link rel="stylesheet" href="./css/modal_styles.css"> <!-- 引入新的模態框樣式 -->
@@ -20,15 +21,15 @@
     <div id="app" v-cloak>
         <nav class="navbar">
             <div class="navbar-brand"></div>
-            <div class="navbar-buttons">
+            <div class="navbar-buttons" :class="{'logged-out-buttons': !user, 'logged-in-buttons': user}">
                 <span v-if="user" class="user-info"></span>
-                <button v-if="!user" @click="showLoginModal" class="firebase-button login-button">登入</button>
-                <button v-if="user" @click="firebaseSignOut" class="firebase-button logout-button">登出</button>
+                <button v-if="!user" @click="showLoginModal" class="firebase-button login-button"><i class="fa-solid fa-right-to-bracket"></i></button>
+                <button v-if="user" @click="firebaseSignOut" class="firebase-button logout-button"><i class="fa-solid fa-right-from-bracket"></i></button>
                 <button v-if="user" @click="toggleAutoBackup" :class="{'firebase-button': true, 'auto-backup-on': enableAutoBackup, 'auto-backup-off': !enableAutoBackup}">
-                    {{ enableAutoBackup ? '自動備份: 開啟' : '自動備份: 關閉' }}
+                    <i class="fa-solid fa-cloud-arrow-up"></i> <span>{{ enableAutoBackup ? 'Auto: on' : 'Auto: off' }}</span>
                 </button>
-                <button v-if="user" @click="backupToCloud(false)" class="firebase-button backup-button">手動備份</button>
-                <button v-if="user" @click="restoreFromCloud" class="firebase-button restore-button">還原</button>
+                <button v-if="user" @click="backupToCloud(false)" class="firebase-button backup-button"><i class="fa-solid fa-cloud-arrow-up"></i></button>
+                <button v-if="user" @click="restoreFromCloud" class="firebase-button restore-button"><i class="fa-solid fa-cloud-arrow-down"></i></button>
             </div>
         </nav>
 

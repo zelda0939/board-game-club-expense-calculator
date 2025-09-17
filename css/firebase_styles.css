@@ -21,6 +21,15 @@
     align-items: center;
 }
 
+.navbar-buttons.logged-out-buttons {
+    justify-content: flex-end; /* 未登入時靠右 */
+}
+
+.navbar-buttons.logged-in-buttons {
+    justify-content: space-evenly; /* 登入後置中水平平均分配 */
+    flex-wrap: wrap; /* 允許按鈕換行 */
+}
+
 .user-info {
     margin-right: 10px;
     font-size: 1em; /* 稍微放大字體 */
@@ -31,13 +40,17 @@
     background-color: #4CAF50; /* 綠色按鈕 */
     color: white;
     border: none;
-    padding: 10px 18px;
+    padding: 10px 15px; /* 調整 padding */
     border-radius: 25px; /* 更圓潤的按鈕 */
     cursor: pointer;
-    font-size: 0.95em;
+    font-size: 1.1em; /* 放大字體以顯示圖示 */
     font-weight: 500;
     transition: all 0.3s ease-in-out;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 添加輕微陰影 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap; /* 防止文字換行 */
 }
 
 .firebase-button:hover {
@@ -49,6 +62,15 @@
 .firebase-button:active {
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 圖示與文字之間的間距 */
+.firebase-button i { /* 針對 Font Awesome 圖示 */
+    margin-right: 0px; /* 移除圖示右側間距，因為大部分按鈕只有圖示 */
+}
+
+.firebase-button span { /* 針對自動備份按鈕中的文字 */
+    margin-left: 5px;
 }
 
 .firebase-button.login-button {
@@ -100,6 +122,7 @@
     background-color: #5a6268;
 }
 
+/* 媒體查詢 */
 @media (max-width: 768px) {
     .navbar {
         padding: 10px 15px;
@@ -107,21 +130,21 @@
     }
 
     .navbar-buttons {
-        flex-wrap: wrap; /* 允許按鈕換行 */
-        justify-content: flex-end; /* 右對齊 */
-        gap: 6px; /* 縮小按鈕間距 */
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 6px;
     }
 
     .firebase-button {
-        padding: 7px 10px;
-        font-size: 0.8em;
-        border-radius: 20px; /* 稍微減小圓角 */
+        padding: 6px 10px; /* 進一步縮小 padding */
+        font-size: 1em; /* 調整字體大小 */
+        border-radius: 20px;
     }
 
     .user-info {
-        order: -1; /* 將用戶訊息移到最前面 */
-        width: 100%; /* 讓用戶訊息佔滿一行 */
+        order: -1;
+        width: 100%;
         text-align: right;
-        margin-bottom: 5px; /* 與按鈕保持距離 */
+        margin-bottom: 5px;
     }
 }
