@@ -20,7 +20,8 @@
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25); /* 更明顯的陰影 */
     text-align: center;
     max-width: 90%;
-    width: 420px; /* 調整寬度 */
+    width: auto; /* 調整寬度為 auto */
+    min-width: 500px; /* 設置最小寬度以容納按鈕 */
     animation: fadeInScale 0.3s ease-out forwards;
     color: #333;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -43,7 +44,7 @@
 .custom-modal-actions {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* 防止按鈕換行 */
     gap: 15px; /* 增加按鈕間距 */
 }
 
@@ -56,7 +57,6 @@
     cursor: pointer;
     font-size: 22px; /* 調整字體大小 */
     transition: all 0.3s ease-in-out;
-    height: 52px; /* 設置固定高度 */
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
