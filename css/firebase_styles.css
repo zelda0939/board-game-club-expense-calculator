@@ -2,10 +2,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #ffffff; /* 更現代的白色背景 */
+    background-color: var(--secondary-color); /* 使用變數 */
     padding: 12px 25px;
-    border-bottom: 1px solid #e0e0e0;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.08); /* 更明顯的陰影 */
+    border-bottom: 1px solid var(--border-color); /* 使用變數 */
+    box-shadow: 0 4px 8px var(--shadow-color); /* 使用變數 */
     margin-bottom: 25px;
     border-radius: 8px;
 }
@@ -13,113 +13,113 @@
 .navbar-brand {
     font-size: 1.3em;
     font-weight: bold;
-    color: #333;
+    color: var(--text-color); /* 使用變數 */
 }
 
 .navbar-buttons {
     display: flex;
-    gap: 15px; /* 增加按鈕間距 */
+    gap: 15px;
     align-items: center;
-    align-content: center; /* 垂直方向上置中對齊多行 flex 項目 */
+    align-content: center;
 }
 
 .navbar-buttons.logged-out-buttons {
-    justify-content: flex-end; /* 未登入時靠右 */
+    justify-content: flex-end;
 }
 
 .navbar-buttons.logged-in-buttons {
-    justify-content: space-evenly; /* 登入後置中水平平均分配 */
-    flex-wrap: wrap; /* 允許按鈕換行 */
-    width: 100%; /* 確保佔滿所有可用空間 */
-    gap: 10px; /* 稍微縮小間距，讓分配更明顯 */
-    row-gap: 12px; /* 增加行之間的間距 */
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 10px;
+    row-gap: 12px;
 }
 
 .user-info {
     margin-right: 10px;
-    font-size: 1.1em; /* 稍微放大字體 */
-    color: #555;
-    flex-basis: 100%; /* 確保用戶資訊在登入後佔據一行 */
-    text-align: center; /* 登入後用戶資訊置中 */
-    margin-bottom: 8px; /* 調整與按鈕的間距，與 row-gap 保持一致 */
+    font-size: 1.1em;
+    color: var(--text-color-secondary); /* 使用變數 */
+    flex-basis: 100%;
+    text-align: center;
+    margin-bottom: 8px;
 }
 
 .firebase-button {
-    background-color: #4CAF50; /* 綠色按鈕 */
-    color: white;
+    background-color: var(--success-color); /* 使用變數 */
+    color: var(--secondary-color); /* 使用變數 */
     border: none;
-    padding: 12px 18px; /* 調整 padding */
-    border-radius: 28px; /* 更圓潤的按鈕 */
+    padding: var(--button-padding-y) var(--button-padding-x); /* 使用變數 */
+    border-radius: var(--button-border-radius); /* 使用變數 */
     cursor: pointer;
-    font-size: 1.2em; /* 放大字體以顯示圖示 */
+    font-size: var(--button-font-size); /* 使用變數 */
     font-weight: 500;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 添加輕微陰影 */
+    box-shadow: 0 2px 4px var(--shadow-color); /* 使用變數 */
     display: flex;
     align-items: center;
     justify-content: center;
-    white-space: nowrap; /* 防止文字換行 */
+    white-space: nowrap;
 }
 
 .firebase-button:hover {
-    background-color: #45a049; /* 懸停時顏色變深 */
-    transform: translateY(-1px); /* 輕微上浮效果 */
+    background-color: color-mix(in srgb, var(--success-color) 85%, black); /* 使用 color-mix 函數 */
+    transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .firebase-button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 /* 圖示與文字之間的間距 */
-.firebase-button i { /* 針對 Font Awesome 圖示 */
-    margin-right: 0px; /* 移除圖示右側間距，因為大部分按鈕只有圖示 */
+.firebase-button i {
+    margin-right: 0px;
 }
 
-.firebase-button span { /* 針對自動備份按鈕中的文字 */
+.firebase-button span {
     margin-left: 5px;
 }
 
 .firebase-button.login-button {
-    background-color: #007bff; /* 藍色登入按鈕 */
+    background-color: var(--primary-button-color); /* 使用變數 */
 }
 
 .firebase-button.login-button:hover {
-    background-color: #0069d9;
+    background-color: color-mix(in srgb, var(--primary-button-color) 85%, black); /* 使用 color-mix 函數 */
 }
 
 .firebase-button.logout-button {
-    background-color: #dc3545; /* 紅色登出按鈕 */
+    background-color: var(--danger-color); /* 使用變數 */
 }
 
 .firebase-button.logout-button:hover {
-    background-color: #c82333;
+    background-color: color-mix(in srgb, var(--danger-color) 85%, black); /* 使用 color-mix 函數 */
 }
 
 .firebase-button.backup-button {
-    background-color: #ffc107; /* 黃色備份按鈕 */
-    color: #333; /* 深色文字 */
+    background-color: var(--warning-color); /* 使用變數 */
+    color: var(--text-color); /* 使用變數 */
 }
 
 .firebase-button.backup-button:hover {
-    background-color: #e0a800;
+    background-color: color-mix(in srgb, var(--warning-color) 85%, black); /* 使用 color-mix 函數 */
 }
 
 .firebase-button.restore-button {
-    background-color: #17a2b8; /* 青色還原按鈕 */
+    background-color: var(--info-color); /* 使用變數 */
 }
 
 .firebase-button.restore-button:hover {
-    background-color: #138496;
+    background-color: color-mix(in srgb, var(--info-color) 85%, black); /* 使用 color-mix 函數 */
 }
 
 .firebase-button.auto-backup-on {
-    background-color: #28a745; /* 綠色，表示開啟 */
+    background-color: var(--success-color); /* 綠色，表示開啟 */
 }
 
 .firebase-button.auto-backup-on:hover {
-    background-color: #218838;
+    background-color: color-mix(in srgb, var(--success-color) 85%, black); /* 使用 color-mix 函數 */
 }
 
 .firebase-button.auto-backup-off {
@@ -127,7 +127,7 @@
 }
 
 .firebase-button.auto-backup-off:hover {
-    background-color: #5a6268;
+    background-color: color-mix(in srgb, #6c757d 85%, black); /* 使用 color-mix 函數 */
 }
 
 /* 媒體查詢 */

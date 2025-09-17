@@ -5,32 +5,32 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* 更深的背景模糊 */
+    background: var(--modal-backdrop-color); /* 使用變數 */
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    backdrop-filter: blur(8px); /* 更強的模糊效果 */
+    backdrop-filter: blur(8px);
 }
 
 .custom-modal-content {
-    background: #fff;
+    background: var(--secondary-color); /* 使用變數 */
     padding: 35px;
     border-radius: 16px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25); /* 更明顯的陰影 */
+    box-shadow: var(--modal-shadow-lg); /* 使用變數 */
     text-align: center;
     max-width: 90%;
-    width: auto; /* 調整寬度為 auto */
-    min-width: 500px; /* 設置最小寬度以容納按鈕 */
+    width: auto;
+    min-width: 500px;
     animation: fadeInScale 0.3s ease-out forwards;
-    color: #333;
+    color: var(--text-color); /* 使用變數 */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: relative;
 }
 
 .custom-modal-content h3 {
     margin-top: 0;
-    color: #4CAF50;
+    color: var(--success-color); /* 使用變數 */
     font-size: 1.6em;
     margin-bottom: 25px;
 }
@@ -44,24 +44,24 @@
 .custom-modal-actions {
     display: flex;
     justify-content: center;
-    flex-wrap: nowrap; /* 防止按鈕換行 */
-    gap: 15px; /* 增加按鈕間距 */
+    flex-wrap: nowrap;
+    gap: 15px;
 }
 
 .custom-modal-actions button {
-    background: #4CAF50;
-    color: white;
+    background: var(--success-color); /* 使用變數 */
+    color: var(--secondary-color); /* 使用變數 */
     border: none;
-    padding: 16px 30px; /* 調整內邊距 */
-    border-radius: 28px;
+    padding: 16px 30px;
+    border-radius: var(--button-border-radius);
     cursor: pointer;
-    font-size: 22px; /* 調整字體大小 */
+    font-size: 22px;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 .custom-modal-actions button.cancel-btn {
-    background: #f44336;
+    background: var(--danger-color); /* 使用變數 */
 }
 
 .custom-modal-actions button:hover {
@@ -81,47 +81,41 @@
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%; /* 為了讓內部內容可以水平置中 */
-    max-width: 500px; /* 限制 toast 的最大寬度 */
+    width: 100%;
+    max-width: 500px;
     height: auto;
     background: none;
     backdrop-filter: none;
-    display: flex; /* 使用 flexbox 讓內容水平置中 */
+    display: flex;
     justify-content: center;
-    align-items: flex-start; /* 讓內容靠上對齊 */
-    z-index: 1050; /* 比其他模態框更高的 z-index */
-    pointer-events: none; /* 讓滑鼠事件穿透此層 */
-    animation: toastSlideInFadeOut 3s forwards ease-out; /* 應用新的動畫 */
+    align-items: flex-start;
+    z-index: 1050;
+    pointer-events: none;
+    animation: toastSlideInFadeOut 3s forwards ease-out;
 }
 
 .temp-message-modal .custom-modal-content {
-    background-color: rgba(33, 37, 41, 0.85); /* 類似 Bootstrap 的深色背景 */
-    color: #fff; /* 白色文字 */
-    padding: 0.75rem 1.25rem; /* 類似 Bootstrap 的內邊距 */
-    max-width: 100%; /* 確保內容框不會超出外部容器 */
-    min-width: 250px; /* 最小寬度 */
+    background-color: var(--dark-background-color); /* 使用變數 */
+    color: var(--secondary-color); /* 使用變數 */
+    padding: 0.75rem 1.25rem;
+    max-width: 100%;
+    min-width: 250px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    border-radius: 15px; /* 讓邊角更圓潤 */
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* 更柔和的陰影 */
+    border-radius: 15px;
+    box-shadow: var(--modal-shadow-md); /* 使用變數 */
     box-sizing: border-box;
-    pointer-events: auto; /* 讓訊息框本身可互動 */
-    animation: none; /* 移除舊的動畫，由外層容器控制 */
-    margin: 0; /* 移除任何可能影響定位的 margin */
+    pointer-events: auto;
+    animation: none;
+    margin: 0;
 }
 
 .temp-message-modal p {
-    margin: 0; /* 確保 margin 為 0 */
+    margin: 0;
     font-size: 1.0rem;
-    /* 移除 flex 相關屬性，讓父容器控制對齊 */
-    /* display: flex; */
-    /* align-items: center; */
-    /* justify-content: center; */
-    /* 移除 line-height，讓瀏覽器處理預設 */
-    /* line-height: 1.2; */
 }
 
 @keyframes fadeInScale {
@@ -194,43 +188,36 @@
 
 /* 訊息類型樣式 (類似 Bootstrap 的顏色) */
 .temp-message-modal .custom-modal-content.success {
-    background-color: #28a745; /* Bootstrap success green */
+    background-color: var(--success-color); /* 使用變數 */
 }
 
 .temp-message-modal .custom-modal-content.error {
-    background-color: #dc3545; /* Bootstrap danger red */
+    background-color: var(--danger-color); /* 使用變數 */
 }
 
 .temp-message-modal .custom-modal-content.info {
-    background-color: #17a2b8; /* Bootstrap info cyan */
+    background-color: var(--info-color); /* 使用變數 */
 }
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
-    /* .custom-modal-overlay { */
-        /* padding: 0 15px; 移除此行以確保水平置中 */
-    /* } */
-
     .custom-modal-content {
         padding: 20px;
-        width: 100%; /* 佔滿可用寬度 */
-        max-width: 380px; /* 最大寬度 */
-        /* margin: 20px auto; 移除此行，讓 .custom-modal-overlay 負責垂直置中 */
+        width: 100%;
+        max-width: 380px;
     }
 
     .custom-modal-overlay.temp-message-modal {
-        top: 10px; /* 手機版從頂部 10px 開始 */
-        max-width: calc(100% - 20px); /* 在手機上留出左右各 10px 的間距 */
+        top: 10px;
+        max-width: calc(100% - 20px);
     }
 
     .temp-message-modal .custom-modal-content {
-        padding: 0.8rem 1.2rem; /* 手機版調整 padding，增加垂直寬度 */
-        font-size: 1.1rem; /* 手機版調整字體大小 */
+        padding: 0.8rem 1.2rem;
+        font-size: 1.1rem;
         min-width: 180px;
-        border-radius: 15px; /* 讓邊角更圓潤 */
-        /* 移除 min-height，讓高度由內容決定 */
-        height: auto; /* 明確設定高度自適應 */
-        /* 移除 flex-shrink，簡化樣式 */
+        border-radius: 15px;
+        height: auto;
     }
 
     .custom-modal-content h3 {
@@ -238,16 +225,14 @@
         margin-bottom: 20px;
     }
 
-    /* 調整手機版 p 標籤樣式，確保行高和邊距 */
     .temp-message-modal p {
-        display: block; /* 讓 p 標籤作為塊級元素 */
-        /* 移除 vertical-align，因為已是 block 元素 */
-        line-height: 1.2; /* 較為平衡的行高 */
+        display: block;
+        line-height: 1.2;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        padding: 0; /* 確保 padding 為 0 */
-        margin: 0; /* 確保 margin 為 0 */
+        padding: 0;
+        margin: 0;
     }
 
     .custom-modal-actions button {
@@ -346,74 +331,39 @@
 
 /* Custom Modal Actions */
 .custom-modal-actions button.change-date-btn {
-    background: #007bff; /* Blue color for change date */
+    background: var(--primary-button-color); /* 使用變數 */
 }
 
 /* Overwrite Confirm Modal Button */
 .custom-modal-actions button.overwrite-btn {
-    background: #FFC107; /* Orange color for overwrite */
-    color: #333; /* Darker text for better contrast */
+    background: var(--warning-color); /* 使用變數 */
+    color: var(--text-color); /* 使用變數 */
 }
 
 /* Date Change Modal Styles */
 .date-change-modal-content {
-    background: #fff;
+    background: var(--secondary-color); /* 使用變數 */
     padding: 35px;
     border-radius: 16px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--modal-shadow-lg); /* 使用變數 */
     text-align: center;
     max-width: 90%;
     width: 380px;
-    color: #333;
+    color: var(--text-color); /* 使用變數 */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .date-change-modal-content input[type="date"] {
-    width: calc(100% - 24px); /* 調整 padding */
-    padding: 12px;
+    width: calc(100% - var(--input-padding-x) * 2); /* 使用變數 */
+    padding: var(--input-padding-y); /* 使用變數 */
     margin-bottom: 25px;
-    border: 1px solid #ccc;
-    border-radius: 22px;
-    font-size: 1.05em;
+    border: 1px solid var(--border-color); /* 使用變數 */
+    border-radius: var(--button-border-radius); /* 使用變數 */
+    font-size: var(--input-font-size); /* 使用變數 */
     box-sizing: border-box;
 }
 
 /* 刪除冗餘的日期更改模態框按鈕樣式 */
-/*
-.date-change-modal-content .modal-actions button {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 28px;
-    cursor: pointer;
-    font-size: 1.05em;
-    margin: 0 10px;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-*/
-
-/*
-.date-change-modal-content .modal-actions button.cancel-btn {
-    background: #f44336;
-}
-*/
-
-/*
-.date-change-modal-content .modal-actions button:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.1);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-*/
-
-/*
-.date-change-modal-content .modal-actions button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-*/
 
 /* Login Modal Styles */
 .login-modal-content {
@@ -421,26 +371,26 @@
 }
 
 .login-modal-content h3 {
-    color: #333; /* 標題顏色 */
-    font-size: 2em; /* 放大標題 */
+    color: var(--text-color); /* 使用變數 */
+    font-size: 2em;
     margin-bottom: 30px;
 }
 
 .login-input {
-    width: calc(100% - 24px); /* 調整 padding */
-    padding: 14px;
+    width: calc(100% - var(--input-padding-x) * 2); /* 使用變數 */
+    padding: var(--input-padding-y); /* 使用變數 */
     margin-bottom: 18px;
-    border: 1px solid #ddd; /* 更淺的邊框 */
-    border-radius: 22px; /* 更圓潤的輸入框 */
-    font-size: 1.1em;
+    border: 1px solid var(--border-color); /* 使用變數 */
+    border-radius: var(--button-border-radius); /* 使用變數 */
+    font-size: var(--input-font-size); /* 使用變數 */
     box-sizing: border-box;
     text-align: left;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .login-input:focus {
-    border-color: #007bff; /* focus 時的藍色邊框 */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* focus 時的陰影 */
+    border-color: var(--primary-button-color); /* 使用變數 */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
     outline: none;
 }
 
@@ -457,7 +407,7 @@
     appearance: none;
     width: 20px;
     height: 20px;
-    border: 2px solid #ccc;
+    border: 2px solid var(--border-color); /* 使用變數 */
     border-radius: 5px;
     margin-right: 10px;
     cursor: pointer;
@@ -467,14 +417,14 @@
 }
 
 .remember-me-group input[type="checkbox"]:checked {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: var(--primary-button-color); /* 使用變數 */
+    border-color: var(--primary-button-color); /* 使用變數 */
 }
 
 .remember-me-group input[type="checkbox"]:checked::before {
-    content: '\2713'; /* 勾選符號 */
+    content: '\2713';
     display: block;
-    color: white;
+    color: var(--secondary-color); /* 使用變數 */
     font-size: 14px;
     line-height: 18px;
     text-align: center;
@@ -486,28 +436,28 @@
 
 .remember-me-group label {
     font-size: 1.05em;
-    color: #555;
+    color: var(--text-color-secondary); /* 使用變數 */
     cursor: pointer;
 }
 
 .login-actions {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* 增加按鈕間距 */
+    gap: 15px;
     margin-top: 25px;
 }
 
 .login-actions .firebase-button {
     width: 100%;
-    padding: 14px 25px;
-    border: none; /* 移除邊框 */
-    border-radius: 28px;
+    padding: var(--button-padding-y) var(--button-padding-x); /* 使用變數 */
+    border: none;
+    border-radius: var(--button-border-radius);
     cursor: pointer;
-    font-size: 1.15em;
+    font-size: var(--button-font-size); /* 使用變數 */
     transition: all 0.3s ease-in-out;
-    color: white;
-    background-color: #007bff; /* 登入按鈕預設為藍色 */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: var(--secondary-color); /* 使用變數 */
+    background-color: var(--primary-button-color); /* 使用變數 */
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 .login-actions .firebase-button:hover {
@@ -522,15 +472,15 @@
 }
 
 .login-actions .signup-button {
-    background-color: #28a745; /* 註冊按鈕為綠色 */
-    color: white;
+    background-color: var(--success-color); /* 使用變數 */
+    color: var(--secondary-color); /* 使用變數 */
     border: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 .login-actions .signup-button:hover {
     background-color: #218838;
-    color: white;
+    color: var(--secondary-color); /* 使用變數 */
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
@@ -541,7 +491,7 @@
 }
 
 .login-error-message {
-    color: #dc3545;
+    color: var(--danger-color); /* 使用變數 */
     margin-top: 20px;
     font-size: 1em;
     font-weight: 500;

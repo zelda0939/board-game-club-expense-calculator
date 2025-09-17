@@ -8,7 +8,26 @@
     --shadow-color: rgba(0, 0, 0, 0.1);
     --danger-color: #e74c3c;
     --success-color: #2ecc71;
-    --text-color-secondary: #7f8c8d; /* 新增次要文字顏色 */
+    --text-color-secondary: #7f8c8d;
+    --info-color: #17a2b8;
+    --warning-color: #ffc107;
+    --primary-button-color: #007bff;
+    --dark-background-color: #212529;
+    --modal-backdrop-color: rgba(0, 0, 0, 0.7);
+    --modal-shadow-lg: 0 15px 40px rgba(0, 0, 0, 0.25);
+    --modal-shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --button-padding-y: 12px;
+    --button-padding-x: 18px;
+    --button-border-radius: 28px;
+    --button-font-size: 1.2em;
+    --input-padding-y: 12px;
+    --input-padding-x: 12px;
+    --input-border-radius: 8px;
+    --input-font-size: 1.1em;
+    --small-button-padding-y: 6px; /* 新增小按鈕 padding */
+    --small-button-padding-x: 10px; /* 新增小按鈕 padding */
+    --small-button-border-radius: 22px; /* 新增小按鈕圓角 */
+    --small-button-font-size: 0.9em; /* 新增小按鈕字體大小 */
 }
 
 body {
@@ -33,9 +52,9 @@ h1 {
 }
 
 .card {
-    background-color: #fff;
+    background-color: var(--secondary-color); /* 使用變數 */
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px var(--shadow-color);
     padding: 20px;
     margin-bottom: 20px;
 }
@@ -72,15 +91,15 @@ h1 {
     text-align: center;
     margin-bottom: 5px;
     font-size: 0.9em;
-    color: #666;
+    color: var(--text-color-secondary); /* 使用變數 */
 }
 
 .input-group input[type="text"] {
     width: 100%;
-    padding: 12px;
+    padding: var(--input-padding-y); /* 使用變數 */
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1.1em;
+    border-radius: var(--input-border-radius);
+    font-size: var(--input-font-size);
     text-align: center;
     box-sizing: border-box;
 }
@@ -92,8 +111,7 @@ input::-webkit-inner-spin-button {
 }
 
 .results-card {
-    background-color: #e8f5e9;
-    /* 淺綠色背景 */
+    background-color: #e8f5e9; /* 淺綠色背景，保持原樣 */
 }
 
 .result-item {
@@ -101,7 +119,7 @@ input::-webkit-inner-spin-button {
     justify-content: space-between;
     align-items: center;
     padding: 15px 0;
-    border-bottom: 1px solid #c8e6c9;
+    border-bottom: 1px solid #c8e6c9; /* 淺綠色邊框，保持原樣 */
 }
 
 .result-item:last-child {
@@ -130,54 +148,78 @@ input::-webkit-inner-spin-button {
 
 .top-controls {
     display: flex;
-    justify-content: center; /* 將子元素置中排列 */
-    align-items: center; /* 垂直居中對齊 */
+    justify-content: center;
+    align-items: center;
     margin-bottom: 20px;
-    flex-wrap: wrap; /* 允許換行，適用於小螢幕 */
-    gap: 15px; /* 元素間的最小間距 */
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .save-load-controls {
     display: flex;
-    flex-direction: row; /* 確保桌面版是水平排列 */
+    flex-direction: row;
     align-items: center;
     gap: 10px;
-    flex-wrap: nowrap; /* 桌面版不換行 */
-    width: 100%; /* 確保容器佔據可用寬度 */
+    flex-wrap: nowrap;
+    width: 100%;
 }
 
 .save-clear-group {
-    display: contents; /* 讓子元素成為父容器的 Flex 項目 */
-    flex-grow: 0; /* 在桌面版不自動擴展 */
-    flex-shrink: 0; /* 在桌面版不自動收縮 */
-    flex-basis: auto; /* 內容決定大小 */
-    gap: 10px; /* 「保存」和「清空」按鈕之間的間距 */
+    display: contents;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+    gap: 10px;
 }
 
 /* 通用按鈕和下拉選單樣式 */
-.save-button, .load-dropdown, .clear-button {
-    padding: 10px 15px;
-    border-radius: 28px;
-    font-size: 16px;
+.base-button {
+    padding: var(--button-padding-y) var(--button-padding-x);
+    border-radius: var(--button-border-radius);
+    font-size: var(--button-font-size);
     cursor: pointer;
     white-space: nowrap;
     height: 40px;
-    box-sizing: border-box; /* 確保 padding 和 border 不會增加寬度 */
-}
-
-.save-button {
-    background-color: #4CAF50;
-    color: white;
+    box-sizing: border-box;
     border: none;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    order: 1; /* 桌面版排在最左邊 */
-    flex-grow: 0; /* 桌面版不自動擴展 */
-    flex-shrink: 0; /* 桌面版不自動收縮 */
+}
+
+.base-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.base-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.save-button {
+    padding: var(--button-padding-y) var(--button-padding-x);
+    border-radius: var(--button-border-radius);
+    font-size: var(--button-font-size);
+    cursor: pointer;
+    white-space: nowrap;
+    height: 40px;
+    box-sizing: border-box;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--success-color);
+    color: var(--secondary-color);
+    order: 1;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .save-button:hover {
@@ -188,34 +230,43 @@ input::-webkit-inner-spin-button {
 
 .save-button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 .load-dropdown {
-    border: 1px solid #ccc;
-    background-color: white;
-    flex-grow: 1; /* 在有空間時擴展 */
-    flex-shrink: 1; /* 允許收縮 */
-    flex-basis: auto; /* 彈性基礎尺寸 */
-    min-width: 150px; /* 確保下拉選單在桌面版有最小寬度 */
-    order: 2; /* 桌面版排在中間 */
-    text-align: center; /* 選單文字置中 */
+    border: 1px solid var(--border-color);
+    background-color: var(--secondary-color);
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    min-width: 150px;
+    order: 2;
+    text-align: center;
+    padding: 10px 15px;
+    border-radius: var(--button-border-radius);
+    font-size: var(--button-font-size);
 }
 
 .clear-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
+    padding: var(--button-padding-y) var(--button-padding-x);
+    border-radius: var(--button-border-radius);
+    font-size: var(--button-font-size);
     cursor: pointer;
+    white-space: nowrap;
+    height: 40px;
+    box-sizing: border-box;
+    border: none;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    order: 3; /* 桌面版排在最右邊 */
-    flex-grow: 0; /* 桌面版不自動擴展 */
-    flex-shrink: 0; /* 桌面版不自動收縮 */
+    background-color: var(--danger-color);
+    color: var(--secondary-color);
+    order: 3;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .clear-button:hover {
@@ -226,24 +277,24 @@ input::-webkit-inner-spin-button {
 
 .clear-button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 .message-display {
-    position: fixed; /* 讓訊息浮動 */
-    top: 20px; /* 改為從頂部20px */
-    left: 50%; /* 水平置中 */
-    transform: translateX(-50%); /* 只在水平方向置中 */
-    background-color: rgba(66, 133, 244, 0.9); /* 更柔和的藍色 */
-    color: white;
-    padding: 12px 25px; /* 增加內邊距 */
-    border-radius: 8px; /* 稍微圓一點的邊角 */
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--info-color);
+    color: var(--secondary-color);
+    padding: 12px 25px;
+    border-radius: 8px;
     text-align: center;
-    font-size: 1.2em; /* 稍微大一點的字體 */
+    font-size: 1.2em;
     font-weight: bold;
-    z-index: 1000; /* 確保在其他元素之上 */
-    width: auto; /* 寬度自適應內容 */
-    max-width: 80%; /* 最大寬度，避免過長 */
+    z-index: 1000;
+    width: auto;
+    max-width: 80%;
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
 }
@@ -252,7 +303,7 @@ input::-webkit-inner-spin-button {
     text-align: center;
     margin-top: 10px;
     font-size: 0.9em;
-    color: #888;
+    color: var(--text-color-secondary);
 }
 
 /* Calculator styles */
@@ -263,7 +314,7 @@ body.no-scroll {
 }
 
 .value.neutral {
-    color: #888; /* 預設灰色 */
+    color: #888;
 }
 
 [v-cloak] {
@@ -274,8 +325,8 @@ body.no-scroll {
 .meal-entries {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* 項目之間的間距 */
-    margin-bottom: 15px; /* 增加每個成員餐費區塊之間的垂直間距 */
+    gap: 8px;
+    margin-bottom: 15px;
 }
 
 .meal-entry {
@@ -285,35 +336,28 @@ body.no-scroll {
 }
 
 .meal-entry input[type="text"] {
-    flex: 1; /* 金額輸入框佔據更多空間 */
+    flex: 1;
 }
 
 .meal-entry input[type="text"][placeholder="備註"] {
-    flex: 2; /* 備註輸入框佔據更多空間 */
-}
-
-.remove-meal-btn,
-.add-meal-btn {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 22px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex: 2;
 }
 
 .remove-meal-btn {
-    background-color: #e74c3c;
-    color: white;
-    padding: 6px 10px; /* 調整內邊距 */
-    border-radius: 50%; /* 讓按鈕變成圓形 */
-    width: 36px; /* 設置固定寬度 */
-    height: 36px; /* 設置固定高度 */
-    display: flex; /* 啟用 Flexbox */
-    align-items: center; /* 垂直置中 */
-    justify-content: center; /* 水平置中 */
-    font-size: 1em; /* 調整字體大小，讓圖示更大 */
+    padding: var(--small-button-padding-y) var(--small-button-padding-x);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1em;
+    background-color: var(--danger-color);
+    color: var(--secondary-color);
+    border: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .remove-meal-btn:hover {
@@ -324,39 +368,38 @@ body.no-scroll {
 
 .remove-meal-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
-/* 重新應用 .add-meal-btn 的基礎樣式，確保其正確 */
 .add-meal-btn {
-    background-color: var(--secondary-color); /* 白底 */
-    color: var(--success-color); /* 綠色文字和圖示 */
-    border: 1px solid var(--success-color); /* 綠色邊框 */
+    padding: var(--small-button-padding-y) var(--small-button-padding-x);
+    border-radius: var(--small-button-border-radius);
+    font-size: var(--small-button-font-size);
+    background-color: var(--secondary-color);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
     margin-top: 10px;
     width: 100%;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px var(--shadow-color);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 10px 15px;
-    border-radius: 22px; /* 確保圓角 */
-    font-size: 0.9em; /* 確保字體大小 */
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .add-meal-btn:hover {
-    background-color: var(--success-color); /* 懸停時背景變綠 */
-    color: var(--secondary-color); /* 懸停時文字變白 */
+    background-color: var(--success-color);
+    color: var(--secondary-color);
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .add-meal-btn:active {
-    background-color: #218838; /* 點擊時背景變深綠 */
+    background-color: #218838;
     color: var(--secondary-color);
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 /* 明細清單 */
@@ -377,32 +420,32 @@ body.no-scroll {
 /* 手機版樣式 */
 @media (max-width: 768px) {
     .save-load-controls {
-        flex-direction: column; /* 垂直堆疊子元素 */
-        align-items: stretch; /* 讓子元素佔滿可用寬度 */
-        gap: 15px; /* 調整垂直間距 */
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
     }
 
     .load-dropdown {
-        width: 100%; /* 手機版佔據完整寬度 */
-        min-width: unset; /* 移除最小寬度限制 */
-        order: 1; /* 手機版排在最上方 */
+        width: 100%;
+        min-width: unset;
+        order: 1;
     }
 
     .save-clear-group {
-        display: flex; /* 啟用 Flexbox */
-        flex-direction: row; /* 內部按鈕水平排列 */
-        flex-wrap: nowrap; /* 不允許內部按鈕換行 */
-        justify-content: space-between; /* 內部按鈕均勻分佈 */
-        width: 100%; /* 佔據完整寬度 */
-        order: 2; /* 手機版排在下拉選單下方 */
-        gap: 10px; /* 按鈕之間的間距 */
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        width: 100%;
+        order: 2;
+        gap: 10px;
     }
 
     .save-button,
     .clear-button {
-        order: unset; /* 移除桌面版的 order */
-        flex-grow: 1; /* 均勻分配空間 */
-        flex-shrink: 0; /* 防止收縮 */
-        flex-basis: calc(50% - 5px); /* 精確計算寬度，考慮到間距 */
+        order: unset;
+        flex-grow: 1;
+        flex-shrink: 0;
+        flex-basis: calc(50% - 5px);
     }
 }
