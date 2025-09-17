@@ -85,7 +85,7 @@ const app = createApp({
         onAuthStateChanged(auth, (user) => {
             this.user = user;
             if (user) {
-                this.showTempMessage("登入成功！");
+                //this.showTempMessage("登入成功！");
                 // 根據 rememberMe 狀態儲存或移除電子郵件
                 if (this.rememberMe) {
                     localStorage.setItem('rememberedEmail', this.loginEmail);

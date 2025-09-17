@@ -25,7 +25,7 @@ export default {
             this.loginError = '';
             const user = await signInWithEmail(this.loginEmail, this.loginPassword);
             if (user) {
-                this.showTempMessage("登入成功！");
+                //this.showTempMessage("登入成功！");
                 this.cancelLoginModal();
                 this.user = user;
             } else {
@@ -57,6 +57,6 @@ export default {
     async firebaseSignOut() {
         await signOutUser();
         this.user = null;
-        this.showTempMessage("已登出。");
+        //this.showTempMessage("已登出。");
     },
 };
