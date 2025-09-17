@@ -3,9 +3,9 @@ import { initialData } from '../dataPersistence.js';
 
 // 模擬 firebaseAuth 模組
 const mockFirebaseAuth = {
-    signOutUser: QUnit.stub(),
-    uploadUserData: QUnit.stub(),
-    downloadUserData: QUnit.stub(),
+    signOutUser: sinon.stub(),
+    uploadUserData: sinon.stub(),
+    downloadUserData: sinon.stub(),
 };
 
 // 替換模組中的導入

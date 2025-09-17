@@ -3,19 +3,19 @@ import { signOutUser, uploadUserData, downloadUserData, createUser, signInWithEm
 QUnit.module('firebaseAuth', hooks => {
     const mockAuth = {};
     const mockFirestore = {
-        doc: QUnit.stub().returns({ /* mock doc ref */ }),
-        setDoc: QUnit.stub().returns(Promise.resolve()),
-        getDoc: QUnit.stub(),
+        doc: sinon.stub().returns({ /* mock doc ref */ }),
+        setDoc: sinon.stub().returns(Promise.resolve()),
+        getDoc: sinon.stub(),
     };
 
     const mockFirebaseFunctions = {
-        signOut: QUnit.stub().returns(Promise.resolve()),
-        createUserWithEmailAndPassword: QUnit.stub(),
-        signInWithEmailAndPassword: QUnit.stub(),
-        getAuth: QUnit.stub().returns(mockAuth),
-        getFirestore: QUnit.stub().returns(mockFirestore),
+        signOut: sinon.stub().returns(Promise.resolve()),
+        createUserWithEmailAndPassword: sinon.stub(),
+        signInWithEmailAndPassword: sinon.stub(),
+        getAuth: sinon.stub().returns(mockAuth),
+        getFirestore: sinon.stub().returns(mockFirestore),
         // onAuthStateChanged 需要特殊處理，它會立即觸發一次，並在登入/登出時再次觸發
-        onAuthStateChanged: QUnit.stub().callsFake((auth, callback) => {
+        onAuthStateChanged: sinon.stub().callsFake((auth, callback) => {
             // 模擬立即觸發一次，通常是 null (未登入)
             callback(null); 
             // 返回一個取消監聽的函數

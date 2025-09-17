@@ -15,7 +15,7 @@ let _getAuth = getAuth;
 let _getFirestore = getFirestore;
 
 // 用於測試的依賴注入函數
-export function setFirebaseMocks(mocks) {
+function setFirebaseMocks(mocks) {
     _signOut = mocks.signOut || signOut;
     _onAuthStateChanged = mocks.onAuthStateChanged || onAuthStateChanged;
     _createUserWithEmailAndPassword = mocks.createUserWithEmailAndPassword || createUserWithEmailAndPassword;

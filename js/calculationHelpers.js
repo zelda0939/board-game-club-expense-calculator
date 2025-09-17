@@ -10,11 +10,11 @@ export default {
             if (Object.hasOwnProperty.call(memberExpenses, key)) {
                 if (key === 'meal' && Array.isArray(memberExpenses[key])) {
                     memberExpenses[key].forEach(meal => {
-                        total += Number(meal.amount.toString().replace(/,/g, '') || 0);
+                        total += parseFloat(meal.amount.toString().replace(/,/g, '')) || 0;
                     });
                 } else {
                     // 將儲存的字串轉換為數字進行計算
-                    total += Number(memberExpenses[key].toString().replace(/,/g, '') || 0);
+                    total += parseFloat(memberExpenses[key].toString().replace(/,/g, '')) || 0;
                 }
             }
         }
