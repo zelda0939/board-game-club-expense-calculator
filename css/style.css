@@ -128,29 +128,6 @@ input::-webkit-inner-spin-button {
     color: var(--danger-color);
 }
 
-.clear-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 28px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.clear-button:hover {
-    background-color: #d32f2f;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.clear-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
 .top-controls {
     display: flex;
     justify-content: center; /* 將子元素置中排列 */
@@ -162,20 +139,30 @@ input::-webkit-inner-spin-button {
 
 .save-load-controls {
     display: flex;
-    gap: 10px; /* 按鈕和下拉選單之間的間距 */
-    align-items: center; /* 垂直居中對齊 */
-    flex-wrap: wrap; /* 允許換行，適用於小螢幕 */
-    justify-content: center; /* 讓內部元素在小螢幕上也能置中 */
+    flex-direction: row; /* 確保桌面版是水平排列 */
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap; /* 桌面版不換行 */
+    width: 100%; /* 確保容器佔據可用寬度 */
 }
 
+.save-clear-group {
+    display: contents; /* 讓子元素成為父容器的 Flex 項目 */
+    flex-grow: 0; /* 在桌面版不自動擴展 */
+    flex-shrink: 0; /* 在桌面版不自動收縮 */
+    flex-basis: auto; /* 內容決定大小 */
+    gap: 10px; /* 「保存」和「清空」按鈕之間的間距 */
+}
+
+/* 通用按鈕和下拉選單樣式 */
 .save-button, .load-dropdown, .clear-button {
     padding: 10px 15px;
     border-radius: 28px;
     font-size: 16px;
     cursor: pointer;
-    white-space: nowrap; /* 防止按鈕文字換行 */
-    height: 40px; /* 設定統一高度 */
-    line-height: 20px; /* 設定統一的行高以垂直居中文字 */
+    white-space: nowrap;
+    height: 40px;
+    box-sizing: border-box; /* 確保 padding 和 border 不會增加寬度 */
 }
 
 .save-button {
@@ -184,6 +171,13 @@ input::-webkit-inner-spin-button {
     border: none;
     transition: all 0.3s ease-in-out;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    order: 1; /* 桌面版排在最左邊 */
+    flex-grow: 0; /* 桌面版不自動擴展 */
+    flex-shrink: 0; /* 桌面版不自動收縮 */
 }
 
 .save-button:hover {
@@ -200,7 +194,39 @@ input::-webkit-inner-spin-button {
 .load-dropdown {
     border: 1px solid #ccc;
     background-color: white;
-    min-width: 180px; /* 讓下拉選單有足夠的寬度 */
+    flex-grow: 1; /* 在有空間時擴展 */
+    flex-shrink: 1; /* 允許收縮 */
+    flex-basis: auto; /* 彈性基礎尺寸 */
+    min-width: 150px; /* 確保下拉選單在桌面版有最小寬度 */
+    order: 2; /* 桌面版排在中間 */
+    text-align: center; /* 選單文字置中 */
+}
+
+.clear-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    order: 3; /* 桌面版排在最右邊 */
+    flex-grow: 0; /* 桌面版不自動擴展 */
+    flex-shrink: 0; /* 桌面版不自動收縮 */
+}
+
+.clear-button:hover {
+    background-color: #d32f2f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.clear-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .message-display {
@@ -280,6 +306,14 @@ body.no-scroll {
 .remove-meal-btn {
     background-color: #e74c3c;
     color: white;
+    padding: 6px 10px; /* 調整內邊距 */
+    border-radius: 50%; /* 讓按鈕變成圓形 */
+    width: 36px; /* 設置固定寬度 */
+    height: 36px; /* 設置固定高度 */
+    display: flex; /* 啟用 Flexbox */
+    align-items: center; /* 垂直置中 */
+    justify-content: center; /* 水平置中 */
+    font-size: 1em; /* 調整字體大小，讓圖示更大 */
 }
 
 .remove-meal-btn:hover {
@@ -293,19 +327,34 @@ body.no-scroll {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* 重新應用 .add-meal-btn 的基礎樣式，確保其正確 */
 .add-meal-btn {
-    background-color: #28a745;
-    color: white;
-    margin-top: 10px; /* 與上方餐費項目的間距 */
+    background-color: var(--secondary-color); /* 白底 */
+    color: var(--success-color); /* 綠色文字和圖示 */
+    border: 1px solid var(--success-color); /* 綠色邊框 */
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border-radius: 22px; /* 確保圓角 */
+    font-size: 0.9em; /* 確保字體大小 */
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .add-meal-btn:hover {
-    background-color: #218838;
+    background-color: var(--success-color); /* 懸停時背景變綠 */
+    color: var(--secondary-color); /* 懸停時文字變白 */
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .add-meal-btn:active {
+    background-color: #218838; /* 點擊時背景變深綠 */
+    color: var(--secondary-color);
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
@@ -323,4 +372,37 @@ body.no-scroll {
 
 .detail-card li:last-child {
     border-bottom: none;
+}
+
+/* 手機版樣式 */
+@media (max-width: 768px) {
+    .save-load-controls {
+        flex-direction: column; /* 垂直堆疊子元素 */
+        align-items: stretch; /* 讓子元素佔滿可用寬度 */
+        gap: 15px; /* 調整垂直間距 */
+    }
+
+    .load-dropdown {
+        width: 100%; /* 手機版佔據完整寬度 */
+        min-width: unset; /* 移除最小寬度限制 */
+        order: 1; /* 手機版排在最上方 */
+    }
+
+    .save-clear-group {
+        display: flex; /* 啟用 Flexbox */
+        flex-direction: row; /* 內部按鈕水平排列 */
+        flex-wrap: nowrap; /* 不允許內部按鈕換行 */
+        justify-content: space-between; /* 內部按鈕均勻分佈 */
+        width: 100%; /* 佔據完整寬度 */
+        order: 2; /* 手機版排在下拉選單下方 */
+        gap: 10px; /* 按鈕之間的間距 */
+    }
+
+    .save-button,
+    .clear-button {
+        order: unset; /* 移除桌面版的 order */
+        flex-grow: 1; /* 均勻分配空間 */
+        flex-shrink: 0; /* 防止收縮 */
+        flex-basis: calc(50% - 5px); /* 精確計算寬度，考慮到間距 */
+    }
 }

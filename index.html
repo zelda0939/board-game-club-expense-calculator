@@ -53,14 +53,16 @@
         <h1>桌遊社花費分攤計算機</h1>
         <div class="top-controls">
             <div class="save-load-controls">
-                <button @click="saveCurrentData" class="save-button">保存</button>
+                <div class="save-clear-group">
+                    <button @click="saveCurrentData" class="save-button"><i class="fa-solid fa-save"></i> 保存</button>
+                    <button @click="clearInputs" class="clear-button"><i class="fa-solid fa-eraser"></i> 清空</button>
+                </div>
                 <select v-model="selectedSaveEntry" @change="handleSaveEntrySelection" class="load-dropdown">
                     <option value="">選擇要載入的數據</option>
                     <option v-for="entry in savedEntries" :key="entry.date" :value="entry.date">
                         {{ entry.date }}
                     </option>
                 </select>
-                <button @click="clearInputs" class="clear-button">清空</button>
             </div>
         </div>
         <div v-if="loadMessage" class="message-display">
@@ -82,9 +84,9 @@
                         <input type="text"
                                v-model="meal.note"
                                placeholder="備註">
-                        <button @click="removeMealEntry('reimbursable.me.meal', index)" class="remove-meal-btn">－</button>
+                        <button @click="removeMealEntry('reimbursable.me.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
-                    <button @click="addMealEntry('reimbursable.me.meal')" class="add-meal-btn">＋ 新增餐費</button>
+                    <button @click="addMealEntry('reimbursable.me.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
                 </div>
                 <div class="input-wrapper meal-entries">
                     <span>Emma</span>
@@ -97,9 +99,9 @@
                         <input type="text"
                                v-model="meal.note"
                                placeholder="備註">
-                        <button @click="removeMealEntry('reimbursable.wife.meal', index)" class="remove-meal-btn">－</button>
+                        <button @click="removeMealEntry('reimbursable.wife.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
-                    <button @click="addMealEntry('reimbursable.wife.meal')" class="add-meal-btn">＋ 新增餐費</button>
+                    <button @click="addMealEntry('reimbursable.wife.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
                 </div>
                 <div class="input-wrapper meal-entries">
                     <span>Andrew</span>
@@ -112,9 +114,9 @@
                         <input type="text"
                                v-model="meal.note"
                                placeholder="備註">
-                        <button @click="removeMealEntry('reimbursable.brother.meal', index)" class="remove-meal-btn">－</button>
+                        <button @click="removeMealEntry('reimbursable.brother.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
-                    <button @click="addMealEntry('reimbursable.brother.meal')" class="add-meal-btn">＋ 新增餐費</button>
+                    <button @click="addMealEntry('reimbursable.brother.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
                 </div>
             </div>
             <div class="input-group">
@@ -152,9 +154,9 @@
                         <input type="text"
                                v-model="meal.note"
                                placeholder="備註">
-                        <button @click="removeMealEntry('our_own.me.meal', index)" class="remove-meal-btn">－</button>
+                        <button @click="removeMealEntry('our_own.me.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
-                    <button @click="addMealEntry('our_own.me.meal')" class="add-meal-btn">＋ 新增餐費</button>
+                    <button @click="addMealEntry('our_own.me.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
                 </div>
                 <div class="input-wrapper meal-entries">
                     <span>Emma</span>
@@ -167,9 +169,9 @@
                         <input type="text"
                                v-model="meal.note"
                                placeholder="備註">
-                        <button @click="removeMealEntry('our_own.wife.meal', index)" class="remove-meal-btn">－</button>
+                        <button @click="removeMealEntry('our_own.wife.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
-                    <button @click="addMealEntry('our_own.wife.meal')" class="add-meal-btn">＋ 新增餐費</button>
+                    <button @click="addMealEntry('our_own.wife.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
                 </div>
             </div>
             <div class="input-group">
