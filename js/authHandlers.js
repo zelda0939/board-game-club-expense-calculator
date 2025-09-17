@@ -47,7 +47,6 @@ export default {
                 this.user = user;
             }
         } catch (error) {
-            console.log("Caught error in handleEmailSignUp:", error.code, error.message);
             if (error.code === 'auth/email-already-in-use') {
                 this.loginError = "該電子郵件已被註冊。";
             } else if (error.code === 'auth/weak-password') {
@@ -62,7 +61,6 @@ export default {
                 console.error("電子郵件註冊錯誤:", error);
                 this.loginError = error.message; // 顯示更詳細的錯誤訊息
             }
-            console.log("loginError after setting:", this.loginError);
         }
     },
     // 處理登出

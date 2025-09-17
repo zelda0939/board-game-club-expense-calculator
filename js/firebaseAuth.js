@@ -82,7 +82,6 @@ async function createUser(email, password) {
     console.log("註冊成功", user);
     return user;
   } catch (error) {
-    console.log("Error in createUser function:", error);
     console.error("註冊失敗", error);
     throw error; // 重新拋出錯誤，以便上層函數可以捕獲它
   }

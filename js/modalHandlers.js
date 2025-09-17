@@ -14,13 +14,20 @@ export default {
         // 根據訊息長度自動調整顯示時間
         const messageLength = message.length; // 訊息字數
         const readingSpeed = 18; // 每秒閱讀字數 (例如 4 個中文字/秒)
-        let displayDuration = duration || (Math.ceil(messageLength / readingSpeed) * 1000); // 計算毫秒數
-
+        let displayDuration;
+        if (duration !== undefined) { // 如果明確提供了 duration 參數，則優先使用它
+            displayDuration = duration;
+        } else {
+            // 否則，根據訊息長度自動調整顯示時間
+            displayDuration = Math.ceil(messageLength / readingSpeed) * 1000;
+        }
         // 設定最小和最大顯示時間
         const minDuration = 1500; // 1.5 秒
         const maxDuration = 5000; // 5 秒
 
-        displayDuration = Math.max(minDuration, Math.min(displayDuration, maxDuration));
+        if (duration === undefined) { // 只有在沒有明確提供 duration 時，才應用最小和最大時間限制
+            displayDuration = Math.max(minDuration, Math.min(displayDuration, maxDuration));
+        }
 
         this.messageTimeout = setTimeout(() => {
             this.tempMessageModal.visible = false;
