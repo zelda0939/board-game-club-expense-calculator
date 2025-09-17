@@ -21,6 +21,8 @@
     gap: 15px;
     align-items: center;
     align-content: center;
+    flex-shrink: 1; /* 允許容器在空間不足時收縮 */
+    flex-grow: 1; /* 允許容器擴展佔據剩餘空間 */
 }
 
 .navbar-buttons.logged-out-buttons {
@@ -28,11 +30,10 @@
 }
 
 .navbar-buttons.logged-in-buttons {
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    width: 100%;
-    gap: 10px;
-    row-gap: 12px;
+    justify-content: space-evenly; /* 電腦版按鈕水平平均分布 */
+    flex-wrap: nowrap; /* 電腦版不換行 */
+    /* 移除 width: 100%; 讓寬度根據內容自動調整 */
+    /* 移除 gap 和 row-gap，繼承父級 .navbar-buttons 的 gap */
 }
 
 .user-info {
@@ -48,7 +49,7 @@
     background-color: var(--success-color); /* 使用變數 */
     color: var(--secondary-color); /* 使用變數 */
     border: none;
-    padding: var(--button-padding-y) var(--button-padding-x); /* 使用變數 */
+    padding: 8px 12px; /* 統一按鈕 padding，使其在桌面版更緊湊 */
     border-radius: var(--button-border-radius); /* 使用變數 */
     cursor: pointer;
     font-size: var(--button-font-size); /* 使用變數 */
@@ -145,20 +146,33 @@
 
     .navbar-buttons {
         flex-wrap: wrap;
-        justify-content: flex-end;
+        justify-content: space-evenly; /* 手機版按鈕水平平均分布 */
         gap: 8px;
         align-content: center; /* 垂直方向上置中對齊多行 flex 項目 */
+        width: 100%; /* 確保佔滿父級寬度 */
     }
 
     .navbar-buttons.logged-in-buttons {
+        justify-content: space-evenly; /* 手機版按鈕水平平均分布 */
         gap: 6px; /* 手機版進一步縮小間距 */
         row-gap: 10px; /* 手機版行之間間距 */
+        flex-wrap: wrap; /* 手機版換行 */
     }
 
     .firebase-button {
         padding: 8px 12px; /* 進一步縮小 padding */
         font-size: 1.1em; /* 調整字體大小 */
         border-radius: 22px;
+    }
+
+    .firebase-button span {
+        display: none; /* 在手機版隱藏文字 */
+    }
+
+    /* 確保 Auto: on/off 按鈕在手機版顯示文字 */
+    .firebase-button.auto-backup-on span,
+    .firebase-button.auto-backup-off span {
+        display: inline-block;
     }
 
     .user-info {

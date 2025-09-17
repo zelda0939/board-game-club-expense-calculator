@@ -22,13 +22,13 @@
         <nav class="navbar">
             <div class="navbar-brand"></div>
             <div class="navbar-buttons" :class="{'logged-out-buttons': !user, 'logged-in-buttons': user}">
-                <button v-if="!user" @click="showLoginModal" class="firebase-button login-button"><i class="fa-solid fa-right-to-bracket"></i>登入</button>
-                <button v-if="user" @click="firebaseSignOut" class="firebase-button logout-button"><i class="fa-solid fa-right-from-bracket"></i></button>
+                <button v-if="!user" @click="showLoginModal" class="firebase-button login-button"><i class="fa-solid fa-right-to-bracket"></i><span>登入</span></button>
+                <button v-if="user" @click="firebaseSignOut" class="firebase-button logout-button"><i class="fa-solid fa-right-from-bracket"></i><span>登出</span></button>
                 <button v-if="user" @click="toggleAutoBackup" :class="{'firebase-button': true, 'auto-backup-on': enableAutoBackup, 'auto-backup-off': !enableAutoBackup}">
                     <i class="fa-solid fa-cloud-arrow-up"></i> <span>{{ enableAutoBackup ? 'Auto: on' : 'Auto: off' }}</span>
                 </button>
-                <button v-if="user" @click="backupToCloud(false)" class="firebase-button backup-button"><i class="fa-solid fa-cloud-arrow-up"></i></button>
-                <button v-if="user" @click="restoreFromCloud" class="firebase-button restore-button"><i class="fa-solid fa-cloud-arrow-down"></i></button>
+                <button v-if="user" @click="backupToCloud(false)" class="firebase-button backup-button"><i class="fa-solid fa-cloud-arrow-up"></i> <span>備份</span></button>
+                <button v-if="user" @click="restoreFromCloud" class="firebase-button restore-button"><i class="fa-solid fa-cloud-arrow-down"></i> <span>還原</span></button>
             </div>
         </nav>
 
