@@ -378,6 +378,8 @@
     box-sizing: border-box;
 }
 
+/* 刪除冗餘的日期更改模態框按鈕樣式 */
+/*
 .date-change-modal-content .modal-actions button {
     background: #4CAF50;
     color: white;
@@ -390,21 +392,28 @@
     transition: all 0.3s ease-in-out;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+*/
 
+/*
 .date-change-modal-content .modal-actions button.cancel-btn {
     background: #f44336;
 }
+*/
 
+/*
 .date-change-modal-content .modal-actions button:hover {
     transform: translateY(-1px);
     filter: brightness(1.1);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
+*/
 
+/*
 .date-change-modal-content .modal-actions button:active {
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+*/
 
 /* Login Modal Styles */
 .login-modal-content {

@@ -258,7 +258,7 @@
                 <h3>修改數據日期</h3>
                 <p>將 <span style="font-weight: bold;">{{ dateChangeModal.originalDate }}</span> 的數據修改為：</p>
                 <input type="date" v-model="dateChangeModal.newDate" ref="dateInput" @click="openDatePicker">
-                <div class="modal-actions">
+                <div class="custom-modal-actions">
                     <button @click="confirmDateChange">確認修改</button>
                     <button @click="cancelDateChange" class="cancel-btn">取消</button>
                 </div>
