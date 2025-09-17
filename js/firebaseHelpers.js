@@ -5,9 +5,19 @@
  */
 import { signOutUser, uploadUserData, downloadUserData } from './firebaseAuth.js';
 
+let _signOutUser = signOutUser;
+let _uploadUserData = uploadUserData;
+let _downloadUserData = downloadUserData;
+
+export function setFirebaseAuthMocksForHelpers(mocks) {
+    _signOutUser = mocks.signOutUser || signOutUser;
+    _uploadUserData = mocks.uploadUserData || uploadUserData;
+    _downloadUserData = mocks.downloadUserData || downloadUserData;
+}
+
 export default {
     async firebaseSignOut() {
-        const success = await signOutUser();
+        const success = await _signOutUser();
         if (!success) {
             this.showTempMessage("登出失敗，請重試！", 2000);
         }
@@ -20,7 +30,7 @@ export default {
                 our_own: this.our_own,
                 savedEntries: this.savedEntries // 也備份 savedEntries
             };
-            const success = await uploadUserData(this.user.uid, currentData);
+            const success = await _uploadUserData(this.user.uid, currentData);
             if (success) {
                 if (!isAutoBackup) {
                     this.showTempMessage("資料已成功備份至雲端！", 2000);
@@ -36,7 +46,7 @@ export default {
     async restoreFromCloud() {
         if (this.user) {
             this.showTempMessage("正在從雲端下載資料...", 1000);
-            const cloudData = await downloadUserData(this.user.uid);
+            const cloudData = await _downloadUserData(this.user.uid);
             if (cloudData) {
                 // 將下載的數據應用到本地狀態
                 this.assignSavedData(this.reimbursable, cloudData.reimbursable);

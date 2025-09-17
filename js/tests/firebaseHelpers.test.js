@@ -1,4 +1,4 @@
-import firebaseHelpers from '../firebaseHelpers.js';
+import firebaseHelpers, { setFirebaseAuthMocksForHelpers } from '../firebaseHelpers.js';
 import { initialData } from '../dataPersistence.js';
 
 // 模擬 firebaseAuth 模組
@@ -8,24 +8,18 @@ const mockFirebaseAuth = {
     downloadUserData: sinon.stub(),
 };
 
-// 替換模組中的導入
-// 注意：在真實的 ES 模組環境中，直接替換導入會比較困難，
-// 通常會使用依賴注入或測試工具的特殊功能。
-// 這裡我們假設可以通過某種方式（例如在測試環境中覆蓋模組）來實現。
-// 對於簡單的 QUnit 測試，我們可以直接在 beforeEach 中將模擬函數設置到 vm 中，
-// 讓 firebaseHelpers 模組通過 this 訪問這些模擬函數。
-// 或者，如果 firebaseHelpers 是直接導入這些函數並使用，那麼需要更精細的模擬方法。
-// 為了簡化，我們將模擬函數直接作為 vm 的屬性，並假設 firebaseHelpers 內部會通過 this 訪問它們。
-
 QUnit.module('firebaseHelpers', hooks => {
     let vm;
     let originalLocalStorage;
 
     hooks.beforeEach(() => {
-        // 恢復所有 stub
+        // 重置所有 stub
         mockFirebaseAuth.signOutUser.reset();
         mockFirebaseAuth.uploadUserData.reset();
         mockFirebaseAuth.downloadUserData.reset();
+
+        // 注入模擬函數到 firebaseHelpers 模組中
+        setFirebaseAuthMocksForHelpers(mockFirebaseAuth);
 
         // 模擬 localStorage
         originalLocalStorage = window.localStorage;
@@ -58,12 +52,8 @@ QUnit.module('firebaseHelpers', hooks => {
             our_own: JSON.parse(JSON.stringify(initialData.our_own)),
             savedEntries: [],
             enableAutoBackup: false,
-            showTempMessage: QUnit.stub(),
-            assignSavedData: QUnit.stub(),
-            // 將模擬的 firebaseAuth 函數綁定到 vm 上，讓 firebaseHelpers 可以通過 this 訪問
-            signOutUser: mockFirebaseAuth.signOutUser,
-            uploadUserData: mockFirebaseAuth.uploadUserData,
-            downloadUserData: mockFirebaseAuth.downloadUserData,
+            showTempMessage: sinon.stub(),
+            assignSavedData: sinon.stub(),
         };
 
         // 將 firebaseHelpers 的方法綁定到模擬的 vm 上

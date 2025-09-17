@@ -75,8 +75,10 @@ export default {
         // 使用初始數據結構重置所有欄位
         Object.assign(this.$data, JSON.parse(JSON.stringify(initialData)));
         localStorage.removeItem('familyCostCalculator');
+        localStorage.removeItem('familyCostCalculatorSavedEntries'); // 確保移除 savedEntries 的 localStorage
         this.selectedSaveEntry = '';
-        // 重新載入保存的項目，確保下拉選單更新但數據不被清除
+        this.savedEntries = []; // 明確清空 savedEntries 陣列
+        // 重新載入保存的項目，確保下拉選單更新但數據不被清除 (此時應該是空的)
         this.loadSavedEntries();
         this.selectedSaveEntry = ''; // 再次確保 selectedSaveEntry 為空，覆蓋 loadSavedEntries 的預設選擇
     },

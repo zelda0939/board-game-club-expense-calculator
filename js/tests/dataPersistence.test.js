@@ -58,10 +58,18 @@ QUnit.module('dataPersistence', hooks => {
                 this.tempMessageModal.message = message;
                 this.tempMessageModal.visible = true;
             },
-            // 確保 Vue 實例的 $data 物件包含所有 initialData 的屬性，並且是響應式的
-            reimbursable: JSON.parse(JSON.stringify(initialData.reimbursable)),
-            our_own: JSON.parse(JSON.stringify(initialData.our_own)),
+            showOverwriteConfirm: sinon.stub().callsFake(function(originalDate, newDate) {
+                this.overwriteConfirmModal.visible = true;
+                this.overwriteConfirmModal.originalDate = originalDate;
+                this.overwriteConfirmModal.newDate = newDate;
+                this.overwriteConfirmModal.message = `日期 ${newDate} 已有數據，是否覆蓋？`;
+            }), // 新增 showOverwriteConfirm 的 stub
         };
+
+        // 確保 Vue 實例的 $data 物件包含所有 initialData 的屬性，並且是響應式的
+        // 修正這裡，讓 vm.reimbursable 和 vm.our_own 引用 vm.$data 中的物件
+        vm.reimbursable = vm.$data.reimbursable;
+        vm.our_own = vm.$data.our_own;
 
         // 將 dataPersistence 的方法綁定到模擬的 vm 上
         for (const key in dataPersistence) {
