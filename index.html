@@ -36,8 +36,8 @@
         <div v-if="loginModalVisible" class="custom-modal-overlay" @click.self="cancelLoginModal">
             <div class="custom-modal-content login-modal-content">
                 <h3>登入 / 註冊</h3>
-                <input type="email" v-model="loginEmail" placeholder="電子郵件" class="login-input">
-                <input type="password" v-model="loginPassword" placeholder="密碼" class="login-input">
+                <input type="email" v-model="loginEmail" placeholder="電子郵件" class="login-input" @keyup.enter="handleEmailSignIn">
+                <input type="password" v-model="loginPassword" placeholder="密碼" class="login-input" @keyup.enter="handleEmailSignIn">
                 <div class="remember-me-group">
                     <input type="checkbox" id="rememberMe" v-model="rememberMe">
                     <label for="rememberMe">記住我</label>

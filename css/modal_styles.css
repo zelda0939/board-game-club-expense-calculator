@@ -105,7 +105,7 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    border-radius: 0.25rem; /* 類似 Bootstrap 的圓角 */
+    border-radius: 15px; /* 讓邊角更圓潤 */
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* 更柔和的陰影 */
     box-sizing: border-box;
     pointer-events: auto; /* 讓訊息框本身可互動 */
@@ -224,9 +224,10 @@
     }
 
     .temp-message-modal .custom-modal-content {
-        padding: 0.4rem 0.6rem; /* 手機版調整 padding，更緊湊 */
-        font-size: 0.9rem; /* 手機版調整字體大小 */
+        padding: 0.8rem 1.2rem; /* 手機版調整 padding，增加垂直寬度 */
+        font-size: 1.1rem; /* 手機版調整字體大小 */
         min-width: 180px;
+        border-radius: 15px; /* 讓邊角更圓潤 */
         /* 移除 min-height，讓高度由內容決定 */
         height: auto; /* 明確設定高度自適應 */
         /* 移除 flex-shrink，簡化樣式 */
