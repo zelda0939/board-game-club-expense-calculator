@@ -53,12 +53,14 @@
     cursor: pointer;
     font-size: var(--button-font-size); /* 使用變數 */
     font-weight: 500;
+    height: 40px; /* 統一按鈕高度 */
     transition: all 0.3s ease-in-out;
     box-shadow: 0 2px 4px var(--shadow-color); /* 使用變數 */
     display: flex;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
+    gap: 8px; /* 新增圖示與文字間距 */
 }
 
 .firebase-button:hover {
@@ -73,13 +75,17 @@
 }
 
 /* 圖示與文字之間的間距 */
+/*
 .firebase-button i {
     margin-right: 0px;
 }
+*/
 
+/*
 .firebase-button span {
     margin-left: 5px;
 }
+*/
 
 .firebase-button.login-button {
     background-color: var(--primary-button-color); /* 使用變數 */
