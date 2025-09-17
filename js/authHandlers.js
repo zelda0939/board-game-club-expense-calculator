@@ -12,7 +12,10 @@ export default {
     // 隱藏登入模態框
     cancelLoginModal() {
         this.loginModalVisible = false;
-        this.loginEmail = '';
+        // 如果沒有勾選記住我，則清除電子郵件，否則保留
+        if (!this.rememberMe) {
+            this.loginEmail = '';
+        }
         this.loginPassword = '';
         this.loginError = '';
     },

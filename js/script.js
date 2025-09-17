@@ -59,6 +59,7 @@ const app = createApp({
             loginEmail: '', // 綁定電子郵件輸入
             loginPassword: '', // 綁定密碼輸入
             loginError: '', // 登入錯誤訊息
+            rememberMe: false, // 新增記住我狀態
         };
     },
     mounted() {
@@ -69,6 +70,14 @@ const app = createApp({
             this.assignSavedData(this.reimbursable, parsedData.reimbursable);
             this.assignSavedData(this.our_own, parsedData.our_own);
         }
+
+        // 載入記住的電子郵件
+        const rememberedEmail = localStorage.getItem('rememberedEmail');
+        if (rememberedEmail) {
+            this.loginEmail = rememberedEmail;
+            this.rememberMe = true;
+        }
+
         // 移除 mounted 時的 loadSavedEntries 呼叫，因為已在 data() 中初始化
         // this.loadSavedEntries(); // 在 mounted 時載入已保存的數據，確保總是執行
 
@@ -76,6 +85,15 @@ const app = createApp({
         onAuthStateChanged(auth, (user) => {
             this.user = user;
             if (user) {
+                this.showTempMessage("登入成功！");
+                // 根據 rememberMe 狀態儲存或移除電子郵件
+                if (this.rememberMe) {
+                    localStorage.setItem('rememberedEmail', this.loginEmail);
+                } else {
+                    localStorage.removeItem('rememberedEmail');
+                }
+                this.cancelLoginModal();
+                this.user = user;
                 console.log("Vue 應用程式中：使用者已登入", user.displayName);
                 // 登入後觸發一次完整備份
                 // this.backupToCloud(); // 根據使用者要求，取消登入後自動備份

@@ -38,6 +38,10 @@
                 <h3>登入 / 註冊</h3>
                 <input type="email" v-model="loginEmail" placeholder="電子郵件" class="login-input">
                 <input type="password" v-model="loginPassword" placeholder="密碼" class="login-input">
+                <div class="remember-me-group">
+                    <input type="checkbox" id="rememberMe" v-model="rememberMe">
+                    <label for="rememberMe">記住我</label>
+                </div>
                 <div class="login-actions">
                     <button @click="handleEmailSignIn" class="firebase-button">登入</button>
                     <button @click="handleEmailSignUp" class="firebase-button signup-button">註冊</button>
