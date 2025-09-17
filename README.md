@@ -52,6 +52,24 @@
 6.  **清空所有欄位：** 點擊頁面頂部的「清空」按鈕可以重置所有輸入和計算結果。
 7.  **提示訊息：** 操作成功或失敗時，頁面中央會短暫顯示美觀的提示訊息，並在 1.5 秒後自動消失。
 
+## 測試
+為了確保專案程式碼的品質和可靠性，我們已引入單元測試。
+
+### 使用工具
+*   **QUnit:** 作為 JavaScript 的測試框架，提供易於使用的斷言 (assertions) 和測試組織結構。
+*   **Sinon.js:** 作為測試替身 (test doubles) 庫，用於創建 stub 和 mock，以便在隔離的環境中測試模組，避免與外部依賴（如 `localStorage` 和 Firebase 服務）進行實際互動。
+
+### 已測試模組
+我們已為以下核心模組撰寫了單元測試：
+*   `js/calculationHelpers.js`: 核心財務計算邏輯。
+*   `js/dataPersistence.js`: 數據在 `localStorage` 中的保存、載入、清空、更新和刪除邏輯。
+*   `js/firebaseAuth.js`: Firebase 認證（登入、註冊、登出）和 Firestore 數據上傳/下載操作。
+*   `js/firebaseHelpers.js`: 處理 Firebase 相關的輔助功能，如數據備份到雲端、從雲端還原資料以及自動備份切換。
+
+### 如何運行測試
+1.  在瀏覽器中打開 `test_calculator.html` 文件。
+2.  QUnit 測試結果將會自動顯示在頁面中，您可以查看每個測試的通過/失敗狀態以及詳細資訊。
+
 ## 部署到 GitHub Pages
 您可以輕鬆將此計算機部署到 GitHub Pages，使其成為一個公開的網頁應用程式：
 1.  **創建 GitHub 儲存庫：** 將此專案的所有文件上傳到一個新的 GitHub 儲存庫中。
