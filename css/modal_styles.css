@@ -52,12 +52,12 @@
     color: white;
     border: none;
     padding: 14px 28px;
-    border-radius: 10px;
+    border-radius: 28px;
     cursor: pointer;
     font-size: 1.1em;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
     min-width: 120px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .custom-modal-actions button.cancel-btn {
@@ -65,14 +65,14 @@
 }
 
 .custom-modal-actions button:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     filter: brightness(1.1);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .custom-modal-actions button:active {
     transform: translateY(0);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Temporary Message Modal */
@@ -81,7 +81,7 @@
     color: white;
     padding: 25px;
     width: 300px;
-    border-radius: 12px;
+    border-radius: 28px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     animation: fadeInOut 2.5s forwards;
 }
@@ -267,7 +267,7 @@
     padding: 12px;
     margin-bottom: 25px;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 22px;
     font-size: 1.05em;
     box-sizing: border-box;
 }
@@ -277,15 +277,27 @@
     color: white;
     border: none;
     padding: 12px 25px;
-    border-radius: 8px;
+    border-radius: 28px;
     cursor: pointer;
     font-size: 1.05em;
     margin: 0 10px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .date-change-modal-content .modal-actions button.cancel-btn {
     background: #f44336;
+}
+
+.date-change-modal-content .modal-actions button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.date-change-modal-content .modal-actions button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Login Modal Styles */
@@ -304,7 +316,7 @@
     padding: 14px;
     margin-bottom: 18px;
     border: 1px solid #ddd; /* 更淺的邊框 */
-    border-radius: 10px; /* 更圓潤的輸入框 */
+    border-radius: 22px; /* 更圓潤的輸入框 */
     font-size: 1.1em;
     box-sizing: border-box;
     text-align: left;
@@ -374,43 +386,43 @@
     width: 100%;
     padding: 14px 25px;
     border: none; /* 移除邊框 */
-    border-radius: 10px;
+    border-radius: 28px;
     cursor: pointer;
     font-size: 1.15em;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
     color: white;
     background-color: #007bff; /* 登入按鈕預設為藍色 */
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .login-actions .firebase-button:hover {
     background-color: #0069d9;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .login-actions .firebase-button:active {
     transform: translateY(0);
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .login-actions .signup-button {
     background-color: #28a745; /* 註冊按鈕為綠色 */
     color: white;
     border: none;
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .login-actions .signup-button:hover {
     background-color: #218838;
     color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .login-actions .signup-button:active {
     transform: translateY(0);
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .login-error-message {

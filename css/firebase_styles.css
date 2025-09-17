@@ -17,7 +17,7 @@
 
 .navbar-buttons {
     display: flex;
-    gap: 12px; /* 增加按鈕間距 */
+    gap: 15px; /* 增加按鈕間距 */
     align-items: center;
     align-content: center; /* 垂直方向上置中對齊多行 flex 項目 */
 }
@@ -30,13 +30,13 @@
     justify-content: space-evenly; /* 登入後置中水平平均分配 */
     flex-wrap: wrap; /* 允許按鈕換行 */
     width: 100%; /* 確保佔滿所有可用空間 */
-    gap: 8px; /* 稍微縮小間距，讓分配更明顯 */
-    row-gap: 10px; /* 增加行之間的間距 */
+    gap: 10px; /* 稍微縮小間距，讓分配更明顯 */
+    row-gap: 12px; /* 增加行之間的間距 */
 }
 
 .user-info {
     margin-right: 10px;
-    font-size: 1em; /* 稍微放大字體 */
+    font-size: 1.1em; /* 稍微放大字體 */
     color: #555;
     flex-basis: 100%; /* 確保用戶資訊在登入後佔據一行 */
     text-align: center; /* 登入後用戶資訊置中 */
@@ -47,10 +47,10 @@
     background-color: #4CAF50; /* 綠色按鈕 */
     color: white;
     border: none;
-    padding: 10px 15px; /* 調整 padding */
-    border-radius: 25px; /* 更圓潤的按鈕 */
+    padding: 12px 18px; /* 調整 padding */
+    border-radius: 28px; /* 更圓潤的按鈕 */
     cursor: pointer;
-    font-size: 1.1em; /* 放大字體以顯示圖示 */
+    font-size: 1.2em; /* 放大字體以顯示圖示 */
     font-weight: 500;
     transition: all 0.3s ease-in-out;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 添加輕微陰影 */
@@ -139,25 +139,25 @@
     .navbar-buttons {
         flex-wrap: wrap;
         justify-content: flex-end;
-        gap: 6px;
+        gap: 8px;
         align-content: center; /* 垂直方向上置中對齊多行 flex 項目 */
     }
 
     .navbar-buttons.logged-in-buttons {
-        gap: 4px; /* 手機版進一步縮小間距 */
-        row-gap: 8px; /* 手機版行之間間距 */
+        gap: 6px; /* 手機版進一步縮小間距 */
+        row-gap: 10px; /* 手機版行之間間距 */
     }
 
     .firebase-button {
-        padding: 6px 10px; /* 進一步縮小 padding */
-        font-size: 1em; /* 調整字體大小 */
-        border-radius: 20px;
+        padding: 8px 12px; /* 進一步縮小 padding */
+        font-size: 1.1em; /* 調整字體大小 */
+        border-radius: 22px;
     }
 
     .user-info {
         order: -1;
         width: 100%;
         text-align: center; /* 手機版用戶資訊置中 */
-        margin-bottom: 6px; /* 調整手機版用戶資訊下間距，與 row-gap 保持一致 */
+        margin-bottom: 8px; /* 調整手機版用戶資訊下間距，與 row-gap 保持一致 */
     }
 }
