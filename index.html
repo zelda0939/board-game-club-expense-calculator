@@ -238,9 +238,9 @@
                 <h3>{{ customModal.title }}</h3>
                 <p>{{ customModal.message }}</p>
                 <div v-if="customModal.type === 'confirm'" class="custom-modal-actions">
-                    <button @click="confirmAction('load')" class="load-btn">載入</button>
-                    <button @click="confirmAction('delete')" class="cancel-btn">刪除</button>
-                    <button @click="confirmAction('changeDate')" class="change-date-btn">修改日期</button>
+                    <button @click="confirmAction('load')" class="load-btn"><i class="fa-solid fa-download"></i><span>載入</span></button>
+                    <button @click="confirmAction('delete')" class="cancel-btn"><i class="fa-solid fa-trash-can"></i><span>刪除</span></button>
+                    <button @click="confirmAction('changeDate')" class="change-date-btn"><i class="fa-solid fa-calendar-days"></i><span>修改日期</span></button>
                 </div>
             </div>
         </div>
@@ -259,8 +259,8 @@
                 <p>將 <span style="font-weight: bold;">{{ dateChangeModal.originalDate }}</span> 的數據修改為：</p>
                 <input type="date" v-model="dateChangeModal.newDate" ref="dateInput" @click="openDatePicker">
                 <div class="custom-modal-actions">
-                    <button @click="confirmDateChange">確認修改</button>
-                    <button @click="cancelDateChange" class="cancel-btn">取消</button>
+                    <button @click="confirmDateChange"><i class="fa-solid fa-check"></i><span>確認修改</span></button>
+                    <button @click="cancelDateChange" class="cancel-btn"><i class="fa-solid fa-xmark"></i><span>取消</span></button>
                 </div>
             </div>
         </div>
@@ -271,8 +271,8 @@
                 <h3>覆蓋確認</h3>
                 <p>{{ overwriteConfirmModal.message }}</p>
                 <div class="custom-modal-actions">
-                    <button @click="handleOverwriteChoice(true)" class="overwrite-btn">覆蓋</button>
-                    <button @click="handleOverwriteChoice(false)" class="cancel-btn">取消</button>
+                    <button @click="handleOverwriteChoice(true)"><i class="fa-solid fa-check"></i><span>確認覆蓋</span></button>
+                    <button @click="handleOverwriteChoice(false)" class="cancel-btn"><i class="fa-solid fa-xmark"></i><span>取消</span></button>
                 </div>
             </div>
         </div>

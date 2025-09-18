@@ -43,8 +43,8 @@
 .custom-modal-actions {
     display: flex;
     justify-content: center;
-    flex-wrap: nowrap;
-    gap: 15px;
+    flex-wrap: wrap; /* 允許按鈕在空間不足時換行 */
+    gap: 10px; /* 調整按鈕之間的水平間距 */
 }
 
 .custom-modal-actions button {
@@ -57,6 +57,10 @@
     font-size: 22px;
     transition: all 0.3s ease-in-out;
     box-shadow: 0 2px 4px var(--shadow-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* 圖示與文字間距 */
 }
 
 .custom-modal-actions button.cancel-btn {
@@ -206,6 +210,13 @@
         max-width: 380px;
     }
 
+    .custom-modal-actions {
+        flex-wrap: nowrap; /* 手機版不換行 */
+        width: 100%; /* 確保佔滿父級寬度 */
+        justify-content: space-evenly; /* 手機版按鈕水平平均分布 */
+        gap: 4px; /* 進一步減少按鈕之間的水平間距 */
+    }
+
     .custom-modal-overlay.temp-message-modal {
         top: 10px;
         max-width: calc(100% - 20px);
@@ -235,10 +246,21 @@
     }
 
     .custom-modal-actions button {
-        padding: 12px 20px;
-        font-size: 1em;
-        margin: 5px;
+        padding: 6px 6px; /* 進一步縮小 padding */
+        font-size: 0.75em; /* 調整字體大小 */
+        margin: 0px; /* 移除 margin，使用父級 gap 控制間距 */
         height: auto;
+        flex-shrink: 1; /* 允許按鈕在空間不足時收縮 */
+        /* 移除 flex-direction: column; 以保持圖示在文字左側 */
+        /* 移除 gap: 4px; 繼承通用樣式 gap: 8px; */
+        /* 移除 border-radius: 22px; 繼承通用樣式 */
+    }
+
+    .custom-modal-actions button span {
+        white-space: nowrap; /* 強制文字不換行 */
+        line-height: 1; /* 最小化行高 */
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .date-change-modal-content,
