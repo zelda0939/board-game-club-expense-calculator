@@ -11,8 +11,6 @@ import calculatorAndInput from './calculatorAndInput.js';
 import modalHandlers from './modalHandlers.js';
 import mealEntryHelpers from './mealEntryHelpers.js';
 import calculationHelpers from './calculationHelpers.js';
-import { onAuthStateChanged, createUser, signInWithEmail, signOutUser } from './firebaseAuth.js';
-import { auth } from './firebaseAuth.js';
 import firebaseHelpers from './firebaseHelpers.js';
 import authHandlers from './authHandlers.js';
 // 定義初始數據結構 (已移至 dataPersistence.js)
@@ -81,26 +79,8 @@ const app = createApp({
         // 移除 mounted 時的 loadSavedEntries 呼叫，因為已在 data() 中初始化
         // this.loadSavedEntries(); // 在 mounted 時載入已保存的數據，確保總是執行
 
-        // 監聽 Firebase 認證狀態變化
-        onAuthStateChanged(auth, (user) => {
-            this.user = user;
-            if (user) {
-                //this.showTempMessage("登入成功！");
-                // 根據 rememberMe 狀態儲存或移除電子郵件
-                if (this.rememberMe) {
-                    localStorage.setItem('rememberedEmail', this.loginEmail);
-                } else {
-                    localStorage.removeItem('rememberedEmail');
-                }
-                this.cancelLoginModal();
-                this.user = user;
-                console.log("Vue 應用程式中：使用者已登入", user.displayName);
-                // 登入後觸發一次完整備份
-                // this.backupToCloud(); // 根據使用者要求，取消登入後自動備份
-            } else {
-                console.log("Vue 應用程式中：使用者已登出");
-            }
-        });
+        // 初始化 Firebase 認證狀態監聽器
+        this.initAuthListener();
     },
     watch: {
         // 監聽 reimbursable 變化，自動保存當前數據
