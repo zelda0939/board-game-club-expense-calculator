@@ -57,7 +57,7 @@ export default {
                         // 如果舊的 meal 數據是數字/字串，轉換為新的陣列結構
                         targetObj[key] = [{ amount: Number(sourceObj[key].toString().replace(/,/g, '')) || 0, note: '' }];
                     } else {
-                        // 如果 source 數據缺失或 meal 無效，預設為空項目
+                        // 如果 source 敱據缺失或 meal 無效，預設為空項目
                         targetObj[key] = [{ amount: 0, note: '' }];
                     }
                 } else if (typeof targetObj[key] === 'object' && targetObj[key] !== null) {
@@ -236,13 +236,13 @@ export default {
         }
         this.selectedSaveEntry = ''; // 確保初始載入時為空
     },
-    saveAndBackupData(reimbursable, our_own, user, isSyncing, enableAutoBackup, backupToCloud) {
+    saveAndBackupData(context) {
         localStorage.setItem('familyCostCalculator', JSON.stringify({
-            reimbursable: reimbursable,
-            our_own: our_own,
+            reimbursable: context.reimbursable,
+            our_own: context.our_own,
         }));
-        if (user && !isSyncing && enableAutoBackup) {
-            backupToCloud(true);
+        if (context.user && !context.isSyncing && context.enableAutoBackup) {
+            context.backupToCloud(true);
         }
     }
 };

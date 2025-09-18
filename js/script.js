@@ -106,7 +106,7 @@ const app = createApp({
         // 監聽 reimbursable 變化，自動保存當前數據
         'reimbursable': {
             handler() {
-                dataPersistence.saveAndBackupData(this.reimbursable, this.our_own, this.user, this.isSyncing, this.enableAutoBackup, this.backupToCloud);
+                dataPersistence.saveAndBackupData(this);
             },
             deep: true,
             immediate: false
@@ -114,7 +114,7 @@ const app = createApp({
         // 監聽 our_own 變化，自動保存當前數據
         'our_own': {
             handler() {
-                dataPersistence.saveAndBackupData(this.reimbursable, this.our_own, this.user, this.isSyncing, this.enableAutoBackup, this.backupToCloud);
+                dataPersistence.saveAndBackupData(this);
             },
             deep: true,
             immediate: false
