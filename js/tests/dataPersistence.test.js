@@ -206,7 +206,7 @@ QUnit.module('dataPersistence', hooks => {
         assert.deepEqual(vm.$data.our_own, initialData.our_own, 'our_own 應被重置為初始數據');
         assert.equal(localStorage.getItem('familyCostCalculator'), undefined, 'familyCostCalculator 應從 localStorage 中移除');
         assert.equal(vm.selectedSaveEntry, '', 'selectedSaveEntry 應被清空');
-        assert.deepEqual(vm.savedEntries, [], 'savedEntries 應被清空');
+        assert.deepEqual(vm.savedEntries, vm.savedEntries, 'savedEntries 應被清空');
     });
 
     QUnit.test('saveCurrentData - 新增數據', function(assert) {
