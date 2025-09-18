@@ -236,4 +236,13 @@ export default {
         }
         this.selectedSaveEntry = ''; // 確保初始載入時為空
     },
+    saveAndBackupData(reimbursable, our_own, user, isSyncing, enableAutoBackup, backupToCloud) {
+        localStorage.setItem('familyCostCalculator', JSON.stringify({
+            reimbursable: reimbursable,
+            our_own: our_own,
+        }));
+        if (user && !isSyncing && enableAutoBackup) {
+            backupToCloud(true);
+        }
+    }
 };

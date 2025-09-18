@@ -105,28 +105,16 @@ const app = createApp({
     watch: {
         // 監聽 reimbursable 變化，自動保存當前數據
         'reimbursable': {
-            handler(newValue, oldValue) {
-                localStorage.setItem('familyCostCalculator', JSON.stringify({
-                    reimbursable: newValue,
-                    our_own: this.our_own,
-                }));
-                if (this.user && !this.isSyncing && this.enableAutoBackup) {
-                    this.backupToCloud(true);
-                }
+            handler() {
+                dataPersistence.saveAndBackupData(this.reimbursable, this.our_own, this.user, this.isSyncing, this.enableAutoBackup, this.backupToCloud);
             },
             deep: true,
             immediate: false
         },
         // 監聽 our_own 變化，自動保存當前數據
         'our_own': {
-            handler(newValue, oldValue) {
-                localStorage.setItem('familyCostCalculator', JSON.stringify({
-                    reimbursable: this.reimbursable,
-                    our_own: newValue,
-                }));
-                if (this.user && !this.isSyncing && this.enableAutoBackup) {
-                    this.backupToCloud(true);
-                }
+            handler() {
+                dataPersistence.saveAndBackupData(this.reimbursable, this.our_own, this.user, this.isSyncing, this.enableAutoBackup, this.backupToCloud);
             },
             deep: true,
             immediate: false
