@@ -68,134 +68,60 @@
         <div v-if="loadMessage" class="message-display">
             {{ loadMessage }}
         </div>
-        <div class="card">
-            <h2>代墊費用</h2>
-            <div class="input-group">
-                <label>代墊餐費</label>
-                <!-- 移除 input-row 容器，讓餐費區塊垂直堆疊 -->
-                <div class="input-wrapper meal-entries">
-                    <span>Zelda</span>
-                    <div v-for="(meal, index) in reimbursable.me.meal" :key="index" class="meal-entry">
-                        <input type="text"
-                               :value="getMealAmountFieldValue('reimbursable.me.meal', index)"
-                               @input="updateMealAmountFromInput({ path: 'reimbursable.me.meal', index: index, value: $event.target.value })"
-                               @focus="openCalculatorForMeal('reimbursable.me.meal', index)"
-                               placeholder="0" readonly>
-                        <input type="text"
-                               v-model="meal.note"
-                               placeholder="備註">
-                        <button @click="removeMealEntry('reimbursable.me.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                    <button @click="addMealEntry('reimbursable.me.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
-                </div>
-                <div class="input-wrapper meal-entries">
-                    <span>Emma</span>
-                    <div v-for="(meal, index) in reimbursable.wife.meal" :key="index" class="meal-entry">
-                        <input type="text"
-                               :value="getMealAmountFieldValue('reimbursable.wife.meal', index)"
-                               @input="updateMealAmountFromInput({ path: 'reimbursable.wife.meal', index: index, value: $event.target.value })"
-                               @focus="openCalculatorForMeal('reimbursable.wife.meal', index)"
-                               placeholder="0" readonly>
-                        <input type="text"
-                               v-model="meal.note"
-                               placeholder="備註">
-                        <button @click="removeMealEntry('reimbursable.wife.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                    <button @click="addMealEntry('reimbursable.wife.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
-                </div>
-                <div class="input-wrapper meal-entries">
-                    <span>Andrew</span>
-                    <div v-for="(meal, index) in reimbursable.brother.meal" :key="index" class="meal-entry">
-                        <input type="text"
-                               :value="getMealAmountFieldValue('reimbursable.brother.meal', index)"
-                               @input="updateMealAmountFromInput({ path: 'reimbursable.brother.meal', index: index, value: $event.target.value })"
-                               @focus="openCalculatorForMeal('reimbursable.brother.meal', index)"
-                               placeholder="0" readonly>
-                        <input type="text"
-                               v-model="meal.note"
-                               placeholder="備註">
-                        <button @click="removeMealEntry('reimbursable.brother.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                    <button @click="addMealEntry('reimbursable.brother.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
-                </div>
-            </div>
-            <div class="input-group">
-                <label>代墊車費</label>
-                <div class="input-row">
-                    <div class="input-wrapper">
-                        <span>Zelda</span>
-                        <input type="text" :value="getFieldValue('reimbursable.me.transport')" @input="updateValueFromInput({ path: 'reimbursable.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.me.transport')" readonly>
-                    </div>
-                    <div class="input-wrapper">
-                        <span>Emma</span>
-                        <input type="text" :value="getFieldValue('reimbursable.wife.transport')" @input="updateValueFromInput({ path: 'reimbursable.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.wife.transport')" readonly>
-                    </div>
-                    <div class="input-wrapper">
-                        <span>Andrew</span>
-                        <input type="text" :value="getFieldValue('reimbursable.brother.transport')" @input="updateValueFromInput({ path: 'reimbursable.brother.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.transport')" readonly>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="card">
-            <h2>自家花費</h2>
-            <div class="input-group">
-                <label>自家餐費</label>
-                <!-- 移除 input-row 容器，讓餐費區塊垂直堆疊 -->
-                <div class="input-wrapper meal-entries">
-                    <span>Zelda</span>
-                    <div v-for="(meal, index) in our_own.me.meal" :key="index" class="meal-entry">
-                        <input type="text"
-                               :value="getMealAmountFieldValue('our_own.me.meal', index)"
-                               @input="updateMealAmountFromInput({ path: 'our_own.me.meal', index: index, value: $event.target.value })"
-                               @focus="openCalculatorForMeal('our_own.me.meal', index)"
-                               placeholder="0" readonly>
-                        <input type="text"
-                               v-model="meal.note"
-                               placeholder="備註">
-                        <button @click="removeMealEntry('our_own.me.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                    <button @click="addMealEntry('our_own.me.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
-                </div>
-                <div class="input-wrapper meal-entries">
-                    <span>Emma</span>
-                    <div v-for="(meal, index) in our_own.wife.meal" :key="index" class="meal-entry">
-                        <input type="text"
-                               :value="getMealAmountFieldValue('our_own.wife.meal', index)"
-                               @input="updateMealAmountFromInput({ path: 'our_own.wife.meal', index: index, value: $event.target.value })"
-                               @focus="openCalculatorForMeal('our_own.wife.meal', index)"
-                               placeholder="0" readonly>
-                        <input type="text"
-                               v-model="meal.note"
-                               placeholder="備註">
-                        <button @click="removeMealEntry('our_own.wife.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                    <button @click="addMealEntry('our_own.wife.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
-                </div>
-            </div>
-            <div class="input-group">
-                <label>自家車費</label>
-                <div class="input-row">
-                    <div class="input-wrapper">
-                        <span>Zelda</span>
-                        <input type="text" :value="getFieldValue('our_own.me.transport')" @input="updateValueFromInput({ path: 'our_own.me.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.me.transport')" readonly>
-                    </div>
-                    <div class="input-wrapper">
-                        <span>Emma</span>
-                        <input type="text" :value="getFieldValue('our_own.wife.transport')" @input="updateValueFromInput({ path: 'our_own.wife.transport', value: $event.target.value })" placeholder="0" @focus="openCalculator('our_own.wife.transport')" readonly>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- 使用 expense-input-group 組件來簡化代碼 -->
+        <expense-input-group
+            title="Zelda"
+            member-key="me"
+            :reimbursable-meal="reimbursable.me.meal"
+            :reimbursable-transport="reimbursable.me.transport"
+            :own-meal="our_own.me.meal"
+            :own-transport="our_own.me.transport"
+            @open-calculator="openCalculator"
+            @open-calculator-for-meal="openCalculatorForMeal"
+            @add-meal-entry="addMealEntry"
+            @remove-meal-entry="removeMealEntry"
+            @request-delete-confirmation="handleDeleteMealRequest"
+            @update:reimbursable-meal="reimbursable.me.meal = $event"
+            @update:reimbursable-transport="reimbursable.me.transport = $event"
+            @update:own-meal="our_own.me.meal = $event"
+            @update:own-transport="our_own.me.transport = $event"
+        ></expense-input-group>
 
-        <div class="card">
-            <h2>其他花費</h2>
-            <div class="input-group">
-                <label>Andrew 3D列印</label>
-                <input type="text" :value="getFieldValue('reimbursable.brother.printer_3d')" @input="updateValueFromInput({ path: 'reimbursable.brother.printer_3d', value: $event.target.value })" placeholder="0" @focus="openCalculator('reimbursable.brother.printer_3d')" readonly>
-            </div>
-        </div>
+        <expense-input-group
+            title="Emma"
+            member-key="wife"
+            :reimbursable-meal="reimbursable.wife.meal"
+            :reimbursable-transport="reimbursable.wife.transport"
+            :own-meal="our_own.wife.meal"
+            :own-transport="our_own.wife.transport"
+            @open-calculator="openCalculator"
+            @open-calculator-for-meal="openCalculatorForMeal"
+            @add-meal-entry="addMealEntry"
+            @remove-meal-entry="removeMealEntry"
+            @request-delete-confirmation="handleDeleteMealRequest"
+            @update:reimbursable-meal="reimbursable.wife.meal = $event"
+            @update:reimbursable-transport="reimbursable.wife.transport = $event"
+            @update:own-meal="our_own.wife.meal = $event"
+            @update:own-transport="our_own.wife.transport = $event"
+        ></expense-input-group>
+
+        <expense-input-group
+            title="Andrew"
+            member-key="brother"
+            :reimbursable-meal="reimbursable.brother.meal"
+            :reimbursable-transport="reimbursable.brother.transport"
+            :brother-printer3d="reimbursable.brother.printer_3d"
+            :is-brother="true"
+            @open-calculator="openCalculator"
+            @open-calculator-for-meal="openCalculatorForMeal"
+            @add-meal-entry="addMealEntry"
+            @remove-meal-entry="removeMealEntry"
+            @request-delete-confirmation="handleDeleteMealRequest"
+            @update:reimbursable-meal="reimbursable.brother.meal = $event"
+            @update:reimbursable-transport="reimbursable.brother.transport = $event"
+            @update:brother-printer3d="reimbursable.brother.printer_3d = $event"
+        ></expense-input-group>
 
         <div class="card results-card">
             <h2>計算結果</h2>
@@ -261,6 +187,18 @@
                 <div class="custom-modal-actions">
                     <button @click="confirmDateChange"><i class="fa-solid fa-check"></i><span>確認修改</span></button>
                     <button @click="cancelDateChange" class="cancel-btn"><i class="fa-solid fa-xmark"></i><span>取消</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 通用確認模態框 -->
+        <div v-if="confirmationModal.visible" class="custom-modal-overlay" @click.self="cancelConfirmation">
+            <div class="custom-modal-content">
+                <h3>操作確認</h3>
+                <p>{{ confirmationModal.message }}</p>
+                <div class="custom-modal-actions">
+                    <button @click="executeConfirmation"><i class="fa-solid fa-check"></i><span>確認</span></button>
+                    <button @click="cancelConfirmation" class="cancel-btn"><i class="fa-solid fa-xmark"></i><span>取消</span></button>
                 </div>
             </div>
         </div>

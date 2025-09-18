@@ -89,5 +89,25 @@ export default {
             this.dateChangeModal.visible = false;
             this.selectedSaveEntry = '';
         }
+    },
+
+    // --- 通用確認模態框 ---
+    showConfirmationModal(message, onConfirm) {
+        this.confirmationModal.message = message;
+        this.confirmationModal.onConfirm = onConfirm;
+        this.confirmationModal.visible = true;
+    },
+
+    executeConfirmation() {
+        if (typeof this.confirmationModal.onConfirm === 'function') {
+            this.confirmationModal.onConfirm();
+        }
+        this.cancelConfirmation();
+    },
+
+    cancelConfirmation() {
+        this.confirmationModal.visible = false;
+        this.confirmationModal.message = '';
+        this.confirmationModal.onConfirm = null;
     }
 };

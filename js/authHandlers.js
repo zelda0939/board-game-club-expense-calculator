@@ -1,4 +1,5 @@
 import { createUser, signInWithEmail, signOutUser, onAuthStateChanged, auth } from './firebaseAuth.js';
+import { getSettings, saveSettings } from './settings.js';
 
 // 由於這些方法會直接在 Vue 實例的 methods 中使用，它們將共享 Vue 的 this 上下文。
 // 所以我們可以假設 this.showTempMessage 是可用的。
@@ -74,12 +75,14 @@ export default {
         onAuthStateChanged(auth, (user) => {
             this.user = user;
             if (user) {
-                // 根據 rememberMe 狀態儲存或移除電子郵件
+                const settings = getSettings();
                 if (this.rememberMe) {
-                    localStorage.setItem('rememberedEmail', this.loginEmail);
+                    settings.rememberedEmail = this.loginEmail;
                 } else {
-                    localStorage.removeItem('rememberedEmail');
+                    settings.rememberedEmail = '';
                 }
+                saveSettings(settings);
+
                 this.cancelLoginModal(); // 確保登入模態框關閉
                 console.log("Vue 應用程式中：使用者已登入", user.displayName);
             } else {

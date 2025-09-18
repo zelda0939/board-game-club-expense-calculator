@@ -6,6 +6,7 @@
  */
 // 引入 CalculatorModal 組件
 import CalculatorModal from './CalculatorModal.js';
+import ExpenseInputGroup from './components/ExpenseInputGroup.js';
 import { initialData, default as dataPersistence } from './dataPersistence.js';
 import calculatorAndInput from './calculatorAndInput.js';
 import modalHandlers from './modalHandlers.js';
@@ -16,85 +17,70 @@ import authHandlers from './authHandlers.js';
 // 定義初始數據結構 (已移至 dataPersistence.js)
 // const initialData = { ... };
 
+import { getSettings, saveSettings } from './settings.js';
+
 // Vue.js 應用邏輯
 const {
     createApp
 } = Vue;
 
+// 新增 debounce 函數
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
 const app = createApp({
     data() {
+        const settings = getSettings();
         return {
             ...JSON.parse(JSON.stringify(initialData)), // 深度複製初始數據
-            savedEntries: JSON.parse(localStorage.getItem('familyCostCalculatorSavedEntries') || '[]'), // 新增用於儲存載入的數據，從 localStorage 載入
-            selectedSaveEntry: '', // 新增用於選擇載入的數據
-            loadMessage: '', // 新增用於顯示載入/保存提示訊息
-            customModal: { // 新增自定義模態框狀態
-                visible: false,
-                title: '',
-                message: '',
-                type: 'confirm' // 'confirm' 或 'info'
-            },
-            tempMessageModal: { // 新增短暫提示訊息模態框狀態
-                visible: false,
-                message: ''
-            },
-            pendingSaveEntry: '', // 新增用於暫存載入/刪除選擇的日期
-            dateChangeModal: { // 新增變更日期模態框狀態
-                visible: false,
-                originalDate: '',
-                newDate: ''
-            },
-            overwriteConfirmModal: { // 新增覆蓋確認模態框狀態
-                visible: false,
-                originalDate: '',
-                newDate: '',
-                message: ''
-            },
-            user: null, // 新增使用者狀態
-            isSyncing: false, // 標誌是否正在同步數據
-            enableAutoBackup: localStorage.getItem('autoBackupEnabled') === 'true', // 新增自動備份開關，從 localStorage 載入，預設為關閉
-            loginModalVisible: false, // 控制登入模態框的顯示
-            loginEmail: '', // 綁定電子郵件輸入
-            loginPassword: '', // 綁定密碼輸入
-            loginError: '', // 登入錯誤訊息
-            rememberMe: false, // 新增記住我狀態
+            savedEntries: settings.savedEntries || [],
+            selectedSaveEntry: '',
+            loadMessage: '',
+            customModal: { visible: false, title: '', message: '', type: 'confirm' },
+            tempMessageModal: { visible: false, message: '' },
+            pendingSaveEntry: '',
+            dateChangeModal: { visible: false, originalDate: '', newDate: '' },
+            overwriteConfirmModal: { visible: false, originalDate: '', newDate: '', message: '' },
+            user: null,
+            isSyncing: false,
+            enableAutoBackup: settings.autoBackupEnabled || false,
+            loginModalVisible: false,
+            loginEmail: settings.rememberedEmail || '',
+            loginPassword: '',
+            loginError: '',
+            rememberMe: !!settings.rememberedEmail,
+            confirmationModal: { visible: false, message: '', onConfirm: null }, // 新增通用確認模態框狀態
         };
     },
+    created() {
+        this.debouncedSaveAndBackup = debounce(this.saveAndBackupData, 500);
+    },
     mounted() {
-        const savedData = localStorage.getItem('familyCostCalculator');
+        const settings = getSettings();
+        const savedData = settings.currentData;
         if (savedData) {
-            const parsedData = JSON.parse(savedData);
-            // 使用新的 assignSavedData 方法來處理載入的數據
-            this.assignSavedData(this.reimbursable, parsedData.reimbursable);
-            this.assignSavedData(this.our_own, parsedData.our_own);
+            this.assignSavedData(this.reimbursable, savedData.reimbursable);
+            this.assignSavedData(this.our_own, savedData.our_own);
         }
-
-        // 載入記住的電子郵件
-        const rememberedEmail = localStorage.getItem('rememberedEmail');
-        if (rememberedEmail) {
-            this.loginEmail = rememberedEmail;
-            this.rememberMe = true;
-        }
-
-        // 移除 mounted 時的 loadSavedEntries 呼叫，因為已在 data() 中初始化
-        // this.loadSavedEntries(); // 在 mounted 時載入已保存的數據，確保總是執行
-
-        // 初始化 Firebase 認證狀態監聽器
         this.initAuthListener();
     },
     watch: {
-        // 監聽 reimbursable 變化，自動保存當前數據
         'reimbursable': {
             handler() {
-                this.saveAndBackupData(this);
+                this.debouncedSaveAndBackup(this);
             },
             deep: true,
             immediate: false
         },
-        // 監聽 our_own 變化，自動保存當前數據
         'our_own': {
             handler() {
-                this.saveAndBackupData(this);
+                this.debouncedSaveAndBackup(this);
             },
             deep: true,
             immediate: false
@@ -111,17 +97,26 @@ const app = createApp({
         },
         // 我應再給Emma
         amountToGiveWife() {
-            // 1. 計算我的總支出
-            const myTotalOwnExpense = this.calculateMemberTotal(this.reimbursable.me) + this.calculateMemberTotal(this.our_own.me);
-            // 2. 計算Emma的總支出
-            const wifeTotalOwnExpense = this.calculateMemberTotal(this.reimbursable.wife) + this.calculateMemberTotal(this.our_own.wife);
-            // 3. 計算夫妻兩人總支出
-            const totalFamilyExpense = myTotalOwnExpense + wifeTotalOwnExpense - this.familyShouldReceive;
-            // 4. 計算平均每人應支出
+            // 1. 計算我的總支出 (代墊 + 自家)
+            const myTotalExpense = this.calculateMemberTotal(this.reimbursable.me) + this.calculateMemberTotal(this.our_own.me);
+
+            // 2. 計算Emma的總支出 (代墊 + 自家)
+            const wifeTotalExpense = this.calculateMemberTotal(this.reimbursable.wife) + this.calculateMemberTotal(this.our_own.wife);
+
+            // 3. 計算我們兩人共同的總支出，需要減去要從 Andrew 收回的錢
+            const totalFamilyExpense = myTotalExpense + wifeTotalExpense - this.familyShouldReceive;
+
+            // 4. 計算平均每人應分攤的支出
             const averageExpense = totalFamilyExpense / 2;
-            // 5. 計算我應給Emma的金額 (平均值 - 我的實際支出)
+
+            // 5. Andrew 的 3D 列印費用由我和 Emma 平分
             const printer3dValue = Number(this.reimbursable.brother.printer_3d.toString().replace(/,/g, '') || 0);
-            const result = averageExpense - (myTotalOwnExpense - this.familyShouldReceive) + (Math.floor(printer3dValue / 2));
+            const printerCostShare = Math.floor(printer3dValue / 2);
+
+            // 6. 計算我應給 Emma 的金額
+            // (我的平均支出) - (我的實際總支出 - 從 Andrew 收回的錢) + (我應承擔的 3D 列印費用)
+            const result = averageExpense - (myTotalExpense - this.familyShouldReceive) + printerCostShare;
+
             return Math.round(result);
         },
         // 動態變更標題文字
@@ -193,8 +188,21 @@ const app = createApp({
         ...calculationHelpers,
         ...firebaseHelpers,
         ...authHandlers,
+        toggleAutoBackup() {
+            this.enableAutoBackup = !this.enableAutoBackup;
+            const settings = getSettings();
+            settings.autoBackupEnabled = this.enableAutoBackup;
+            saveSettings(settings);
+            this.showTempMessage(`自動備份已${this.enableAutoBackup ? '開啟' : '關閉'}。`);
+        },
+        handleDeleteMealRequest({ path, index }) {
+            this.showConfirmationModal('確定要刪除此餐費項目嗎？', () => {
+                this.removeMealEntry(path, index);
+            });
+        },
     },
     components: {
-        CalculatorModal
+        CalculatorModal,
+        'expense-input-group': ExpenseInputGroup // 註冊新組件
     }
 }).mount('#app');
