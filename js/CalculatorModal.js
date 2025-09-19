@@ -82,6 +82,83 @@ export default {
         }
     },
     methods: {
+        // 安全的表達式解析與計算（shunting-yard -> RPN 計算）
+        evaluateExpression(expr) {
+            if (!expr || typeof expr !== 'string') return NaN;
+            // 允許的字符集（數字、運算符、小數點與括號、空白）
+            if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
+
+            // 1. 轉換輸入為 tokens
+            const tokens = expr.match(/\d+\.?\d*|\.\d+|[+\-*/()]/g);
+            if (!tokens) return NaN;
+
+            // 2. Shunting-yard 將中序轉為後序 (RPN)
+            const outputQueue = [];
+            const operatorStack = [];
+            const precedence = { '+': 1, '-': 1, '*': 2, '/': 2 };
+            const isLeftAssoc = op => true;
+
+            for (let i = 0; i < tokens.length; i++) {
+                const token = tokens[i];
+                if (/^\d+\.?\d*$/.test(token) || /^\.\d+$/.test(token)) {
+                    outputQueue.push(token);
+                } else if (/^[+\-*/]$/.test(token)) {
+                    while (operatorStack.length) {
+                        const top = operatorStack[operatorStack.length - 1];
+                        if (/^[+\-*/]$/.test(top) && ((isLeftAssoc(token) && precedence[token] <= precedence[top]) || (!isLeftAssoc(token) && precedence[token] < precedence[top]))) {
+                            outputQueue.push(operatorStack.pop());
+                        } else {
+                            break;
+                        }
+                    }
+                    operatorStack.push(token);
+                } else if (token === '(') {
+                    operatorStack.push(token);
+                } else if (token === ')') {
+                    let foundLeft = false;
+                    while (operatorStack.length) {
+                        const op = operatorStack.pop();
+                        if (op === '(') { foundLeft = true; break; }
+                        outputQueue.push(op);
+                    }
+                    if (!foundLeft) return NaN; // 括號不匹配
+                } else {
+                    return NaN;
+                }
+            }
+
+            while (operatorStack.length) {
+                const op = operatorStack.pop();
+                if (op === '(' || op === ')') return NaN; // 括號不匹配
+                outputQueue.push(op);
+            }
+
+            // 3. 計算 RPN
+            const stack = [];
+            for (let i = 0; i < outputQueue.length; i++) {
+                const t = outputQueue[i];
+                if (/^\d+\.?\d*$/.test(t) || /^\.\d+$/.test(t)) {
+                    stack.push(Number(t));
+                } else if (/^[+\-*/]$/.test(t)) {
+                    if (stack.length < 2) return NaN;
+                    const b = stack.pop();
+                    const a = stack.pop();
+                    let res;
+                    if (t === '+') res = a + b;
+                    else if (t === '-') res = a - b;
+                    else if (t === '*') res = a * b;
+                    else if (t === '/') {
+                        if (b === 0) return NaN; // 除以 0 視為錯誤
+                        res = a / b;
+                    }
+                    stack.push(res);
+                } else {
+                    return NaN;
+                }
+            }
+            if (stack.length !== 1) return NaN;
+            return stack[0];
+        },
         handleCancel() {
             this.$emit('update:visible', false);
         },
@@ -388,47 +465,27 @@ export default {
         },
         tryEval() {
             this.error = '';
-            const inputToEvaluate = this.input; // 在運算前移除千位符號
-            console.log('tryEval: Evaluating expression:', inputToEvaluate);
+            const inputToEvaluate = this.input;
+            if (inputToEvaluate.trim() === '') return;
 
-            if (inputToEvaluate.trim() === '') {
+            const result = this.evaluateExpression(inputToEvaluate);
+            if (typeof result !== 'number' || !isFinite(result)) {
+                this.error = '算式錯誤';
+                this.lastCalculated = false;
                 return;
             }
 
-            try {
-                if (/^[0-9+\-*/().\s]+$/.test(inputToEvaluate)) {
-                    let result = eval(inputToEvaluate);
-                    console.log('tryEval: Result:', result);
-                    if(result === Infinity || result === -Infinity) {
-                        console.log('tryEval: Result is Infinity or -Infinity');
-                        this.error = '算式錯誤';
-                        this.lastCalculated = false;
-                        return;
-                    }
-                    // 檢查結果是否為浮點數
-                    if (typeof result === 'number' && !Number.isInteger(result)) {
-                        result = round(result, 10);
-                    }
-                    
-                    if (typeof result === 'number' && isFinite(result)) {
-                        const resultString = result.toString();
-                        if (resultString.replace(/[^0-9]/g, '').length > this.maxDigits) {
-                            this.error = `結果超過 ${this.maxDigits} 位數`;
-                            this.lastCalculated = false;
-                            return;
-                        }
-                        this.input = resultString; // 儲存無千位符號的結果
-                    } else {
-                        this.error = '算式錯誤';
-                        this.lastCalculated = false;
-                    }
-                }
+            let final = result;
+            if (!Number.isInteger(final)) final = round(final, 10);
 
-            } catch (e) {
-                console.error('tryEval: Error during evaluation:', e.message);
-                this.error = e.message === '除數不能為零' ? e.message : '算式錯誤';
+            const resultString = final.toString();
+            if (resultString.replace(/[^0-9]/g, '').length > this.maxDigits) {
+                this.error = `結果超過 ${this.maxDigits} 位數`;
                 this.lastCalculated = false;
+                return;
             }
+
+            this.input = resultString;
         },
         confirmAndClose() {
             this.tryEval();
@@ -466,26 +523,22 @@ export default {
                 this.realtimeResult = '';
                 return;
             }
-            try {
-                // 僅在輸入有效時嘗試評估，並清除可能的錯誤消息
-                if (/^[0-9+\-*\/().\s]+$/.test(this.input)) { // eval 前移除千位符號
-                    let tempResult = eval(this.input); // eval 前移除千位符號
-                    if (typeof tempResult === 'number' && isFinite(tempResult)) {
-                        // 對結果進行四捨五入，最多保留10位小數
-                        const realtimeResultString = round(tempResult, 10).toString();
-                        if (realtimeResultString.replace(/[^0-9]/g, '').length > this.maxDigits) {
-                            this.realtimeResult = ''; // 結果超過位數限制時清空
-                        } else {
-                            this.realtimeResult = this._formatDisplayValue(realtimeResultString); // 格式化即時結果
-                        }
-                    } else {
-                        this.realtimeResult = ''; // 非法結果清空
-                    }
+
+            if (!/^[0-9+\-*\/().\s]+$/.test(this.input)) {
+                this.realtimeResult = '';
+                return;
+            }
+
+            const temp = this.evaluateExpression(this.input);
+            if (typeof temp === 'number' && isFinite(temp)) {
+                const realtimeResultString = round(temp, 10).toString();
+                if (realtimeResultString.replace(/[^0-9]/g, '').length > this.maxDigits) {
+                    this.realtimeResult = '';
                 } else {
-                    this.realtimeResult = ''; // 非法輸入清空
+                    this.realtimeResult = this._formatDisplayValue(realtimeResultString);
                 }
-            } catch (e) {
-                this.realtimeResult = ''; // 運算錯誤清空
+            } else {
+                this.realtimeResult = '';
             }
         },
         getCurrentNumberString() {
