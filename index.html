@@ -59,7 +59,7 @@
                 </div>
                 <select v-model="selectedSaveEntry" @change="handleSaveEntrySelection" class="load-dropdown">
                     <option value="">選擇要載入的數據</option>
-                    <option v-for="entry in savedEntries" :key="entry.date" :value="entry.date">
+                    <option v-for="entry in savedEntriesDesc" :key="entry.date" :value="entry.date">
                         {{ entry.date }}
                     </option>
                 </select>
