@@ -33,3 +33,46 @@ QUnit.module('CalculatorModal.evaluateExpression', hooks => {
         assert.ok(Number.isNaN(result), '括號不匹配應回傳 NaN');
     });
 });
+
+QUnit.module('CalculatorModal.evaluateExpression - 進階與邊界測試', hooks => {
+    QUnit.test('多重括號與嵌套', function(assert) {
+        assert.equal(CalculatorModal.methods.evaluateExpression('((2+3)*4)-5'), 15, '((2+3)*4)-5 應為 15');
+        assert.equal(CalculatorModal.methods.evaluateExpression('(1+(2*3+(4/2)))'), 9, '(1+(2*3+(4/2))) 應為 9');
+    });
+    QUnit.test('負數與正負號混用', function(assert) {
+        assert.equal(CalculatorModal.methods.evaluateExpression('-3+5'), 2, '-3+5 應為 2');
+        assert.equal(CalculatorModal.methods.evaluateExpression('4*-2'), -8, '4*-2 應為 -8');
+        assert.equal(CalculatorModal.methods.evaluateExpression('-(-5)'), 5, '-(-5) 應為 5');
+    });
+    QUnit.test('連續運算子或錯誤格式', function(assert) {
+        assert.ok(Number.isNaN(CalculatorModal.methods.evaluateExpression('1++2')), '1++2 應回傳 NaN');
+        assert.equal(CalculatorModal.methods.evaluateExpression('3--2'), 5, '3--2 應為 5');
+        assert.ok(Number.isNaN(CalculatorModal.methods.evaluateExpression('2..3+1')), '2..3+1 應回傳 NaN');
+    });
+    QUnit.test('空字串或僅空白', function(assert) {
+        assert.ok(Number.isNaN(CalculatorModal.methods.evaluateExpression('')), '空字串應回傳 NaN');
+        assert.ok(Number.isNaN(CalculatorModal.methods.evaluateExpression('   ')), '僅空白應回傳 NaN');
+    });
+    QUnit.test('極大或極小數值', function(assert) {
+        assert.ok(Number.isNaN(CalculatorModal.methods.evaluateExpression('1e3+1')), '1e3+1 應回傳 NaN（不支援 e 記號）');
+        assert.ok(Number.isNaN(CalculatorModal.methods.evaluateExpression('1e10+1')), '1e10+1 應回傳 NaN（不支援 e 記號）');
+        assert.ok(Number.isNaN(CalculatorModal.methods.evaluateExpression('1/1e-10')), '1/1e-10 應回傳 NaN（不支援 e 記號）');
+    });
+    QUnit.test('僅單一數字或小數', function(assert) {
+        assert.equal(CalculatorModal.methods.evaluateExpression('5'), 5, '5 應為 5');
+        assert.equal(CalculatorModal.methods.evaluateExpression('0.75'), 0.75, '0.75 應為 0.75');
+    });
+    QUnit.test('運算子前後空白', function(assert) {
+        assert.equal(CalculatorModal.methods.evaluateExpression(' 1 + 2 '), 3, ' 1 + 2  應為 3');
+        assert.equal(CalculatorModal.methods.evaluateExpression('3* 4'), 12, '3* 4 應為 12');
+    });
+    QUnit.test('非法但常見輸入', function(assert) {
+        assert.ok(Number.isNaN(CalculatorModal.methods.evaluateExpression('1/')), '1/ 應回傳 NaN');
+        assert.ok(Number.isNaN(CalculatorModal.methods.evaluateExpression('*2+3')), '*2+3 應回傳 NaN');
+        assert.ok(Number.isNaN(CalculatorModal.methods.evaluateExpression('(2+3))')), '(2+3)) 應回傳 NaN');
+    });
+    QUnit.test('浮點誤差邊界', function(assert) {
+        const result = CalculatorModal.methods.evaluateExpression('0.1+0.2');
+        assert.ok(Math.abs(result - 0.3) < 1e-9, '0.1+0.2 應接近 0.3');
+    });
+});

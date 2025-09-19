@@ -88,9 +88,58 @@ export default {
             // 允許的字符集（數字、運算符、小數點與括號、空白）
             if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
 
-            // 1. 轉換輸入為 tokens
-            const tokens = expr.match(/\d+\.?\d*|\.\d+|[+\-*/()]/g);
-            if (!tokens) return NaN;
+            // 1. 進階 tokenizer，支援一元負號，禁止一元正號、連續運算子、多個小數點
+            const tokens = [];
+            const re = /([+\-*/()])|(\d*\.\d+|\d+)|(\s+)/g;
+            let m, lastToken = null;
+            while ((m = re.exec(expr)) !== null) {
+                if (m[3]) continue; // skip whitespace
+                let token = m[1] || m[2];
+                // 禁止一元正號
+                if (token === '+' && (
+                    lastToken === null ||
+                    ['+', '-', '*', '/', '('].includes(lastToken)
+                )) {
+                    return NaN;
+                }
+                // 處理一元負號
+                if (token === '-' && (
+                    lastToken === null ||
+                    ['+', '-', '*', '/', '('].includes(lastToken)
+                )) {
+                    // 下一個數字或小數合併
+                    const numMatch = re.exec(expr);
+                    if (numMatch && numMatch[2]) {
+                        // 檢查多個小數點
+                        if ((numMatch[2].match(/\./g) || []).length > 1) return NaN;
+                        tokens.push('-' + numMatch[2]);
+                        lastToken = 'number';
+                        continue;
+                    } else if (numMatch && numMatch[1] === '(') {
+                        tokens.push('-1');
+                        tokens.push('*');
+                        tokens.push('(');
+                        lastToken = '(';
+                        continue;
+                    } else {
+                        return NaN; // 單獨一元負號後沒數字
+                    }
+                }
+                // 禁止連續運算子（除了允許一元負號已處理）
+                if (
+                    /^[+\-*/]$/.test(token) &&
+                    /^[+\-*/]$/.test(lastToken)
+                ) {
+                    return NaN;
+                }
+                // 檢查多個小數點
+                if (typeof token === 'string' && (token.match(/\./g) || []).length > 1) {
+                    return NaN;
+                }
+                tokens.push(token);
+                lastToken = (m[2] ? 'number' : token);
+            }
+            if (!tokens.length) return NaN;
 
             // 2. Shunting-yard 將中序轉為後序 (RPN)
             const outputQueue = [];
@@ -100,7 +149,7 @@ export default {
 
             for (let i = 0; i < tokens.length; i++) {
                 const token = tokens[i];
-                if (/^\d+\.?\d*$/.test(token) || /^\.\d+$/.test(token)) {
+                if (/^-?\d+\.?\d*$/.test(token) || /^-?\.\d+$/.test(token)) {
                     outputQueue.push(token);
                 } else if (/^[+\-*/]$/.test(token)) {
                     while (operatorStack.length) {
@@ -137,7 +186,7 @@ export default {
             const stack = [];
             for (let i = 0; i < outputQueue.length; i++) {
                 const t = outputQueue[i];
-                if (/^\d+\.?\d*$/.test(t) || /^\.\d+$/.test(t)) {
+                if (/^-?\d+\.?\d*$/.test(t) || /^-?\.\d+$/.test(t)) {
                     stack.push(Number(t));
                 } else if (/^[+\-*/]$/.test(t)) {
                     if (stack.length < 2) return NaN;
