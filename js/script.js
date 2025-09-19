@@ -138,9 +138,9 @@ const app = createApp({
         // 動態變更我們家應獲得差額的標題文字
         familyShouldReceiveText() {
             if (this.familyShouldReceive >= 0) {
-                return "我們家應獲得差額";
+                return "Zelda應從Andrew獲得差額";
             } else {
-                return "我們家應付出差額";
+                return "Zelda應付Andrew差額";
             }
         },
         // 餐費明細
