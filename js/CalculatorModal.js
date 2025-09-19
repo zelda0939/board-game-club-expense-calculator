@@ -598,29 +598,35 @@ export default {
         // 新增內部方法來處理顯示值的格式化
         _formatDisplayValue(inputString) {
             if (!inputString) return '';
-
+            // 若原始輸入以小數點結尾，直接顯示原始內容
+            if (/\.$/.test(inputString)) {
+                return inputString;
+            }
             // 替換運算符 * 和 /
             let processedInput = inputString.replace(/\*/g, '×').replace(/\//g, '÷');
-
             // 使用正規表達式匹配數字（包括負數和小數）和運算符/括號
-            const tokens = processedInput.match(/(-?\d+\.?\d*|[+\-×÷()])/g);
+            const tokens = processedInput.match(/(-?\d*\.?\d+|-?\d+\.?|[+\-×÷()])/g);
             if (!tokens) return '';
-
             let formattedTokens = [];
             for (let i = 0; i < tokens.length; i++) {
                 let token = tokens[i];
                 if (/[+\-×÷()]/.test(token)) { // 運算符或括號
                     formattedTokens.push(token);
-                } else { // 數字部分
-                    const numberValue = parseFloat(token);
-                    if (!isNaN(numberValue) && isFinite(numberValue)) {
-                        if (this.useThousandSeparator) { // 根據參數決定是否使用千位分隔符號
-                            formattedTokens.push(numberValue.toLocaleString('zh-TW', { maximumFractionDigits: 10 }));
-                        } else {
-                            formattedTokens.push(numberValue.toString());
-                        }
+                } else {
+                    // 修正：保留小數點結尾（如 1.、2.、-3.）或單獨的 .
+                    if (/^-?\d+\.$/.test(token) || token === '.' || token === '-.') {
+                        formattedTokens.push(token);
                     } else {
-                        formattedTokens.push(token); // Fallback for any unparseable number string
+                        const numberValue = parseFloat(token);
+                        if (!isNaN(numberValue) && isFinite(numberValue)) {
+                            if (this.useThousandSeparator) {
+                                formattedTokens.push(numberValue.toLocaleString('zh-TW', { maximumFractionDigits: 10 }));
+                            } else {
+                                formattedTokens.push(numberValue.toString());
+                            }
+                        } else {
+                            formattedTokens.push(token); // Fallback for any unparseable number string
+                        }
                     }
                 }
             }
