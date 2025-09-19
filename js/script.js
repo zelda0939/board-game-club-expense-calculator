@@ -62,7 +62,6 @@ const app = createApp({
         this.debouncedSaveAndBackup = debounce(this.saveAndBackupData, 500);
     },
     mounted() {
-        this.loadSavedEntries();
         const settings = getSettings();
         const savedData = settings.currentData;
         if (savedData) {
