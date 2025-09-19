@@ -32,11 +32,11 @@
 *   **自定義名稱：** 預設名稱「我」、「老婆」、「哥」已更改為「Zelda」、「Emma」、「Andrew」，使介面更具個人化。
 
 ## 技術棧
-*   **前端框架：** Vue.js 3
-*   **網頁技術：** HTML5, CSS3, JavaScript
-*   **後端服務：** Firebase (Authentication, Firestore)
-*   **計算精度處理：** 內建 `round()` 函數輔助 `eval()` 處理浮點數顯示
-*   **觸控事件優化：** 針對行動裝置的觸控事件處理邏輯
+- **前端框架：** Vue.js 3
+- **網頁技術：** HTML5, CSS3, JavaScript
+- **後端服務（可選）：** Firebase (Authentication, Firestore)
+- **計算精度處理：** 內建 `round()` 輔助數值顯示；已移除 `eval()`，改為安全的 expression evaluator（shunting-yard -> RPN）以避免執行任意 JavaScript
+- **觸控事件優化：** 針對行動裝置的觸控事件處理邏輯
 
 ## 如何使用
 1.  **開啟應用程式：** 在瀏覽器中打開 `index.html` 文件。
@@ -53,22 +53,26 @@
 7.  **提示訊息：** 操作成功或失敗時，頁面中央會短暫顯示美觀的提示訊息，並在 1.5 秒後自動消失。
 
 ## 測試
-為了確保專案程式碼的品質和可靠性，我們已引入單元測試。
+本專案使用 QUnit（瀏覽器端）與 Sinon.js（作為 stub/mocks）進行單元測試。
 
-### 使用工具
-*   **QUnit:** 作為 JavaScript 的測試框架，提供易於使用的斷言 (assertions) 和測試組織結構。
-*   **Sinon.js:** 作為測試替身 (test doubles) 庫，用於創建 stub 和 mock，以便在隔離的環境中測試模組，避免與外部依賴（如 `localStorage` 和 Firebase 服務）進行實際互動。
+### 已有測試
+- `js/tests/calculationHelpers.test.js`：驗證核心財務計算邏輯。
+- `js/tests/dataPersistence.test.js`：驗證 localStorage 的儲存/載入/刪除等行為。
+- `js/tests/firebaseAuth.test.js` / `js/tests/firebaseHelpers.test.js`：覆蓋 Firebase 相關行為（使用替身避免真實網路存取）。
+- 新增：`js/tests/calculatorModal.test.js`，測試 `CalculatorModal.methods.evaluateExpression`（基本運算、小數、前導小數、非法輸入、括號不匹配、除以零等情境）。
 
-### 已測試模組
-我們已為以下核心模組撰寫了單元測試：
-*   `js/calculationHelpers.js`: 核心財務計算邏輯。
-*   `js/dataPersistence.js`: 數據在 `localStorage` 中的保存、載入、清空、更新和刪除邏輯。
-*   `js/firebaseAuth.js`: Firebase 認證（登入、註冊、登出）和 Firestore 數據上傳/下載操作。
-*   `js/firebaseHelpers.js`: 處理 Firebase 相關的輔助功能，如數據備份到雲端、從雲端還原資料以及自動備份切換。
+### 如何在本機執行測試（簡單）
+1. 開啟 `test_calculator.html`（本案使用 QUnit CDN），瀏覽器會載入並執行 `js/tests/*.test.js`。
+2. 測試結果會顯示在頁面上。
 
-### 如何運行測試
-1.  在瀏覽器中打開 `test_calculator.html` 文件。
-2.  QUnit 測試結果將會自動顯示在頁面中，您可以查看每個測試的通過/失敗狀態以及詳細資訊。
+範例（Windows PowerShell）：
+```powershell
+範例（Windows PowerShell，於專案根目錄執行）：
+```powershell
+start .\test_calculator.html
+```
+
+若要將測試自動化（CI），建議建立 `package.json` 並使用 Jest 或 Vitest 將現有測試轉為 Node 可執行格式；我可以協助這個轉換。
 
 ## 部署到 GitHub Pages
 您可以輕鬆將此計算機部署到 GitHub Pages，使其成為一個公開的網頁應用程式：
