@@ -46,14 +46,18 @@ export default {
         },
         // 處理餐費金額的顯示
         getMealAmountFieldValue(mealArray, index) {
-            if (mealArray && mealArray[index] && mealArray[index].amount) {
-                return mealArray[index].amount.toString();
-            }
-            return '0';
+            const amount = mealArray?.[index]?.amount;
+            if (amount === null || amount === undefined || amount === '') return '0';
+            const sAmount = amount.toString();
+            const num = Number(sAmount.replace(/,/g, ''));
+            return isNaN(num) ? sAmount : num.toLocaleString();
         },
         // 處理一般金額的顯示
         getFieldValue(value) {
-            return value ? value.toString() : '0';
+            if (value === null || value === undefined || value === '') return '0';
+            const sValue = value.toString();
+            const num = Number(sValue.replace(/,/g, ''));
+            return isNaN(num) ? sValue : num.toLocaleString();
         },
         // 更新餐費備註
         updateMealNote(mealArray, index, event) {

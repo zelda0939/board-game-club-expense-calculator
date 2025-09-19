@@ -106,10 +106,6 @@ export default {
             this.showTempMessage(`保存成功：${today}。`);
         }
 
-        const settings = getSettings();
-        settings.savedEntries = this.savedEntries;
-        saveSettings(settings);
-
         this.selectedSaveEntry = '';
     },
     // 新增：處理載入/刪除選擇 (顯示自定義模態框)
@@ -179,10 +175,6 @@ export default {
         }
 
         this.savedEntries.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        
-        const settings = getSettings();
-        settings.savedEntries = this.savedEntries;
-        saveSettings(settings);
     },
     // 載入指定日期的數據
     loadDataByDate(date) {
@@ -200,9 +192,6 @@ export default {
         const initialLength = this.savedEntries.length;
         this.savedEntries = this.savedEntries.filter(entry => entry.date !== date);
         if (this.savedEntries.length < initialLength) {
-            const settings = getSettings();
-            settings.savedEntries = this.savedEntries;
-            saveSettings(settings);
             this.showTempMessage(`已刪除 ${date} 數據。`);
         } else {
             this.showTempMessage('未找到數據可刪除。');
