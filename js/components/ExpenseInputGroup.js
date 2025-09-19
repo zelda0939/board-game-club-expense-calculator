@@ -131,7 +131,7 @@ export default {
 
             <!-- 其他花費 (如果是 Andrew) -->
             <div v-if="isBrother" class="input-group">
-                <label>Andrew 3D列印</label>
+                <label>3D列印</label>
                 <input type="text" :value="getFieldValue(brotherPrinter3d)" @focus="openCalculator('reimbursable.' + memberKey + '.printer_3d')" placeholder="0" readonly>
             </div>
         </div>
