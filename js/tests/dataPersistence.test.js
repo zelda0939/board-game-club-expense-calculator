@@ -165,10 +165,9 @@ QUnit.module('dataPersistence', hooks => {
         vm.$data.reimbursable.me.meal = [{ amount: 100, note: 'test' }];
         vm.saveCurrentData();
 
-        const settings = getSettings();
-        assert.equal(settings.savedEntries.length, 1, 'savedEntries 應包含一條數據');
-        assert.equal(settings.savedEntries[0].date, today, '數據日期應為今天');
-        assert.equal(settings.savedEntries[0].reimbursable.me.meal[0].amount, 100, '數據內容應正確保存');
+        assert.equal(vm.savedEntries.length, 1, 'vm.savedEntries 應包含一條數據');
+        assert.equal(vm.savedEntries[0].date, today, '數據日期應為今天');
+        assert.equal(vm.savedEntries[0].reimbursable.me.meal[0].amount, 100, '數據內容應正確保存');
         assert.equal(vm.tempMessageModal.message, `保存成功：${today}。`, '應顯示保存成功訊息');
     });
 
@@ -180,34 +179,30 @@ QUnit.module('dataPersistence', hooks => {
         vm.$data.reimbursable.me.meal = [{ amount: 200, note: 'second save' }];
         vm.saveCurrentData();
 
-        const settings = getSettings();
-        assert.equal(settings.savedEntries.length, 1, 'savedEntries 應仍然只有一條數據');
-        assert.equal(settings.savedEntries[0].reimbursable.me.meal[0].amount, 200, '數據內容應被更新');
+        assert.equal(vm.savedEntries.length, 1, 'vm.savedEntries 應仍然只有一條數據');
+        assert.equal(vm.savedEntries[0].reimbursable.me.meal[0].amount, 200, '數據內容應被更新');
         assert.equal(vm.tempMessageModal.message, `數據已更新至 ${today}。`, '應顯示更新成功訊息');
     });
 
     QUnit.test('saveCurrentData - 超過 20 筆數據應移除最舊的', function(assert) {
         // 填充 20 筆數據
-        let settings = getSettings();
+        vm.savedEntries = [];
         for (let i = 0; i < 20; i++) {
-            settings.savedEntries.push({
+            vm.savedEntries.push({
                 date: `2025-01-${(i + 1).toString().padStart(2, '0')}`,
                 reimbursable: { me: { meal: [{ amount: i, note: '' }] } },
                 our_own: {}
             });
         }
-        saveSettings(settings);
-        vm.savedEntries = settings.savedEntries; // 同步 vm 的 savedEntries
 
         const today = new Date().toISOString().slice(0, 10);
         vm.$data.reimbursable.me.meal = [{ amount: 999, note: 'new entry' }];
         vm.saveCurrentData(); // 新增第 21 筆數據
 
-        settings = getSettings(); // 重新獲取更新後的 settings
-        assert.equal(settings.savedEntries.length, 20, 'savedEntries 應保持 20 筆數據');
-        assert.equal(settings.savedEntries[0].date, '2025-01-02', '最舊的數據 (2025-01-01) 應被移除');
-        assert.equal(settings.savedEntries[19].date, today, '最新數據應被添加');
-        assert.equal(settings.savedEntries[19].reimbursable.me.meal[0].amount, 999, '最新數據內容應正確');
+        assert.equal(vm.savedEntries.length, 20, 'vm.savedEntries 應保持 20 筆數據');
+        assert.equal(vm.savedEntries[0].date, '2025-01-02', '最舊的數據 (2025-01-01) 應被移除');
+        assert.equal(vm.savedEntries[19].date, today, '最新數據應被添加');
+        assert.equal(vm.savedEntries[19].reimbursable.me.meal[0].amount, 999, '最新數據內容應正確');
     });
 
     QUnit.test('handleSaveEntrySelection - 顯示確認模態框', function(assert) {
@@ -252,31 +247,22 @@ QUnit.module('dataPersistence', hooks => {
     QUnit.test('deleteDataByDate - 刪除指定日期的數據', function(assert) {
         const testData1 = { date: '2025-02-01', reimbursable: {}, our_own: {} };
         const testData2 = { date: '2025-02-02', reimbursable: {}, our_own: {} };
-        let settings = getSettings();
-        settings.savedEntries = [testData1, testData2];
-        saveSettings(settings);
-        vm.savedEntries = settings.savedEntries; // 同步 vm 的 savedEntries
+        vm.savedEntries = [testData1, testData2];
 
         vm.deleteDataByDate('2025-02-01');
 
-        settings = getSettings(); // 重新獲取更新後的 settings
         assert.equal(vm.savedEntries.length, 1, 'vm.savedEntries 應減少一條');
-        assert.equal(settings.savedEntries.length, 1, 'settings.savedEntries 應減少一條');
-        assert.equal(settings.savedEntries[0].date, '2025-02-02', '應刪除正確的數據');
+        assert.equal(vm.savedEntries[0].date, '2025-02-02', '應刪除正確的數據');
         assert.equal(vm.tempMessageModal.message, '已刪除 2025-02-01 數據。', '應顯示刪除成功訊息');
     });
 
     QUnit.test('deleteDataByDate - 未找到數據可刪除', function(assert) {
-        let settings = getSettings();
-        settings.savedEntries = [{ date: '2025-02-02', reimbursable: {}, our_own: {} }];
-        saveSettings(settings);
-        vm.savedEntries = settings.savedEntries; // 同步 vm 的 savedEntries
+        const testData = { date: '2025-02-02', reimbursable: {}, our_own: {} };
+        vm.savedEntries = [testData];
 
         vm.deleteDataByDate('2025-02-01');
 
-        settings = getSettings(); // 重新獲取更新後的 settings
         assert.equal(vm.savedEntries.length, 1, 'vm.savedEntries 長度應不變');
-        assert.equal(settings.savedEntries.length, 1, 'settings.savedEntries 長度應不變');
         assert.equal(vm.tempMessageModal.message, '未找到數據可刪除。', '應顯示未找到數據訊息');
     });
 
@@ -288,7 +274,6 @@ QUnit.module('dataPersistence', hooks => {
             reimbursable: { me: { meal: [{ amount: 100, note: '' }] } },
             our_own: {}
         }];
-        localStorage.setItem('familyCostCalculatorSavedEntries', JSON.stringify(vm.savedEntries));
 
         vm.updateEntryDate(originalDate, newDate);
 
@@ -301,7 +286,6 @@ QUnit.module('dataPersistence', hooks => {
         const originalDate = '2025-03-01';
         const newDate = '2025-03-05';
         vm.savedEntries = [];
-        localStorage.setItem('familyCostCalculatorSavedEntries', JSON.stringify(vm.savedEntries));
 
         vm.updateEntryDate(originalDate, newDate);
 
@@ -316,7 +300,6 @@ QUnit.module('dataPersistence', hooks => {
             reimbursable: { me: { meal: [{ amount: 100, note: '' }] } },
             our_own: {}
         }];
-        localStorage.setItem('familyCostCalculatorSavedEntries', JSON.stringify(vm.savedEntries));
 
         vm.updateEntryDate(originalDate, newDate);
 
@@ -335,7 +318,6 @@ QUnit.module('dataPersistence', hooks => {
             reimbursable: { me: { meal: [{ amount: 200, note: '' }] } },
             our_own: {}
         }];
-        localStorage.setItem('familyCostCalculatorSavedEntries', JSON.stringify(vm.savedEntries));
 
         vm.updateEntryDate(originalDate, newDate);
 
@@ -351,7 +333,6 @@ QUnit.module('dataPersistence', hooks => {
         const originalData = { date: originalDate, reimbursable: { me: { meal: [{ amount: 100, note: 'Original' }] } }, our_own: {} };
         const newData = { date: newDate, reimbursable: { me: { meal: [{ amount: 200, note: 'Existing' }] } }, our_own: {} };
         vm.savedEntries = [originalData, newData];
-        localStorage.setItem('familyCostCalculatorSavedEntries', JSON.stringify(vm.savedEntries));
 
         vm.updateEntryDate(originalDate, newDate, true); // 設置 overwrite 為 true
 
