@@ -138,7 +138,7 @@ const app = createApp({
         // 動態變更我們家應獲得差額的標題文字
         familyShouldReceiveText() {
             if (this.familyShouldReceive >= 0) {
-                return "Zelda應從Andrew獲得差額";
+                return "Zelda應從Andrew獲得";
             } else {
                 return "Zelda應付Andrew差額";
             }
