@@ -76,3 +76,40 @@ QUnit.module('CalculatorModal.evaluateExpression - 進階與邊界測試', hooks
         assert.ok(Math.abs(result - 0.3) < 1e-9, '0.1+0.2 應接近 0.3');
     });
 });
+
+QUnit.module('CalculatorModal._formatDisplayValue', hooks => {
+    // Mock component context for the method
+    const mockThis = {
+        useThousandSeparator: true
+    };
+
+    QUnit.test('integer formatting', function(assert) {
+        const formatted = CalculatorModal.methods._formatDisplayValue.call(mockThis, '12345');
+        assert.equal(formatted, '12,345', 'Should format integer with thousand separators.');
+    });
+
+    QUnit.test('decimal number formatting', function(assert) {
+        const formatted = CalculatorModal.methods._formatDisplayValue.call(mockThis, '12345.678');
+        assert.equal(formatted, '12,345.678', 'Should format decimal number with thousand separators.');
+    });
+
+    QUnit.test('number with trailing decimal point', function(assert) {
+        const formatted = CalculatorModal.methods._formatDisplayValue.call(mockThis, '12345.');
+        assert.equal(formatted, '12,345.', 'Should format number and preserve trailing decimal point.');
+    });
+
+    QUnit.test('expression with multiple numbers', function(assert) {
+        const formatted = CalculatorModal.methods._formatDisplayValue.call(mockThis, '1234.5+67890');
+        assert.equal(formatted, '1,234.5+67,890', 'Should format all numbers in an expression.');
+    });
+
+    QUnit.test('negative number formatting', function(assert) {
+        const formatted = CalculatorModal.methods._formatDisplayValue.call(mockThis, '-12345.67');
+        assert.equal(formatted, '-12,345.67', 'Should correctly format negative numbers.');
+    });
+
+    QUnit.test('number that does not need a separator', function(assert) {
+        const formatted = CalculatorModal.methods._formatDisplayValue.call(mockThis, '123.45');
+        assert.equal(formatted, '123.45', 'Should not add separator to numbers less than 1000.');
+    });
+});

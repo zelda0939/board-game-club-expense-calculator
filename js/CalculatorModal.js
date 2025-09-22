@@ -408,7 +408,7 @@ export default {
             }
 
             // 確保 val 始終為字串以便於比較
-            const pressVal = val.toString(); 
+            const pressVal = val.toString();
 
             // 在所有輸入處理之後，進行正規化。在 switch 語句之前執行
             // this.input = this.normalizeNumberInput(this.input); // 移至每個邏輯的末尾
@@ -471,8 +471,8 @@ export default {
             this.input = this.normalizeNumberInput(this.input);
             // 移除了在所有輸入處理之後無條件呼叫 updateRealtimeResult() 的程式碼
             // 統一在非等於運算後更新即時結果，並確保沒有錯誤
-            if (pressVal !== '=' && pressVal !== 'C' && !this.error) { 
-                this.updateRealtimeResult(); 
+            if (pressVal !== '=' && pressVal !== 'C' && !this.error) {
+                this.updateRealtimeResult();
             }
         },
         normalizeNumberInput(inputString) {
@@ -496,7 +496,7 @@ export default {
                         token = token.replace(/^0+/, ''); // 移除所有前導零
                         if (token === '') token = '0'; // 如果移除後為空，則設為'0'
                     }
-                    
+
                     // 處理單獨的 '.'
                     if (token === '.') {
                         token = '0.';
@@ -554,7 +554,7 @@ export default {
                 }
                 finalValue = Number(this.input); // 直接轉換，因為 this.input 在 tryEval 後已是純數字字串
             }
-            
+
             // 根據 useThousandSeparator 決定是否格式化最終值
             let emittedValue = finalValue;
             if (this.useThousandSeparator) {
@@ -562,7 +562,7 @@ export default {
             } else {
                 emittedValue = finalValue.toString();
             }
-            
+
             this.$emit('update:value', { path: this.targetPath, value: emittedValue });
             this.$emit('update:visible', false);
             this.realtimeResult = ''; // 確定計算完成後清空即時結果
@@ -598,38 +598,56 @@ export default {
         // 新增內部方法來處理顯示值的格式化
         _formatDisplayValue(inputString) {
             if (!inputString) return '';
-            // 若原始輸入以小數點結尾，直接顯示原始內容
-            if (/\.$/.test(inputString)) {
-                return inputString;
-            }
-            // 替換運算符 * 和 /
+
+            // Replace operators for display
             let processedInput = inputString.replace(/\*/g, '×').replace(/\//g, '÷');
-            // 使用正規表達式匹配數字（包括負數和小數）和運算符/括號
-            const tokens = processedInput.match(/(-?\d*\.?\d+|-?\d+\.?|[+\-×÷()])/g);
-            if (!tokens) return '';
-            let formattedTokens = [];
-            for (let i = 0; i < tokens.length; i++) {
-                let token = tokens[i];
-                if (/[+\-×÷()]/.test(token)) { // 運算符或括號
-                    formattedTokens.push(token);
-                } else {
-                    // 修正：保留小數點結尾（如 1.、2.、-3.）或單獨的 .
-                    if (/^-?\d+\.$/.test(token) || token === '.' || token === '-.') {
-                        formattedTokens.push(token);
-                    } else {
-                        const numberValue = parseFloat(token);
-                        if (!isNaN(numberValue) && isFinite(numberValue)) {
-                            if (this.useThousandSeparator) {
-                                formattedTokens.push(numberValue.toLocaleString('zh-TW', { maximumFractionDigits: 10 }));
-                            } else {
-                                formattedTokens.push(numberValue.toString());
-                            }
-                        } else {
-                            formattedTokens.push(token); // Fallback for any unparseable number string
-                        }
-                    }
+
+            // Better regex to properly tokenize numbers and operators
+            const tokens = processedInput.match(/-?\d+\.?\d*|\+|\-|×|÷|\(|\)/g) || [];
+
+            const formattedTokens = tokens.map(token => {
+                // If it's an operator or parenthesis, return as-is
+                if (['+', '-', '×', '÷', '(', ')'].includes(token)) {
+                    return token;
                 }
-            }
+
+                // Check if it's a number (including negative numbers)
+                if (isNaN(parseFloat(token))) {
+                    return token;
+                }
+
+                if (!this.useThousandSeparator) {
+                    return token;
+                }
+
+                const dotIndex = token.indexOf('.');
+                let integerPart;
+                let decimalPart = '';
+                let hasDecimalPoint = false;
+
+                if (dotIndex > -1) {
+                    integerPart = token.substring(0, dotIndex);
+                    decimalPart = token.substring(dotIndex + 1);
+                    hasDecimalPoint = true;
+                } else {
+                    integerPart = token;
+                }
+
+                let formattedIntegerPart = '';
+                for (let i = 0; i < integerPart.length; i++) {
+                    if (i > 0 && (integerPart.length - i) % 3 === 0) {
+                        formattedIntegerPart += ',';
+                    }
+                    formattedIntegerPart += integerPart[i];
+                }
+
+                if (hasDecimalPoint) {
+                    return formattedIntegerPart + '.' + decimalPart;
+                } else {
+                    return formattedIntegerPart;
+                }
+            });
+
             return formattedTokens.join('');
         }
     },
