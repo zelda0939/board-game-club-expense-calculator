@@ -29,6 +29,30 @@ export default {
         'update:brotherPrinter3d',
         'request-delete-confirmation' // 新增事件
     ],
+    computed: {
+        totalReimbursableMeal() {
+            if (!this.reimbursableMeal) return 0;
+            return this.reimbursableMeal.reduce((total, meal) => {
+                const amount = parseFloat(meal.amount.toString().replace(/,/g, '') || 0);
+                return total + amount;
+            }, 0);
+        },
+        totalOwnMeal() {
+            if (!this.ownMeal) return 0;
+            return this.ownMeal.reduce((total, meal) => {
+                const amount = parseFloat(meal.amount.toString().replace(/,/g, '') || 0);
+                return total + amount;
+            }, 0);
+        },
+        formatCurrency() {
+            return (value) => {
+                if (typeof value !== 'number') {
+                    return '0';
+                }
+                return value.toLocaleString();
+            }
+        }
+    },
     methods: {
         // 為了讓模板中的事件能夠正確觸發，我們需要這些方法來轉發事件到父組件
         openCalculator(path) {
@@ -88,6 +112,9 @@ export default {
                                placeholder="備註">
                         <button @click="removeMealEntry('reimbursable.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
+                    <div class="meal-total" v-if="reimbursableMeal && reimbursableMeal.length > 1 && totalReimbursableMeal > 0">
+                        <strong>總計：</strong> {{ formatCurrency(totalReimbursableMeal) }}
+                    </div>
                     <button @click="addMealEntry('reimbursable.' + memberKey + '.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
                 </div>
             </div>
@@ -115,6 +142,9 @@ export default {
                                    @input="updateMealNote(ownMeal, index, $event)"
                                    placeholder="備註">
                             <button @click="removeMealEntry('our_own.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                        <div class="meal-total" v-if="ownMeal && ownMeal.length > 1 && totalOwnMeal > 0">
+                            <strong>總計：</strong> {{ formatCurrency(totalOwnMeal) }}
                         </div>
                         <button @click="addMealEntry('our_own.' + memberKey + '.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
                     </div>
