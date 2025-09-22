@@ -112,4 +112,9 @@ QUnit.module('CalculatorModal._formatDisplayValue', hooks => {
         const formatted = CalculatorModal.methods._formatDisplayValue.call(mockThis, '123.45');
         assert.equal(formatted, '123.45', 'Should not add separator to numbers less than 1000.');
     });
+
+    QUnit.test('negative number below 1000', function(assert) {
+        const formatted = CalculatorModal.methods._formatDisplayValue.call(mockThis, '-100');
+        assert.equal(formatted, '-100', 'Should correctly format negative numbers below 1000 without separator.');
+    });
 });

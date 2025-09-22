@@ -599,19 +599,19 @@ export default {
         _formatDisplayValue(inputString) {
             if (!inputString) return '';
 
-            // Replace operators for display
+            // 替換運算符用於顯示
             let processedInput = inputString.replace(/\*/g, '×').replace(/\//g, '÷');
 
-            // Better regex to properly tokenize numbers and operators
+            // 改進的正則表達式，正確分離數字和運算符
             const tokens = processedInput.match(/-?\d+\.?\d*|\+|\-|×|÷|\(|\)/g) || [];
 
             const formattedTokens = tokens.map(token => {
-                // If it's an operator or parenthesis, return as-is
+                // 如果是運算符或括號，直接返回
                 if (['+', '-', '×', '÷', '(', ')'].includes(token)) {
                     return token;
                 }
 
-                // Check if it's a number (including negative numbers)
+                // 檢查是否為數字（包括負數）
                 if (isNaN(parseFloat(token))) {
                     return token;
                 }
@@ -624,6 +624,7 @@ export default {
                 let integerPart;
                 let decimalPart = '';
                 let hasDecimalPoint = false;
+                let isNegative = false;
 
                 if (dotIndex > -1) {
                     integerPart = token.substring(0, dotIndex);
@@ -633,12 +634,23 @@ export default {
                     integerPart = token;
                 }
 
+                // 處理負號
+                if (integerPart.startsWith('-')) {
+                    isNegative = true;
+                    integerPart = integerPart.substring(1);
+                }
+
                 let formattedIntegerPart = '';
                 for (let i = 0; i < integerPart.length; i++) {
                     if (i > 0 && (integerPart.length - i) % 3 === 0) {
                         formattedIntegerPart += ',';
                     }
                     formattedIntegerPart += integerPart[i];
+                }
+
+                // 重新添加負號
+                if (isNegative) {
+                    formattedIntegerPart = '-' + formattedIntegerPart;
                 }
 
                 if (hasDecimalPoint) {
