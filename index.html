@@ -82,6 +82,7 @@
             @add-meal-entry="addMealEntry"
             @remove-meal-entry="removeMealEntry"
             @request-delete-confirmation="handleDeleteMealRequest"
+            @request-transfer-meal="handleRequestTransferMeal"
             @update:reimbursable-meal="reimbursable.me.meal = $event"
             @update:reimbursable-transport="reimbursable.me.transport = $event"
             @update:own-meal="our_own.me.meal = $event"
@@ -100,6 +101,7 @@
             @add-meal-entry="addMealEntry"
             @remove-meal-entry="removeMealEntry"
             @request-delete-confirmation="handleDeleteMealRequest"
+            @request-transfer-meal="handleRequestTransferMeal"
             @update:reimbursable-meal="reimbursable.wife.meal = $event"
             @update:reimbursable-transport="reimbursable.wife.transport = $event"
             @update:own-meal="our_own.wife.meal = $event"
@@ -118,6 +120,7 @@
             @add-meal-entry="addMealEntry"
             @remove-meal-entry="removeMealEntry"
             @request-delete-confirmation="handleDeleteMealRequest"
+            @request-transfer-meal="handleRequestTransferMeal"
             @update:reimbursable-meal="reimbursable.brother.meal = $event"
             @update:reimbursable-transport="reimbursable.brother.transport = $event"
             @update:brother-printer3d="reimbursable.brother.printer_3d = $event"
@@ -211,6 +214,21 @@
                 <div class="custom-modal-actions">
                     <button @click="handleOverwriteChoice(true)"><i class="fa-solid fa-check"></i><span>確認覆蓋</span></button>
                     <button @click="handleOverwriteChoice(false)" class="cancel-btn"><i class="fa-solid fa-xmark"></i><span>取消</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 餐費轉移模態框 -->
+        <div v-if="transferMealModal.visible" class="custom-modal-overlay" @click.self="cancelMealTransfer">
+            <div class="custom-modal-content">
+                <h3>轉移餐費給</h3>
+                <div class="custom-modal-actions vertical-actions">
+                    <button v-for="target in transferTargets" :key="target.name" @click="executeMealTransfer(target)" class="transfer-btn">
+                        {{ target.name }}
+                    </button>
+                </div>
+                <div class="custom-modal-actions" style="margin-top: 10px;">
+                    <button @click="cancelMealTransfer" class="cancel-btn"><i class="fa-solid fa-xmark"></i><span>取消</span></button>
                 </div>
             </div>
         </div>

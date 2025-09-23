@@ -47,6 +47,11 @@
     gap: 10px; /* 調整按鈕之間的水平間距 */
 }
 
+.custom-modal-actions.vertical-actions {
+    flex-direction: column;
+    align-items: stretch; /* Make buttons same width */
+}
+
 .custom-modal-actions button {
     background: var(--success-color); /* 使用變數 */
     color: var(--secondary-color); /* 使用變數 */

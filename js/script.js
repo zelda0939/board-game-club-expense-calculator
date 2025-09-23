@@ -56,6 +56,7 @@ const app = createApp({
             loginError: '',
             rememberMe: !!settings.rememberedEmail,
             confirmationModal: { visible: false, message: '', onConfirm: null }, // 新增通用確認模態框狀態
+            transferMealModal: { visible: false, path: '', index: -1, sourceMemberKey: '' },
         };
     },
     created() {
@@ -191,6 +192,43 @@ const app = createApp({
                 }
             }
             return details;
+        },
+        transferTargets() {
+            const members = {
+                me: 'Zelda',
+                wife: 'Emma',
+                brother: 'Andrew'
+            };
+            const categories = {
+                reimbursable: '代墊餐費',
+                our_own: '自家餐費'
+            };
+
+            const { sourceMemberKey, path } = this.transferMealModal;
+            if (!path) return [];
+
+            const targets = [];
+
+            for (const memberKey in members) {
+                if (memberKey === sourceMemberKey) continue;
+
+                if (memberKey === 'brother') {
+                    targets.push({
+                        memberKey: 'brother',
+                        categoryKey: 'reimbursable',
+                        name: `${members.brother} (${categories.reimbursable})`
+                    });
+                } else {
+                    for (const categoryKey in categories) {
+                        targets.push({
+                            memberKey: memberKey,
+                            categoryKey: categoryKey,
+                            name: `${members[memberKey]} (${categories[categoryKey]})`
+                        });
+                    }
+                }
+            }
+            return targets;
         }
     },
     methods: {
@@ -212,6 +250,36 @@ const app = createApp({
             this.showConfirmationModal('確定要刪除此餐費項目嗎？', () => {
                 this.removeMealEntry(path, index);
             });
+        },
+        handleRequestTransferMeal({ path, index }) {
+            const pathParts = path.split('.');
+            const sourceMemberKey = pathParts[1];
+            this.transferMealModal = {
+                visible: true,
+                path,
+                index,
+                sourceMemberKey
+            };
+        },
+        executeMealTransfer(target) { // target is now an object
+            const { path, index } = this.transferMealModal;
+            const pathParts = path.split('.');
+            const sourceCategory = pathParts[0];
+            const sourceMemberKey = pathParts[1];
+
+            const mealToTransfer = this[sourceCategory][sourceMemberKey].meal[index];
+
+            // Add to target
+            this[target.categoryKey][target.memberKey].meal.push(mealToTransfer);
+
+            // Remove from source
+            this[sourceCategory][sourceMemberKey].meal.splice(index, 1);
+
+            this.cancelMealTransfer();
+            this.showTempMessage('餐費已轉移。');
+        },
+        cancelMealTransfer() {
+            this.transferMealModal = { visible: false, path: '', index: -1, sourceMemberKey: '' };
         },
     },
     components: {

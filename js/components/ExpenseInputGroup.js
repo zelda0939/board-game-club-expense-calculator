@@ -27,7 +27,8 @@ export default {
         'update:ownMeal',
         'update:ownTransport',
         'update:brotherPrinter3d',
-        'request-delete-confirmation' // 新增事件
+        'request-delete-confirmation', // 新增事件
+        'request-transfer-meal'
     ],
     computed: {
         totalReimbursableMeal() {
@@ -92,6 +93,9 @@ export default {
             } else if (this.ownMeal === mealArray) {
                 this.$emit('update:ownMeal', newMealArray);
             }
+        },
+        requestTransferMeal(path, index) {
+            this.$emit('request-transfer-meal', { path, index });
         }
     },
     template: `
@@ -110,6 +114,7 @@ export default {
                                :value="meal.note"
                                @input="updateMealNote(reimbursableMeal, index, $event)"
                                placeholder="備註">
+                        <button @click="requestTransferMeal('reimbursable.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
                         <button @click="removeMealEntry('reimbursable.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                     <div class="meal-total" v-if="reimbursableMeal && reimbursableMeal.length > 1 && totalReimbursableMeal > 0">
@@ -141,6 +146,7 @@ export default {
                                    :value="meal.note"
                                    @input="updateMealNote(ownMeal, index, $event)"
                                    placeholder="備註">
+                            <button @click="requestTransferMeal('our_own.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
                             <button @click="removeMealEntry('our_own.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                         <div class="meal-total" v-if="ownMeal && ownMeal.length > 1 && totalOwnMeal > 0">

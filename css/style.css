@@ -371,6 +371,34 @@ body.no-scroll {
     box-shadow: 0 2px 4px var(--shadow-color);
 }
 
+.transfer-meal-btn {
+    padding: var(--small-button-padding-y) var(--small-button-padding-x);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1em;
+    background-color: var(--info-color);
+    color: var(--secondary-color);
+    border: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.transfer-meal-btn:hover {
+    background-color: #138496; /* A darker shade of --info-color */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.transfer-meal-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
 .add-meal-btn {
     padding: var(--small-button-padding-y) var(--small-button-padding-x);
     border-radius: var(--small-button-border-radius);
