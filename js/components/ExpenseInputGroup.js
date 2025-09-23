@@ -30,6 +30,11 @@ export default {
         'request-delete-confirmation', // 新增事件
         'request-transfer-meal'
     ],
+    data() {
+        return {
+            activeMealMenu: null, // e.g., { path: 'reimbursable.me.meal', index: 0 }
+        };
+    },
     computed: {
         totalReimbursableMeal() {
             if (!this.reimbursableMeal) return 0;
@@ -68,6 +73,7 @@ export default {
         removeMealEntry(path, index) {
             // 直接發出請求，讓父組件處理確認模態框
             this.$emit('request-delete-confirmation', { path, index });
+            this.activeMealMenu = null;
         },
         // 處理餐費金額的顯示
         getMealAmountFieldValue(mealArray, index) {
@@ -96,6 +102,18 @@ export default {
         },
         requestTransferMeal(path, index) {
             this.$emit('request-transfer-meal', { path, index });
+            this.activeMealMenu = null;
+        },
+        toggleMealMenu(path, index) {
+            const menuKey = `${path}-${index}`;
+            if (this.activeMealMenu === menuKey) {
+                this.activeMealMenu = null; // Close if already open
+            } else {
+                this.activeMealMenu = menuKey; // Open it
+            }
+        },
+        isMenuActive(path, index) {
+            return this.activeMealMenu === `${path}-${index}`;
         }
     },
     template: `
@@ -114,8 +132,15 @@ export default {
                                :value="meal.note"
                                @input="updateMealNote(reimbursableMeal, index, $event)"
                                placeholder="備註">
-                        <button @click="requestTransferMeal('reimbursable.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
-                        <button @click="removeMealEntry('reimbursable.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
+                        <div class="meal-actions">
+                            <button @click="toggleMealMenu('reimbursable.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
+                            <transition name="fade-scale">
+                                <div v-if="isMenuActive('reimbursable.' + memberKey + '.meal', index)" class="actions-menu">
+                                    <button @click="requestTransferMeal('reimbursable.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
+                                    <button @click="removeMealEntry('reimbursable.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                            </transition>
+                        </div>
                     </div>
                     <div class="meal-total" v-if="reimbursableMeal && reimbursableMeal.length > 1 && totalReimbursableMeal > 0">
                         <strong>總計：</strong> {{ formatCurrency(totalReimbursableMeal) }}
@@ -146,8 +171,15 @@ export default {
                                    :value="meal.note"
                                    @input="updateMealNote(ownMeal, index, $event)"
                                    placeholder="備註">
-                            <button @click="requestTransferMeal('our_own.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
-                            <button @click="removeMealEntry('our_own.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
+                            <div class="meal-actions">
+                                <button @click="toggleMealMenu('our_own.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
+                                <transition name="fade-scale">
+                                    <div v-if="isMenuActive('our_own.' + memberKey + '.meal', index)" class="actions-menu">
+                                        <button @click="requestTransferMeal('our_own.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
+                                        <button @click="removeMealEntry('our_own.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </transition>
+                            </div>
                         </div>
                         <div class="meal-total" v-if="ownMeal && ownMeal.length > 1 && totalOwnMeal > 0">
                             <strong>總計：</strong> {{ formatCurrency(totalOwnMeal) }}

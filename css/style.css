@@ -430,6 +430,51 @@ body.no-scroll {
     box-shadow: 0 2px 4px var(--shadow-color);
 }
 
+.meal-actions {
+    position: relative;
+}
+
+.actions-btn {
+    padding: var(--small-button-padding-y) var(--small-button-padding-x);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1em;
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.actions-menu {
+    position: absolute;
+    right: 100%;
+    top: 0;
+    display: flex;
+    gap: 5px;
+    background-color: var(--secondary-color);
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    z-index: 10;
+    transform-origin: right center;
+}
+
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+    opacity: 0;
+    transform: scale(0.9);
+}
+
 /* 明細清單 */
 .detail-card ul {
     list-style: none;
