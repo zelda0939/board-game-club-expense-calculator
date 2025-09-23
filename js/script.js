@@ -14,6 +14,7 @@ import mealEntryHelpers from './mealEntryHelpers.js';
 import calculationHelpers from './calculationHelpers.js';
 import firebaseHelpers from './firebaseHelpers.js';
 import authHandlers from './authHandlers.js';
+import transferHandlers from './transferHandlers.js';
 // 定義初始數據結構 (已移至 dataPersistence.js)
 // const initialData = { ... };
 
@@ -239,47 +240,11 @@ const app = createApp({
         ...calculationHelpers,
         ...firebaseHelpers,
         ...authHandlers,
-        toggleAutoBackup() {
-            this.enableAutoBackup = !this.enableAutoBackup;
-            const settings = getSettings();
-            settings.autoBackupEnabled = this.enableAutoBackup;
-            saveSettings(settings);
-            this.showTempMessage(`自動備份已${this.enableAutoBackup ? '開啟' : '關閉'}。`);
-        },
+        ...transferHandlers,
         handleDeleteMealRequest({ path, index }) {
             this.showConfirmationModal('確定要刪除此餐費項目嗎？', () => {
                 this.removeMealEntry(path, index);
             });
-        },
-        handleRequestTransferMeal({ path, index }) {
-            const pathParts = path.split('.');
-            const sourceMemberKey = pathParts[1];
-            this.transferMealModal = {
-                visible: true,
-                path,
-                index,
-                sourceMemberKey
-            };
-        },
-        executeMealTransfer(target) { // target is now an object
-            const { path, index } = this.transferMealModal;
-            const pathParts = path.split('.');
-            const sourceCategory = pathParts[0];
-            const sourceMemberKey = pathParts[1];
-
-            const mealToTransfer = this[sourceCategory][sourceMemberKey].meal[index];
-
-            // Add to target
-            this[target.categoryKey][target.memberKey].meal.push(mealToTransfer);
-
-            // Remove from source
-            this[sourceCategory][sourceMemberKey].meal.splice(index, 1);
-
-            this.cancelMealTransfer();
-            this.showTempMessage('餐費已轉移。');
-        },
-        cancelMealTransfer() {
-            this.transferMealModal = { visible: false, path: '', index: -1, sourceMemberKey: '' };
         },
     },
     components: {

@@ -4,6 +4,7 @@
  * 導入了 firebaseAuth.js 中的認證和資料持久化函數。
  */
 import { signOutUser, uploadUserData, downloadUserData } from './firebaseAuth.js';
+import { getSettings, saveSettings } from './settings.js';
 
 let _signOutUser = signOutUser;
 let _uploadUserData = uploadUserData;
@@ -52,11 +53,13 @@ export default {
                 this.assignSavedData(this.reimbursable, cloudData.reimbursable);
                 this.assignSavedData(this.our_own, cloudData.our_own);
                 this.savedEntries = cloudData.savedEntries || []; // 還原 savedEntries
-                localStorage.setItem('familyCostCalculator', JSON.stringify({
+                const settings = getSettings();
+                settings.currentData = {
                     reimbursable: this.reimbursable,
                     our_own: this.our_own,
-                }));
-                localStorage.setItem('familyCostCalculatorSavedEntries', JSON.stringify(this.savedEntries)); // 更新 savedEntries 到 localStorage
+                };
+                settings.savedEntries = this.savedEntries;
+                saveSettings(settings);
                 this.showTempMessage("資料已成功從雲端還原！", 2000);
             } else {
                 this.showTempMessage("從雲端還原資料失敗或雲端無資料！", 2000);
@@ -67,9 +70,10 @@ export default {
     },
     toggleAutoBackup() {
         this.enableAutoBackup = !this.enableAutoBackup;
-        localStorage.setItem('autoBackupEnabled', this.enableAutoBackup);
-        this.showTempMessage(`自動備份已${this.enableAutoBackup ? '開啟' : '關閉'}！`, 2000);
-        // 可以選擇在此處觸發一次備份，如果開啟了自動備份
+        const settings = getSettings();
+        settings.autoBackupEnabled = this.enableAutoBackup;
+        saveSettings(settings);
+        this.showTempMessage(`自動備份已${this.enableAutoBackup ? '開啟' : '關閉'}。`);
         if (this.enableAutoBackup && this.user) {
             this.backupToCloud(true);
         }

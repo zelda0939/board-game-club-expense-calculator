@@ -1,5 +1,6 @@
 import firebaseHelpers, { setFirebaseAuthMocksForHelpers } from '../firebaseHelpers.js';
 import { initialData } from '../dataPersistence.js';
+import { getSettings } from '../settings.js';
 
 // 模擬 firebaseAuth 模組
 const mockFirebaseAuth = {
@@ -179,7 +180,8 @@ QUnit.module('firebaseHelpers', hooks => {
         assert.true(vm.assignSavedData.calledWith(vm.reimbursable, cloudData.reimbursable), 'assignSavedData 應處理 reimbursable');
         assert.deepEqual(vm.savedEntries, cloudData.savedEntries, 'savedEntries 應從雲端還原');
         assert.true(vm.showTempMessage.calledWith('資料已成功從雲端還原！', 2000), '應顯示還原成功訊息');
-        assert.equal(localStorage.getItem('familyCostCalculatorSavedEntries'), JSON.stringify(cloudData.savedEntries), 'localStorage 中的 savedEntries 應更新');
+        const settings = getSettings();
+        assert.deepEqual(settings.savedEntries, cloudData.savedEntries, 'localStorage 中的 savedEntries 應更新');
         done();
     });
 
@@ -221,8 +223,9 @@ QUnit.module('firebaseHelpers', hooks => {
         vm.toggleAutoBackup();
 
         assert.true(vm.enableAutoBackup, 'enableAutoBackup 應為 true');
-        assert.equal(localStorage.getItem('autoBackupEnabled'), 'true', 'localStorage 中的 autoBackupEnabled 應為 true');
-        assert.true(vm.showTempMessage.calledWith('自動備份已開啟！', 2000), '應顯示開啟訊息');
+        const settings = getSettings();
+        assert.true(settings.autoBackupEnabled, 'settings 中的 autoBackupEnabled 應為 true');
+        assert.true(vm.showTempMessage.calledWith('自動備份已開啟。'), '應顯示開啟訊息');
         // 檢查 backupToCloud 是否被呼叫
         // 這裡需要等待異步操作完成
         setTimeout(() => {
@@ -240,8 +243,9 @@ QUnit.module('firebaseHelpers', hooks => {
         vm.toggleAutoBackup();
 
         assert.false(vm.enableAutoBackup, 'enableAutoBackup 應為 false');
-        assert.equal(localStorage.getItem('autoBackupEnabled'), 'false', 'localStorage 中的 autoBackupEnabled 應為 false');
-        assert.true(vm.showTempMessage.calledWith('自動備份已關閉！', 2000), '應顯示關閉訊息');
+        const settings = getSettings();
+        assert.false(settings.autoBackupEnabled, 'settings 中的 autoBackupEnabled 應為 false');
+        assert.true(vm.showTempMessage.calledWith('自動備份已關閉。'), '應顯示關閉訊息');
     });
 
     QUnit.test('toggleAutoBackup - 開啟自動備份但未登入', function(assert) {
@@ -253,7 +257,7 @@ QUnit.module('firebaseHelpers', hooks => {
         vm.toggleAutoBackup();
 
         assert.true(vm.enableAutoBackup, 'enableAutoBackup 應為 true');
-        assert.true(vm.showTempMessage.calledWith('自動備份已開啟！', 2000), '應顯示開啟訊息');
+        assert.true(vm.showTempMessage.calledWith('自動備份已開啟。'), '應顯示開啟訊息');
         assert.false(mockFirebaseAuth.uploadUserData.called, '未登入時不應觸發 backupToCloud');
     });
 });
