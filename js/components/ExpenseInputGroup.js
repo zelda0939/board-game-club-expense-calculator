@@ -114,6 +114,11 @@ export default {
         },
         isMenuActive(path, index) {
             return this.activeMealMenu === `${path}-${index}`;
+        },
+        closeMenuIfActive(path, index) {
+            if (this.isMenuActive(path, index)) {
+                this.activeMealMenu = null;
+            }
         }
     },
     template: `
@@ -132,7 +137,7 @@ export default {
                                :value="meal.note"
                                @input="updateMealNote(reimbursableMeal, index, $event)"
                                placeholder="備註">
-                        <div class="meal-actions">
+                        <div class="meal-actions" v-click-outside="() => closeMenuIfActive('reimbursable.' + memberKey + '.meal', index)">
                             <button @click="toggleMealMenu('reimbursable.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
                             <transition name="fade-scale">
                                 <div v-if="isMenuActive('reimbursable.' + memberKey + '.meal', index)" class="actions-menu">
@@ -171,7 +176,7 @@ export default {
                                    :value="meal.note"
                                    @input="updateMealNote(ownMeal, index, $event)"
                                    placeholder="備註">
-                            <div class="meal-actions">
+                            <div class="meal-actions" v-click-outside="() => closeMenuIfActive('our_own.' + memberKey + '.meal', index)">
                                 <button @click="toggleMealMenu('our_own.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
                                 <transition name="fade-scale">
                                     <div v-if="isMenuActive('our_own.' + memberKey + '.meal', index)" class="actions-menu">
