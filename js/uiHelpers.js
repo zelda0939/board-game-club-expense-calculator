@@ -59,8 +59,18 @@ export default {
                 useCORS: true,    // 使用 CORS 來加載跨域圖片
                 scrollY: -window.scrollY, // 確保從頁面頂部開始截圖
                 scrollX: 0,
-                windowWidth: elementToCapture.scrollWidth,
-                windowHeight: elementToCapture.scrollHeight
+                windowWidth: document.documentElement.scrollWidth,
+                windowHeight: document.documentElement.scrollHeight,
+                onclone: (clonedDoc) => {
+                    // 在複製的文檔中，找到所有懸浮按鈕內的圖示
+                    const iconsInFabs = clonedDoc.querySelectorAll('.fab i.fa-solid');
+                    iconsInFabs.forEach(icon => {
+                        // 應用一個微調樣式，將圖示稍微向上移動以修正渲染偏差
+                        // 這個樣式只在截圖過程中生效，不影響實際頁面
+                        icon.style.position = 'relative';
+                        icon.style.top = '-2px';
+                    });
+                }
             });
 
             const link = document.createElement('a');
