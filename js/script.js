@@ -236,8 +236,8 @@ const app = createApp({
             const person = this.quickAddModal.person;
             const types = {
                 'reimbursable.meal': '代墊餐費',
-                'our_own.meal': '自家餐費',
                 'reimbursable.transport': '代墊車費',
+                'our_own.meal': '自家餐費',
                 'our_own.transport': '自家車費',
             };
             if (person === 'brother') {
