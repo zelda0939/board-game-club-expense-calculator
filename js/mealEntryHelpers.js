@@ -4,9 +4,11 @@
  */
 export default {
     // 新增餐費項目
-    addMealEntry(memberPath) {
+    addMealEntry(memberPath, amount = 0, note = '') {
         const { target, key } = this.getTargetObjectAndKey(memberPath);
-        target[key].push({ amount: 0, note: '' });
+        // 清理和轉換 amount，確保它是一個數字
+        const numericAmount = Number(String(amount).replace(/,/g, '')) || 0;
+        target[key].push({ amount: numericAmount, note: note });
     },
     // 移除餐費項目
     removeMealEntry(memberPath, index) {

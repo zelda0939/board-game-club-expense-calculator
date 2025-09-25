@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="./css/calculator.css">
     <link rel="stylesheet" href="./css/modal_styles.css"> <!-- 引入新的模態框樣式 -->
     <link rel="stylesheet" href="./css/firebase_styles.css"> <!-- 引入 Firebase 樣式 -->
+    <link rel="stylesheet" href="./css/fab.css"> <!-- 引入懸浮按鈕樣式 -->
 </head>
 
 <body>
@@ -229,6 +230,46 @@
                 </div>
                 <div class="custom-modal-actions" style="margin-top: 10px;">
                     <button @click="cancelMealTransfer" class="cancel-btn"><i class="fa-solid fa-xmark"></i><span>取消</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 快速新增費用按鈕 -->
+        <button @click="openQuickAddModal" class="fab">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+
+        <!-- 快速新增費用模態框 -->
+        <div v-if="quickAddModal.visible" class="custom-modal-overlay" @click.self="closeQuickAddModal">
+            <div class="custom-modal-content">
+                <h3>快速新增費用</h3>
+                <div class="quick-add-form">
+                    <div class="form-group">
+                        <label for="quick-add-person">成員</label>
+                        <select id="quick-add-person" v-model="quickAddModal.person">
+                            <option value="me">Zelda</option>
+                            <option value="wife">Emma</option>
+                            <option value="brother">Andrew</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quick-add-type">類型</label>
+                        <select id="quick-add-type" v-model="quickAddModal.type">
+                            <option v-for="(label, value) in availableExpenseTypes" :value="value">{{ label }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quick-add-amount">金額</label>
+                        <input type="text" id="quick-add-amount" :value="formatCurrency(quickAddModal.amount)" @focus="openQuickAddCalculator" placeholder="輸入金額" readonly>
+                    </div>
+                    <div class="form-group" v-if="isMealExpense">
+                        <label for="quick-add-note">備註</label>
+                        <input type="text" id="quick-add-note" v-model="quickAddModal.note" placeholder="(選填)">
+                    </div>
+                </div>
+                <div class="custom-modal-actions quick-add-actions">
+                    <button @click="saveQuickExpense"><i class="fa-solid fa-save"></i><span>儲存</span></button>
+                    <button @click="closeQuickAddModal" class="cancel-btn"><i class="fa-solid fa-xmark"></i><span>取消</span></button>
                 </div>
             </div>
         </div>

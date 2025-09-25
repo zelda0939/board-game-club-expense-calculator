@@ -9,7 +9,7 @@ export default {
             return value.toLocaleString('zh-TW', { maximumFractionDigits: 10 });
         }
         // 如果是字串，嘗試轉換為數字再格式化
-        const numValue = Number(value.toString().replace(/,/g, ''));
+        const numValue = Number(String(value).replace(/,/g, ''));
         if (!isNaN(numValue) && isFinite(numValue)) {
             return numValue.toLocaleString('zh-TW', { maximumFractionDigits: 10 });
         }
@@ -38,6 +38,12 @@ export default {
         this.calculatorState.visible = true;
     },
     updateValueFromCalculator({ path, value }) {
+        // 專門處理快速新增模態框的金額更新
+        if (path === 'quickAddModal.amount') {
+            this.quickAddModal.amount = value;
+            return;
+        }
+
         const pathParts = path.split('.');
         // 檢查 path 是否包含數字索引，判斷是否為餐費項目
         const isMealEntry = !isNaN(parseInt(pathParts[pathParts.length - 2]));

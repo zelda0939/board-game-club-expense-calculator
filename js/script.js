@@ -58,6 +58,7 @@ const app = createApp({
             rememberMe: !!settings.rememberedEmail,
             confirmationModal: { visible: false, message: '', onConfirm: null }, // 新增通用確認模態框狀態
             transferMealModal: { visible: false, path: '', index: -1, sourceMemberKey: '' },
+            quickAddModal: { visible: false, person: 'me', type: 'reimbursable.meal', amount: null, note: '' },
         };
     },
     created() {
@@ -230,6 +231,24 @@ const app = createApp({
                 }
             }
             return targets;
+        },
+        availableExpenseTypes() {
+            const person = this.quickAddModal.person;
+            const types = {
+                'reimbursable.meal': '代墊餐費',
+                'our_own.meal': '自家餐費',
+                'reimbursable.transport': '代墊車費',
+                'our_own.transport': '自家車費',
+            };
+            if (person === 'brother') {
+                types['reimbursable.printer_3d'] = '3D列印';
+                delete types['our_own.meal'];
+                delete types['our_own.transport'];
+            }
+            return types;
+        },
+        isMealExpense() {
+            return this.quickAddModal.type.includes('meal');
         }
     },
     methods: {
@@ -245,6 +264,43 @@ const app = createApp({
             this.showConfirmationModal('確定要刪除此餐費項目嗎？', () => {
                 this.removeMealEntry(path, index);
             });
+        },
+        openQuickAddModal() {
+            this.quickAddModal.visible = true;
+            this.quickAddModal.person = 'me';
+            this.quickAddModal.type = 'reimbursable.meal';
+            this.quickAddModal.amount = null;
+            this.quickAddModal.note = '';
+        },
+        closeQuickAddModal() {
+            this.quickAddModal.visible = false;
+        },
+        saveQuickExpense() {
+            const { person, type, amount, note } = this.quickAddModal;
+            const numericAmount = parseFloat(String(amount).replace(/,/g, '')) || 0;
+
+            if (!numericAmount || numericAmount <= 0) {
+                this.showTempMessage('請輸入有效的金額', 'error');
+                return;
+            }
+
+            const [category, expenseType] = type.split('.');
+            
+            if (expenseType === 'meal') {
+                const path = `${category}.${person}.meal`;
+                this.addMealEntry(path, numericAmount, note);
+            } else {
+                this[category][person][expenseType] = numericAmount;
+            }
+
+            this.showTempMessage('費用已新增', 'success');
+            this.closeQuickAddModal();
+        },
+        openQuickAddCalculator() {
+            this.calculatorState.targetPath = 'quickAddModal.amount';
+            const currentValue = this.quickAddModal.amount;
+            this.calculatorState.initialValue = (currentValue !== undefined && currentValue !== null) ? currentValue.toString().replace(/,/g, '') : '';
+            this.calculatorState.visible = true;
         },
     },
     components: {
