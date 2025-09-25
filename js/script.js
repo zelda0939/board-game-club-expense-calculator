@@ -15,7 +15,9 @@ import calculationHelpers from './calculationHelpers.js';
 import firebaseHelpers from './firebaseHelpers.js';
 import authHandlers from './authHandlers.js';
 import transferHandlers from './transferHandlers.js';
-import { scrollToElement } from './utils/scrollUtils.js';
+import uiHelpers from './uiHelpers.js'; // 新增
+import quickAddHandlers from './quickAddHandlers.js'; // 新增
+
 // 定義初始數據結構 (已移至 dataPersistence.js)
 // const initialData = { ... };
 
@@ -261,77 +263,12 @@ const app = createApp({
         ...firebaseHelpers,
         ...authHandlers,
         ...transferHandlers,
-        /**
-         * 滾動到指定的費用項目。
-         * @param {string} path - 費用項目的路徑，例如 'reimbursable.me.meal' 或 'reimbursable.me.transport'。
-         * @param {string} person - 成員的 key，例如 'me'。
-         */
-        scrollToExpenseItem(path, person) {
-            this.$nextTick(() => {
-                try {
-                    const refName = `group-${person}`;
-                    const groupComp = this.$refs?.[refName];
-
-                    // 優先使用子組件的滾動方法，因為它能處理更複雜的內部結構
-                    if (groupComp?.scrollToPath) {
-                        if (groupComp.scrollToPath(path)) {
-                            return; // 如果子組件成功處理，則結束
-                        }
-                    }
-
-                    // 如果子組件方法失敗或不存在，使用通用的 DOM 查詢和滾動工具作為備援
-                    const targetElement = document.querySelector(`[data-member-path="${path}"]`);
-                    scrollToElement(targetElement);
-                } catch (e) {
-                    console.error('Error scrolling to expense item:', e);
-                }
-            });
-        },
+        ...uiHelpers, // 新增
+        ...quickAddHandlers, // 新增
         handleDeleteMealRequest({ path, index }) {
             this.showConfirmationModal('確定要刪除此餐費項目嗎？', () => {
                 this.removeMealEntry(path, index);
             });
-        },
-        openQuickAddModal() {
-            this.quickAddModal.visible = true;
-            this.quickAddModal.person = 'me';
-            this.quickAddModal.type = 'reimbursable.meal';
-            this.quickAddModal.amount = null;
-            this.quickAddModal.note = '';
-        },
-        closeQuickAddModal() {
-            this.quickAddModal.visible = false;
-        },
-        saveQuickExpense() {
-            const { person, type, amount, note } = this.quickAddModal;
-            const numericAmount = parseFloat(String(amount).replace(/,/g, '')) || 0;
-
-            if (!numericAmount || numericAmount <= 0) {
-                this.showTempMessage('請輸入有效的金額', 'error');
-                return;
-            }
-
-            const [category, expenseType] = type.split('.');
-            
-            if (expenseType === 'meal') {
-                const path = `${category}.${person}.${expenseType}`;
-                this.addMealEntry(path, numericAmount, note);
-                this.scrollToExpenseItem(path, person);
-            } else {
-                const path = `${category}.${person}.${expenseType}`;
-                // 這裡我們直接更新數據，因為 Vue 的響應式系統會自動更新 input 的值
-                this.updateValueFromCalculator({ path, value: this.formatCurrency(numericAmount) });
-                this.scrollToExpenseItem(path, person);
-            }
-
-            this.showTempMessage('費用已新增', 'success');
-            this.closeQuickAddModal();
-        },
-        openQuickAddCalculator() {
-            this.calculatorState.targetPath = 'quickAddModal.amount';
-            const currentValue = this.quickAddModal.amount;
-            this.calculatorState.initialValue = (currentValue !== undefined && currentValue !== null) ? currentValue.toString().replace(/,/g, '') : '';
-            this.calculatorState.visible = true;
         },
     },
     components: {
