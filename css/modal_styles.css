@@ -529,3 +529,47 @@
         min-width: 500px;
     }
 }
+
+/* 快速新增費用模態框樣式 */
+.quick-add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.quick-add-form .form-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+}
+
+.quick-add-form label {
+    font-weight: bold;
+    text-align: right;
+    width: 60px;
+    flex-shrink: 0;
+}
+
+.quick-add-form select,
+.quick-add-form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--button-border-radius);
+    font-size: 1rem;
+    text-align: center;
+}
+
+.quick-add-form select {
+    text-align-last: center; /* For centering the selected option */
+}
+
+.quick-add-actions {
+    margin-top: 25px;
+}

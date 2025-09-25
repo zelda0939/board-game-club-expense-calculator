@@ -36,6 +36,13 @@ export default {
     },
 
     /**
+     * 將畫面平滑滾動到頁面頂部。
+     */
+    scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    /**
      * 截取整個 #app 元素的畫面並觸發下載。
      */
     async captureScreenshot() {

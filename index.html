@@ -237,18 +237,29 @@
 
         <!-- 懸浮按鈕容器 -->
         <div class="fab-container">
-            <!-- 截圖按鈕 -->
-            <button @click="captureScreenshot" class="fab fab-action" title="下載頁面截圖">
-                <i class="fa-solid fa-camera"></i>
+            <!-- 主懸浮按鈕，點擊展開/收合選單 -->
+            <button @click="toggleFabMenu" class="fab fab-main" :class="{'fab-main-open': fabMenuOpen}" title="更多操作">
+                <i class="fa-solid" :class="{'fa-xmark': fabMenuOpen, 'fa-bars': !fabMenuOpen}"></i>
             </button>
-            <!-- 快速移動到計算結果按鈕 -->
-            <button @click="scrollToResults" class="fab fab-secondary" title="移動到計算結果">
-                <i class="fa-solid fa-calculator"></i>
-            </button>
-            <!-- 快速新增費用按鈕 -->
-            <button @click="openQuickAddModal" class="fab" title="快速新增費用">
-                <i class="fa-solid fa-plus"></i>
-            </button>
+            <!-- 懸浮功能選單 -->
+            <div class="fab-menu" :class="{'fab-menu-open': fabMenuOpen}">
+                <!-- 快速新增費用按鈕 -->
+                <button @click="openQuickAddModal(); toggleFabMenu();" class="fab" title="快速新增費用">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <!-- 快速移動到計算結果按鈕 -->
+                <button @click="scrollToResults(); toggleFabMenu();" class="fab fab-secondary" title="移動到計算結果">
+                    <i class="fa-solid fa-calculator"></i>
+                </button>
+                <!-- 截圖按鈕 -->
+                <button @click="captureScreenshot(); toggleFabMenu();" class="fab fab-action" title="下載頁面截圖">
+                    <i class="fa-solid fa-camera"></i>
+                </button>
+                <!-- 移至頂部按鈕 -->
+                <button @click="scrollToTop(); toggleFabMenu();" class="fab fab-scroll-top" title="移至頂部">
+                    <i class="fa-solid fa-arrow-up"></i>
+                </button>
+            </div>
         </div>
 
         <!-- 快速新增費用模態框 -->

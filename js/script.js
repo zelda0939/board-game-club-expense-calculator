@@ -62,6 +62,7 @@ const app = createApp({
             confirmationModal: { visible: false, message: '', onConfirm: null }, // 新增通用確認模態框狀態
             transferMealModal: { visible: false, path: '', index: -1, sourceMemberKey: '' },
             quickAddModal: { visible: false, person: 'me', type: 'reimbursable.meal', amount: null, note: '' },
+            fabMenuOpen: false, // 控制懸浮按鈕選單的開關
         };
     },
     created() {
@@ -269,6 +270,9 @@ const app = createApp({
             this.showConfirmationModal('確定要刪除此餐費項目嗎？', () => {
                 this.removeMealEntry(path, index);
             });
+        },
+        toggleFabMenu() {
+            this.fabMenuOpen = !this.fabMenuOpen;
         },
     },
     components: {

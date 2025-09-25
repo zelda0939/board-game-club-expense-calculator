@@ -4,8 +4,7 @@
     bottom: 20px;
     right: 20px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: column-reverse; /* 主按鈕在下，選單在上 */
     z-index: 1000;
 }
 
@@ -39,11 +38,11 @@
 
 /* 次要懸浮按鈕樣式 */
 .fab-secondary {
-    background-color: var(--text-color-secondary); /* 使用 CSS 變數 */
+    background-color: var(--primary-color); /* 使用專案綠色 */
 }
 
 .fab-secondary:hover {
-    background-color: #5a6268;
+    background-color: #36a473; /* 較深的綠色 */
 }
 
 /* 其他操作按鈕樣式 (例如截圖) */
@@ -55,45 +54,62 @@
     background-color: #138496;
 }
 
-/* 快速新增表單樣式 (從這裡移到 modal_styles.css 或 style.css 更合適，但暫時保留) */
-.quick-add-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
+/* 移至頂部按鈕樣式 */
+.fab-scroll-top {
+    background-color: var(--text-color-secondary); /* 使用專案灰色 */
 }
 
-.quick-add-form .form-group {
+.fab-scroll-top:hover {
+    background-color: #5a6268; /* 較深的灰色 */
+}
+
+/* 主懸浮按鈕樣式 */
+.fab-main {
+    background-color: var(--primary-button-color);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    z-index: 1001; /* 確保主按鈕在最上層 */
+}
+
+.fab-main:hover {
+    background-color: #0056b3;
+}
+
+/* 主懸浮按鈕打開時的樣式 */
+.fab-main-open {
+    background-color: var(--danger-color);
+}
+
+.fab-main-open:hover {
+    background-color: #c0392b;
+}
+
+/* 懸浮功能選單容器 */
+.fab-menu {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column-reverse;
     gap: 10px;
-    width: 100%;
-    max-width: 300px;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.quick-add-form label {
-    font-weight: bold;
-    text-align: right;
-    width: 60px;
-    flex-shrink: 0;
+/* 選單中的按鈕初始狀態 (隱藏) */
+.fab-menu .fab {
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease-out;
+    pointer-events: none;
 }
 
-.quick-add-form select,
-.quick-add-form input {
-    flex-grow: 1;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 28px;
-    font-size: 1rem;
-    text-align: center;
+/* 選單打開時，子按鈕的樣式 (顯示) */
+.fab-menu-open .fab {
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
 }
 
-.quick-add-form select {
-    text-align-last: center;
-}
-
-.quick-add-actions {
-    margin-top: 20px;
-}
+/* 為每個子按鈕增加延遲，產生依次彈出的效果 */
+/* 注意：由於 flex-direction 是 column-reverse，所以視覺上最上面的按鈕是 HTML 中的最後一個 */
+.fab-menu-open .fab:nth-child(1) { transition-delay: 0s; }   /* 新增按鈕 (最下面) */
+.fab-menu-open .fab:nth-child(2) { transition-delay: 0.1s; } /* 計算結果按鈕 */
+.fab-menu-open .fab:nth-child(3) { transition-delay: 0.2s; } /* 截圖按鈕 */
+.fab-menu-open .fab:nth-child(4) { transition-delay: 0.3s; } /* 移至頂部按鈕 (最上面) */
