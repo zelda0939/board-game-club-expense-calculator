@@ -73,4 +73,19 @@ export default {
             this.showTempMessage('截圖失敗，請查看控制台錯誤。', 3000, 'error');
         }
     },
+
+    /**
+     * 切換懸浮功能選單的開關狀態，並控制頁面滾動條。
+     */
+    toggleFabMenu() {
+        this.fabMenuOpen = !this.fabMenuOpen;
+        if (this.fabMenuOpen) {
+            document.body.classList.add('fab-open-no-scroll');
+        } else {
+            // 延遲移除 class，確保收合動畫完成後再恢復捲軸
+            setTimeout(() => {
+                document.body.classList.remove('fab-open-no-scroll');
+            }, 300); // 延遲時間應與 CSS 中的 transition 時間 (0.3s) 匹配
+        }
+    },
 };

@@ -271,9 +271,6 @@ const app = createApp({
                 this.removeMealEntry(path, index);
             });
         },
-        toggleFabMenu() {
-            this.fabMenuOpen = !this.fabMenuOpen;
-        },
     },
     components: {
         CalculatorModal,

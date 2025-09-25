@@ -1,10 +1,11 @@
 /* 懸浮按鈕容器 */
 .fab-container {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column-reverse; /* 主按鈕在下，選單在上 */
+    bottom: 0;
+    right: 0;
+    width: calc(56px + 20px); /* 按鈕寬度 + 右邊距 */
+    height: calc(56px + 20px); /* 按鈕寬度 + 下邊距 */
+    pointer-events: none; /* 容器本身不攔截事件 */
     z-index: 1000;
 }
 
@@ -22,6 +23,7 @@
     justify-content: center;
     align-items: center;
     font-size: 24px;
+    pointer-events: auto; /* 只有按鈕本身可以點擊 */
     transition: all 0.3s ease;
 }
 
@@ -66,6 +68,9 @@
 /* 主懸浮按鈕樣式 */
 .fab-main {
     background-color: var(--primary-button-color);
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
     transition: transform 0.3s ease, background-color 0.3s ease;
     z-index: 1001; /* 確保主按鈕在最上層 */
 }
@@ -85,22 +90,24 @@
 
 /* 懸浮功能選單容器 */
 .fab-menu {
+    position: absolute;
+    bottom: calc(56px + 20px + 10px); /* 主按鈕高度 + 邊距 + 間距 */
+    right: 20px;
     display: flex;
     flex-direction: column-reverse;
     gap: 10px;
     align-items: center;
-    margin-bottom: 10px;
-    /* 初始狀態：高度為0，內容溢出隱藏 */
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
+    /* 初始狀態：隱藏且不可點擊，並將其移到主按鈕下方 */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* 選單中的按鈕初始狀態 (隱藏) */
 .fab-menu .fab {
     transform: scale(0);
     opacity: 0;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease-out;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease-out; /* 保持子按鈕的動畫 */
 }
 
 /* 選單打開時，子按鈕的樣式 (顯示) */
@@ -111,9 +118,12 @@
 
 /* 選單打開時，容器的樣式 */
 .fab-menu-open {
-    /* 設置一個足夠大的高度以容納所有按鈕 */
-    max-height: 300px; /* 56px * 4 + 10px * 3 = 254px */
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0s; /* 立即移除收合時的延遲 */
 }
+
+/* 選單打開時，容器的樣式 */
 
 /* 為每個子按鈕增加延遲，產生依次彈出的效果 */
 /* 注意：由於 flex-direction 是 column-reverse，所以視覺上最上面的按鈕是 HTML 中的最後一個 */

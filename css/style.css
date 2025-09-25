@@ -529,3 +529,8 @@ body.no-scroll {
     font-weight: bold;
     font-size: 1.1em;
 }
+
+/* 當懸浮選單打開時，防止 body 出現水平捲軸 */
+body.fab-open-no-scroll {
+    overflow-x: hidden;
+}
