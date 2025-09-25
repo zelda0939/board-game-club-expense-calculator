@@ -3,6 +3,8 @@
  * @description 一個 Vue 組件，用於顯示和管理單個成員的費用輸入。
  */
 
+import { scrollToElement } from '../components/scrollUtils.js';
+
 export default {
     props: {
         title: String, // 成員標題，例如 "Zelda"
@@ -124,54 +126,21 @@ export default {
         // 父元件可以呼叫此方法 (透過 $refs) 來讓組件滾動並聚焦到最新加入的餐費項目
         scrollToLatestMeal(path) {
             try {
-                const wrapper = this.$el.querySelector(`.meal-entries[data-member-path="${path}"]`);
-                if (!wrapper) return false;
-                const entries = wrapper.querySelectorAll('.meal-entry');
-                if (!entries || entries.length === 0) return false;
-                const newEntry = entries[entries.length - 1];
+                const mealWrapper = this.$el.querySelector(`.meal-entries[data-member-path="${path}"]`);
+                if (!mealWrapper) return false;
 
-                // 找到最近的可滾動容器
-                function findScrollContainer(el) {
-                    let cur = el.parentElement;
-                    while (cur) {
-                        const style = window.getComputedStyle(cur);
-                        const overflowY = style.overflowY;
-                        const isScrollable = (overflowY === 'auto' || overflowY === 'scroll') && cur.scrollHeight > cur.clientHeight;
-                        if (isScrollable) return cur;
-                        cur = cur.parentElement;
-                    }
-                    return null;
+                const entries = mealWrapper.querySelectorAll('.meal-entry');
+                if (entries.length > 0) {
+                    const lastEntry = entries[entries.length - 1];
+                    scrollToElement(lastEntry);
+                    return true;
                 }
-
-                const scrollContainer = findScrollContainer(newEntry);
-                if (scrollContainer) {
-                    const containerRect = scrollContainer.getBoundingClientRect();
-                    const entryRect = newEntry.getBoundingClientRect();
-                    const offset = (entryRect.top - containerRect.top) + (entryRect.height / 2) - (containerRect.height / 2);
-                    const targetScroll = Math.max(0, scrollContainer.scrollTop + offset);
-                    scrollContainer.scrollTo({ top: targetScroll, behavior: 'smooth' });
-                } else {
-                    newEntry.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-
-                // 不聚焦（避免觸發計算機），僅保留置中備援滾動
-                setTimeout(() => {
-                    try {
-                        const rect = newEntry.getBoundingClientRect();
-                        const absoluteTop = rect.top + window.pageYOffset - (window.innerHeight / 2);
-                        window.scrollTo({ top: absoluteTop, behavior: 'smooth' });
-                    } catch (e) {
-                        // ignore
-                    }
-                }, 120);
-
-                return true;
+                return false;
             } catch (e) {
                 console.error('ExpenseInputGroup.scrollToLatestMeal error', e);
                 return false;
             }
-        }
-        ,
+        },
         // 通用的滾動方法：父元件可呼叫此方法，傳入任意 path（如 'reimbursable.me.meal' 或 'reimbursable.me.transport'）
         scrollToPath(path) {
             try {
@@ -179,51 +148,15 @@ export default {
                 const mealWrapper = this.$el.querySelector(`.meal-entries[data-member-path="${path}"]`);
                 if (mealWrapper) {
                     const entries = mealWrapper.querySelectorAll('.meal-entry');
-                    if (entries && entries.length > 0) {
-                        const newEntry = entries[entries.length - 1];
-                        // 使用之前的方法滾動並聚焦
-                        this.scrollToLatestMeal(path);
-                        return true;
-                    }
+                    const targetElement = entries.length > 0 ? entries[entries.length - 1] : mealWrapper;
+                    scrollToElement(targetElement);
+                    return true;
                 }
 
                 // 2) 嘗試以具體 input[data-member-path] 處理（transport, printer_3d 等）
                 const field = this.$el.querySelector(`[data-member-path="${path}"]`);
                 if (field) {
-                    // 找最近的可滾動容器
-                    function findScrollContainer(el) {
-                        let cur = el.parentElement;
-                        while (cur) {
-                            const style = window.getComputedStyle(cur);
-                            const overflowY = style.overflowY;
-                            const isScrollable = (overflowY === 'auto' || overflowY === 'scroll') && cur.scrollHeight > cur.clientHeight;
-                            if (isScrollable) return cur;
-                            cur = cur.parentElement;
-                        }
-                        return null;
-                    }
-
-                    const scrollContainer = findScrollContainer(field);
-                    if (scrollContainer) {
-                        const containerRect = scrollContainer.getBoundingClientRect();
-                        const entryRect = field.getBoundingClientRect();
-                        const offset = (entryRect.top - containerRect.top) + (entryRect.height / 2) - (containerRect.height / 2);
-                        const targetScroll = Math.max(0, scrollContainer.scrollTop + offset);
-                        scrollContainer.scrollTo({ top: targetScroll, behavior: 'smooth' });
-                    } else {
-                        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-
-                    // 不聚焦（避免觸發計算機），僅保留置中備援滾動
-                    setTimeout(() => {
-                        try {
-                            const rect = field.getBoundingClientRect();
-                            const absoluteTop = rect.top + window.pageYOffset - (window.innerHeight / 2);
-                            window.scrollTo({ top: absoluteTop, behavior: 'smooth' });
-                        } catch (e) {
-                            // ignore
-                        }
-                    }, 120);
+                    scrollToElement(field);
                     return true;
                 }
 
