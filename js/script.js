@@ -289,8 +289,123 @@ const app = createApp({
             if (expenseType === 'meal') {
                 const path = `${category}.${person}.meal`;
                 this.addMealEntry(path, numericAmount, note);
+                // 等待 DOM 更新，然後滾動並聚焦到新加入的餐費項目
+                this.$nextTick(() => {
+                    try {
+                        const refName = `group-${person}`;
+                        const groupComp = this.$refs && this.$refs[refName];
+                        let handledByRef = false;
+                        if (groupComp && typeof groupComp.scrollToLatestMeal === 'function') {
+                            try {
+                                handledByRef = !!groupComp.scrollToLatestMeal(path);
+                                console.debug('scrollToLatestMeal via ref returned', handledByRef);
+                            } catch (e) {
+                                console.error('error calling scrollToLatestMeal on ref', e);
+                            }
+                        }
+
+                        if (!handledByRef) {
+                            // fallback to DOM-based search (previous logic)
+                            let newEntry = null;
+                            const wrapper = document.querySelector(`.meal-entries[data-member-path="${path}"]`);
+                            if (wrapper) {
+                                const entries = wrapper.querySelectorAll('.meal-entry');
+                                if (entries && entries.length > 0) newEntry = entries[entries.length - 1];
+                            }
+
+                            if (!newEntry) {
+                                const memberEl = document.querySelector(`.card[data-member-key="${person}"]`);
+                                if (memberEl) {
+                                    const mealEntries = memberEl.querySelectorAll('.meal-entries .meal-entry');
+                                    if (mealEntries && mealEntries.length > 0) {
+                                        newEntry = mealEntries[mealEntries.length - 1];
+                                    }
+                                }
+                            }
+
+                            if (newEntry) {
+                                console.debug('Found newEntry for quick add (DOM fallback):', newEntry);
+                                newEntry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                setTimeout(() => {
+                                    try {
+                                        const rect = newEntry.getBoundingClientRect();
+                                        const absoluteTop = rect.top + window.pageYOffset - (window.innerHeight / 2);
+                                        window.scrollTo({ top: absoluteTop, behavior: 'smooth' });
+                                    } catch (e) {}
+                                }, 120);
+                            } else {
+                                console.debug('Could not find newEntry for quick add (DOM fallback)');
+                            }
+                        }
+                    } catch (e) {
+                        console.error('scrollToNewMealEntry error', e);
+                    }
+                });
             } else {
                 this[category][person][expenseType] = numericAmount;
+                // 如果是非 meal 類型（例如 transport 或 printer_3d），嘗試滾動並聚焦該欄位
+                const path = `${category}.${person}.${expenseType}`;
+                this.$nextTick(() => {
+                    try {
+                        const refName = `group-${person}`;
+                        const groupComp = this.$refs && this.$refs[refName];
+                        let handled = false;
+                        if (groupComp && typeof groupComp.scrollToPath === 'function') {
+                            try {
+                                handled = !!groupComp.scrollToPath(path);
+                                console.debug('scrollToPath via ref returned', handled);
+                            } catch (e) {
+                                console.error('error calling scrollToPath on ref', e);
+                            }
+                        }
+
+                        if (!handled) {
+                            // DOM fallback: 找 input[data-member-path="path"]
+                            const el = document.querySelector(`[data-member-path="${path}"]`);
+                            if (el) {
+                                // 找最近可滾動容器
+                                function findScrollContainer(elm) {
+                                    let cur = elm.parentElement;
+                                    while (cur) {
+                                        const style = window.getComputedStyle(cur);
+                                        const overflowY = style.overflowY;
+                                        const isScrollable = (overflowY === 'auto' || overflowY === 'scroll') && cur.scrollHeight > cur.clientHeight;
+                                        if (isScrollable) return cur;
+                                        cur = cur.parentElement;
+                                    }
+                                    return null;
+                                }
+
+                                const scrollContainer = findScrollContainer(el);
+                                if (scrollContainer) {
+                                    const containerRect = scrollContainer.getBoundingClientRect();
+                                    const entryRect = el.getBoundingClientRect();
+                                    const offset = (entryRect.top - containerRect.top) + (entryRect.height / 2) - (containerRect.height / 2);
+                                    const targetScroll = Math.max(0, scrollContainer.scrollTop + offset);
+                                    try {
+                                        scrollContainer.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                                    } catch (e) {
+                                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    }
+                                } else {
+                                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                }
+
+                                setTimeout(() => {
+                                    try {
+                                        const rect = el.getBoundingClientRect();
+                                        const absoluteTop = rect.top + window.pageYOffset - (window.innerHeight / 2);
+                                        window.scrollTo({ top: absoluteTop, behavior: 'smooth' });
+                                    } catch (e) {}
+                                }, 120);
+                            } else {
+                                console.debug('Could not find element for path', path);
+                            }
+                        }
+                    } catch (e) {
+                        console.error('scrollToPath quick add error', e);
+                    }
+                });
             }
 
             this.showTempMessage('費用已新增', 'success');

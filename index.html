@@ -88,7 +88,7 @@
             @update:reimbursable-transport="reimbursable.me.transport = $event"
             @update:own-meal="our_own.me.meal = $event"
             @update:own-transport="our_own.me.transport = $event"
-        ></expense-input-group>
+        ref="group-me"></expense-input-group>
 
         <expense-input-group
             title="Emma"
@@ -107,7 +107,7 @@
             @update:reimbursable-transport="reimbursable.wife.transport = $event"
             @update:own-meal="our_own.wife.meal = $event"
             @update:own-transport="our_own.wife.transport = $event"
-        ></expense-input-group>
+        ref="group-wife"></expense-input-group>
 
         <expense-input-group
             title="Andrew"
@@ -125,7 +125,7 @@
             @update:reimbursable-meal="reimbursable.brother.meal = $event"
             @update:reimbursable-transport="reimbursable.brother.transport = $event"
             @update:brother-printer3d="reimbursable.brother.printer_3d = $event"
-        ></expense-input-group>
+        ref="group-brother"></expense-input-group>
 
         <div class="card results-card">
             <h2>計算結果</h2>

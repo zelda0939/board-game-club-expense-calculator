@@ -120,15 +120,128 @@ export default {
                 this.activeMealMenu = null;
             }
         }
+        ,
+        // 父元件可以呼叫此方法 (透過 $refs) 來讓組件滾動並聚焦到最新加入的餐費項目
+        scrollToLatestMeal(path) {
+            try {
+                const wrapper = this.$el.querySelector(`.meal-entries[data-member-path="${path}"]`);
+                if (!wrapper) return false;
+                const entries = wrapper.querySelectorAll('.meal-entry');
+                if (!entries || entries.length === 0) return false;
+                const newEntry = entries[entries.length - 1];
+
+                // 找到最近的可滾動容器
+                function findScrollContainer(el) {
+                    let cur = el.parentElement;
+                    while (cur) {
+                        const style = window.getComputedStyle(cur);
+                        const overflowY = style.overflowY;
+                        const isScrollable = (overflowY === 'auto' || overflowY === 'scroll') && cur.scrollHeight > cur.clientHeight;
+                        if (isScrollable) return cur;
+                        cur = cur.parentElement;
+                    }
+                    return null;
+                }
+
+                const scrollContainer = findScrollContainer(newEntry);
+                if (scrollContainer) {
+                    const containerRect = scrollContainer.getBoundingClientRect();
+                    const entryRect = newEntry.getBoundingClientRect();
+                    const offset = (entryRect.top - containerRect.top) + (entryRect.height / 2) - (containerRect.height / 2);
+                    const targetScroll = Math.max(0, scrollContainer.scrollTop + offset);
+                    scrollContainer.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                } else {
+                    newEntry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
+                // 不聚焦（避免觸發計算機），僅保留置中備援滾動
+                setTimeout(() => {
+                    try {
+                        const rect = newEntry.getBoundingClientRect();
+                        const absoluteTop = rect.top + window.pageYOffset - (window.innerHeight / 2);
+                        window.scrollTo({ top: absoluteTop, behavior: 'smooth' });
+                    } catch (e) {
+                        // ignore
+                    }
+                }, 120);
+
+                return true;
+            } catch (e) {
+                console.error('ExpenseInputGroup.scrollToLatestMeal error', e);
+                return false;
+            }
+        }
+        ,
+        // 通用的滾動方法：父元件可呼叫此方法，傳入任意 path（如 'reimbursable.me.meal' 或 'reimbursable.me.transport'）
+        scrollToPath(path) {
+            try {
+                // 1) 嘗試以 meal-entries container 處理（若是 meal）
+                const mealWrapper = this.$el.querySelector(`.meal-entries[data-member-path="${path}"]`);
+                if (mealWrapper) {
+                    const entries = mealWrapper.querySelectorAll('.meal-entry');
+                    if (entries && entries.length > 0) {
+                        const newEntry = entries[entries.length - 1];
+                        // 使用之前的方法滾動並聚焦
+                        this.scrollToLatestMeal(path);
+                        return true;
+                    }
+                }
+
+                // 2) 嘗試以具體 input[data-member-path] 處理（transport, printer_3d 等）
+                const field = this.$el.querySelector(`[data-member-path="${path}"]`);
+                if (field) {
+                    // 找最近的可滾動容器
+                    function findScrollContainer(el) {
+                        let cur = el.parentElement;
+                        while (cur) {
+                            const style = window.getComputedStyle(cur);
+                            const overflowY = style.overflowY;
+                            const isScrollable = (overflowY === 'auto' || overflowY === 'scroll') && cur.scrollHeight > cur.clientHeight;
+                            if (isScrollable) return cur;
+                            cur = cur.parentElement;
+                        }
+                        return null;
+                    }
+
+                    const scrollContainer = findScrollContainer(field);
+                    if (scrollContainer) {
+                        const containerRect = scrollContainer.getBoundingClientRect();
+                        const entryRect = field.getBoundingClientRect();
+                        const offset = (entryRect.top - containerRect.top) + (entryRect.height / 2) - (containerRect.height / 2);
+                        const targetScroll = Math.max(0, scrollContainer.scrollTop + offset);
+                        scrollContainer.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                    } else {
+                        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+
+                    // 不聚焦（避免觸發計算機），僅保留置中備援滾動
+                    setTimeout(() => {
+                        try {
+                            const rect = field.getBoundingClientRect();
+                            const absoluteTop = rect.top + window.pageYOffset - (window.innerHeight / 2);
+                            window.scrollTo({ top: absoluteTop, behavior: 'smooth' });
+                        } catch (e) {
+                            // ignore
+                        }
+                    }, 120);
+                    return true;
+                }
+
+                return false;
+            } catch (e) {
+                console.error('ExpenseInputGroup.scrollToPath error', e);
+                return false;
+            }
+        }
     },
     template: `
-        <div class="card">
+    <div class="card" :data-member-key="memberKey">
             <h2>{{ title }}</h2>
             <!-- 代墊費用 -->
             <div class="input-group">
                 <label>代墊餐費</label>
-                <div class="input-wrapper meal-entries">
-                    <div v-for="(meal, index) in reimbursableMeal" :key="index" class="meal-entry">
+                <div class="input-wrapper meal-entries" :data-member-path="'reimbursable.' + memberKey + '.meal'">
+                    <div v-for="(meal, index) in reimbursableMeal" :key="index" class="meal-entry" :data-index="index">
                         <input type="text"
                                :value="getMealAmountFieldValue(reimbursableMeal, index)"
                                @focus="openCalculatorForMeal('reimbursable.' + memberKey + '.meal', index)"
@@ -157,7 +270,7 @@ export default {
                 <label>代墊車費</label>
                 <div class="input-row">
                     <div class="input-wrapper">
-                        <input type="text" :value="getFieldValue(reimbursableTransport)" @focus="openCalculator('reimbursable.' + memberKey + '.transport')" placeholder="0" readonly>
+                        <input type="text" :value="getFieldValue(reimbursableTransport)" @focus="openCalculator('reimbursable.' + memberKey + '.transport')" :data-member-path="'reimbursable.' + memberKey + '.transport'" placeholder="0" readonly>
                     </div>
                 </div>
             </div>
@@ -166,8 +279,8 @@ export default {
             <template v-if="!isBrother">
                 <div class="input-group">
                     <label>自家餐費</label>
-                    <div class="input-wrapper meal-entries">
-                        <div v-for="(meal, index) in ownMeal" :key="index" class="meal-entry">
+                    <div class="input-wrapper meal-entries" :data-member-path="'our_own.' + memberKey + '.meal'">
+                        <div v-for="(meal, index) in ownMeal" :key="index" class="meal-entry" :data-index="index">
                             <input type="text"
                                    :value="getMealAmountFieldValue(ownMeal, index)"
                                    @focus="openCalculatorForMeal('our_own.' + memberKey + '.meal', index)"
@@ -196,7 +309,7 @@ export default {
                     <label>自家車費</label>
                     <div class="input-row">
                         <div class="input-wrapper">
-                            <input type="text" :value="getFieldValue(ownTransport)" @focus="openCalculator('our_own.' + memberKey + '.transport')" placeholder="0" readonly>
+                            <input type="text" :value="getFieldValue(ownTransport)" @focus="openCalculator('our_own.' + memberKey + '.transport')" :data-member-path="'our_own.' + memberKey + '.transport'" placeholder="0" readonly>
                         </div>
                     </div>
                 </div>
@@ -205,7 +318,7 @@ export default {
             <!-- 其他花費 (如果是 Andrew) -->
             <div v-if="isBrother" class="input-group">
                 <label>3D列印</label>
-                <input type="text" :value="getFieldValue(brotherPrinter3d)" @focus="openCalculator('reimbursable.' + memberKey + '.printer_3d')" placeholder="0" readonly>
+                <input type="text" :value="getFieldValue(brotherPrinter3d)" @focus="openCalculator('reimbursable.' + memberKey + '.printer_3d')" :data-member-path="'reimbursable.' + memberKey + '.printer_3d'" placeholder="0" readonly>
             </div>
         </div>
     `
