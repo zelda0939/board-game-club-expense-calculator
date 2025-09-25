@@ -46,6 +46,15 @@
     background-color: #5a6268;
 }
 
+/* 其他操作按鈕樣式 (例如截圖) */
+.fab-action {
+    background-color: #17a2b8; /* 一個不同的顏色 */
+}
+
+.fab-action:hover {
+    background-color: #138496;
+}
+
 /* 快速新增表單樣式 (從這裡移到 modal_styles.css 或 style.css 更合適，但暫時保留) */
 .quick-add-form {
     display: flex;

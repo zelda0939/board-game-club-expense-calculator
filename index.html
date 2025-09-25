@@ -9,6 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <title>桌遊社花費分攤計算機</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./css/style.css"> <!-- 引入獨立的 style.css -->
     <link rel="stylesheet" href="./css/calculator.css">
@@ -236,6 +237,10 @@
 
         <!-- 懸浮按鈕容器 -->
         <div class="fab-container">
+            <!-- 截圖按鈕 -->
+            <button @click="captureScreenshot" class="fab fab-action" title="下載頁面截圖">
+                <i class="fa-solid fa-camera"></i>
+            </button>
             <!-- 快速移動到計算結果按鈕 -->
             <button @click="scrollToResults" class="fab fab-secondary" title="移動到計算結果">
                 <i class="fa-solid fa-calculator"></i>
