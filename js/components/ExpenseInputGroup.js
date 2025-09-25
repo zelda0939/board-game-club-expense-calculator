@@ -3,7 +3,7 @@
  * @description 一個 Vue 組件，用於顯示和管理單個成員的費用輸入。
  */
 
-import { scrollToElement } from '../components/scrollUtils.js';
+import { scrollToElement } from '../utils/scrollUtils.js';
 
 export default {
     props: {

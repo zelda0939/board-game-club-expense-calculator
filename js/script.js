@@ -15,6 +15,7 @@ import calculationHelpers from './calculationHelpers.js';
 import firebaseHelpers from './firebaseHelpers.js';
 import authHandlers from './authHandlers.js';
 import transferHandlers from './transferHandlers.js';
+import { scrollToElement } from './utils/scrollUtils.js';
 // 定義初始數據結構 (已移至 dataPersistence.js)
 // const initialData = { ... };
 
@@ -260,6 +261,32 @@ const app = createApp({
         ...firebaseHelpers,
         ...authHandlers,
         ...transferHandlers,
+        /**
+         * 滾動到指定的費用項目。
+         * @param {string} path - 費用項目的路徑，例如 'reimbursable.me.meal' 或 'reimbursable.me.transport'。
+         * @param {string} person - 成員的 key，例如 'me'。
+         */
+        scrollToExpenseItem(path, person) {
+            this.$nextTick(() => {
+                try {
+                    const refName = `group-${person}`;
+                    const groupComp = this.$refs?.[refName];
+
+                    // 優先使用子組件的滾動方法，因為它能處理更複雜的內部結構
+                    if (groupComp?.scrollToPath) {
+                        if (groupComp.scrollToPath(path)) {
+                            return; // 如果子組件成功處理，則結束
+                        }
+                    }
+
+                    // 如果子組件方法失敗或不存在，使用通用的 DOM 查詢和滾動工具作為備援
+                    const targetElement = document.querySelector(`[data-member-path="${path}"]`);
+                    scrollToElement(targetElement);
+                } catch (e) {
+                    console.error('Error scrolling to expense item:', e);
+                }
+            });
+        },
         handleDeleteMealRequest({ path, index }) {
             this.showConfirmationModal('確定要刪除此餐費項目嗎？', () => {
                 this.removeMealEntry(path, index);
@@ -287,125 +314,14 @@ const app = createApp({
             const [category, expenseType] = type.split('.');
             
             if (expenseType === 'meal') {
-                const path = `${category}.${person}.meal`;
-                this.addMealEntry(path, numericAmount, note);
-                // 等待 DOM 更新，然後滾動並聚焦到新加入的餐費項目
-                this.$nextTick(() => {
-                    try {
-                        const refName = `group-${person}`;
-                        const groupComp = this.$refs && this.$refs[refName];
-                        let handledByRef = false;
-                        if (groupComp && typeof groupComp.scrollToLatestMeal === 'function') {
-                            try {
-                                handledByRef = !!groupComp.scrollToLatestMeal(path);
-                                console.debug('scrollToLatestMeal via ref returned', handledByRef);
-                            } catch (e) {
-                                console.error('error calling scrollToLatestMeal on ref', e);
-                            }
-                        }
-
-                        if (!handledByRef) {
-                            // fallback to DOM-based search (previous logic)
-                            let newEntry = null;
-                            const wrapper = document.querySelector(`.meal-entries[data-member-path="${path}"]`);
-                            if (wrapper) {
-                                const entries = wrapper.querySelectorAll('.meal-entry');
-                                if (entries && entries.length > 0) newEntry = entries[entries.length - 1];
-                            }
-
-                            if (!newEntry) {
-                                const memberEl = document.querySelector(`.card[data-member-key="${person}"]`);
-                                if (memberEl) {
-                                    const mealEntries = memberEl.querySelectorAll('.meal-entries .meal-entry');
-                                    if (mealEntries && mealEntries.length > 0) {
-                                        newEntry = mealEntries[mealEntries.length - 1];
-                                    }
-                                }
-                            }
-
-                            if (newEntry) {
-                                console.debug('Found newEntry for quick add (DOM fallback):', newEntry);
-                                newEntry.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                setTimeout(() => {
-                                    try {
-                                        const rect = newEntry.getBoundingClientRect();
-                                        const absoluteTop = rect.top + window.pageYOffset - (window.innerHeight / 2);
-                                        window.scrollTo({ top: absoluteTop, behavior: 'smooth' });
-                                    } catch (e) {}
-                                }, 120);
-                            } else {
-                                console.debug('Could not find newEntry for quick add (DOM fallback)');
-                            }
-                        }
-                    } catch (e) {
-                        console.error('scrollToNewMealEntry error', e);
-                    }
-                });
-            } else {
-                this[category][person][expenseType] = numericAmount;
-                // 如果是非 meal 類型（例如 transport 或 printer_3d），嘗試滾動並聚焦該欄位
                 const path = `${category}.${person}.${expenseType}`;
-                this.$nextTick(() => {
-                    try {
-                        const refName = `group-${person}`;
-                        const groupComp = this.$refs && this.$refs[refName];
-                        let handled = false;
-                        if (groupComp && typeof groupComp.scrollToPath === 'function') {
-                            try {
-                                handled = !!groupComp.scrollToPath(path);
-                                console.debug('scrollToPath via ref returned', handled);
-                            } catch (e) {
-                                console.error('error calling scrollToPath on ref', e);
-                            }
-                        }
-
-                        if (!handled) {
-                            // DOM fallback: 找 input[data-member-path="path"]
-                            const el = document.querySelector(`[data-member-path="${path}"]`);
-                            if (el) {
-                                // 找最近可滾動容器
-                                function findScrollContainer(elm) {
-                                    let cur = elm.parentElement;
-                                    while (cur) {
-                                        const style = window.getComputedStyle(cur);
-                                        const overflowY = style.overflowY;
-                                        const isScrollable = (overflowY === 'auto' || overflowY === 'scroll') && cur.scrollHeight > cur.clientHeight;
-                                        if (isScrollable) return cur;
-                                        cur = cur.parentElement;
-                                    }
-                                    return null;
-                                }
-
-                                const scrollContainer = findScrollContainer(el);
-                                if (scrollContainer) {
-                                    const containerRect = scrollContainer.getBoundingClientRect();
-                                    const entryRect = el.getBoundingClientRect();
-                                    const offset = (entryRect.top - containerRect.top) + (entryRect.height / 2) - (containerRect.height / 2);
-                                    const targetScroll = Math.max(0, scrollContainer.scrollTop + offset);
-                                    try {
-                                        scrollContainer.scrollTo({ top: targetScroll, behavior: 'smooth' });
-                                    } catch (e) {
-                                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                    }
-                                } else {
-                                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                }
-
-                                setTimeout(() => {
-                                    try {
-                                        const rect = el.getBoundingClientRect();
-                                        const absoluteTop = rect.top + window.pageYOffset - (window.innerHeight / 2);
-                                        window.scrollTo({ top: absoluteTop, behavior: 'smooth' });
-                                    } catch (e) {}
-                                }, 120);
-                            } else {
-                                console.debug('Could not find element for path', path);
-                            }
-                        }
-                    } catch (e) {
-                        console.error('scrollToPath quick add error', e);
-                    }
-                });
+                this.addMealEntry(path, numericAmount, note);
+                this.scrollToExpenseItem(path, person);
+            } else {
+                const path = `${category}.${person}.${expenseType}`;
+                // 這裡我們直接更新數據，因為 Vue 的響應式系統會自動更新 input 的值
+                this.updateValueFromCalculator({ path, value: this.formatCurrency(numericAmount) });
+                this.scrollToExpenseItem(path, person);
             }
 
             this.showTempMessage('費用已新增', 'success');
