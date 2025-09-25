@@ -90,21 +90,29 @@
     gap: 10px;
     align-items: center;
     margin-bottom: 10px;
+    /* 初始狀態：高度為0，內容溢出隱藏 */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
 }
 
 /* 選單中的按鈕初始狀態 (隱藏) */
 .fab-menu .fab {
     transform: scale(0);
     opacity: 0;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease-out;
-    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease-out;
 }
 
 /* 選單打開時，子按鈕的樣式 (顯示) */
 .fab-menu-open .fab {
     transform: scale(1);
     opacity: 1;
-    pointer-events: auto;
+}
+
+/* 選單打開時，容器的樣式 */
+.fab-menu-open {
+    /* 設置一個足夠大的高度以容納所有按鈕 */
+    max-height: 300px; /* 56px * 4 + 10px * 3 = 254px */
 }
 
 /* 為每個子按鈕增加延遲，產生依次彈出的效果 */
