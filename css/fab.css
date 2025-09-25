@@ -1,32 +1,57 @@
-.fab {
+/* 懸浮按鈕容器 */
+.fab-container {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    width: 60px;
-    height: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+}
+
+/* 通用懸浮按鈕樣式 */
+.fab {
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    background-color: #007bff;
+    background-color: var(--primary-button-color); /* 使用 CSS 變數 */
     color: white;
     border: none;
-    font-size: 24px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    transition: background-color 0.3s;
+    font-size: 24px;
+    transition: all 0.3s ease;
 }
 
 .fab:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; /* 保持 hover 效果 */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
 }
 
+.fab:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 次要懸浮按鈕樣式 */
+.fab-secondary {
+    background-color: var(--text-color-secondary); /* 使用 CSS 變數 */
+}
+
+.fab-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* 快速新增表單樣式 (從這裡移到 modal_styles.css 或 style.css 更合適，但暫時保留) */
 .quick-add-form {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    align-items: center; /* Center form groups */
+    align-items: center;
 }
 
 .quick-add-form .form-group {
@@ -36,7 +61,7 @@
     justify-content: center;
     gap: 10px;
     width: 100%;
-    max-width: 300px; /* Set a max-width for the form rows */
+    max-width: 300px;
 }
 
 .quick-add-form label {
@@ -57,7 +82,7 @@
 }
 
 .quick-add-form select {
-    text-align-last: center; /* For centering the selected option */
+    text-align-last: center;
 }
 
 .quick-add-actions {

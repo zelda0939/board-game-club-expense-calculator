@@ -127,7 +127,7 @@
             @update:brother-printer3d="reimbursable.brother.printer_3d = $event"
         ref="group-brother"></expense-input-group>
 
-        <div class="card results-card">
+        <div class="card results-card" id="results-section">
             <h2>計算結果</h2>
             <div class="result-item">
                 <span class="label">{{ familyShouldReceiveText }}</span>
@@ -234,10 +234,17 @@
             </div>
         </div>
 
-        <!-- 快速新增費用按鈕 -->
-        <button @click="openQuickAddModal" class="fab">
-            <i class="fa-solid fa-plus"></i>
-        </button>
+        <!-- 懸浮按鈕容器 -->
+        <div class="fab-container">
+            <!-- 快速移動到計算結果按鈕 -->
+            <button @click="scrollToResults" class="fab fab-secondary" title="移動到計算結果">
+                <i class="fa-solid fa-calculator"></i>
+            </button>
+            <!-- 快速新增費用按鈕 -->
+            <button @click="openQuickAddModal" class="fab" title="快速新增費用">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
 
         <!-- 快速新增費用模態框 -->
         <div v-if="quickAddModal.visible" class="custom-modal-overlay" @click.self="closeQuickAddModal">

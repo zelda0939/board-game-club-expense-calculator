@@ -27,4 +27,11 @@ export default {
             }
         });
     },
+
+    /**
+     * 將畫面平滑滾動到計算結果區塊。
+     */
+    scrollToResults() {
+        document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
+    },
 };
