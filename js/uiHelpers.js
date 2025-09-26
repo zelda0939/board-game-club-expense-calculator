@@ -107,8 +107,8 @@ export default {
                         const iconsInFabs = clonedDoc.querySelectorAll('.fab i.fa-solid');
                         iconsInFabs.forEach(icon => {
                             // 應用一個微調樣式，將圖示稍微向上移動以修正渲染偏差
-                            icon.style.position = 'relative';
-                            icon.style.top = '-2px';
+                        icon.style.position = 'relative'; // 確保 top 屬性生效
+                        icon.style.top = '-4px'; // 增加向上位移的量
                         });
                     }
                 });
