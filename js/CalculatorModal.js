@@ -569,6 +569,11 @@ export default {
 
             this.$emit('update:value', { path: this.targetPath, value: emittedValue });
             this.$emit('update:visible', false);
+            // 解決問題：當計算機關閉後，主動讓觸發的 input 失去焦點
+            // 這樣下次點擊時才能再次觸發 @focus 事件
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
             this.realtimeResult = ''; // 確定計算完成後清空即時結果
         },
         updateRealtimeResult() {
