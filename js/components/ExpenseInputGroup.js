@@ -35,6 +35,7 @@ export default {
         'update:brotherPrinter3d',
         'request-delete-confirmation', // 新增事件
         'request-transfer-meal',
+        'request-copy-meal', // 新增複製餐費事件
         'analyze-receipt', // 新增 AI 分析事件
         'request-clear-meals' // 新增清空餐費事件
     ],
@@ -113,6 +114,10 @@ export default {
         },
         requestTransferMeal(path, index) {
             this.$emit('request-transfer-meal', { path, index });
+            this.activeMealMenu = null;
+        },
+        requestCopyMeal(path, index) {
+            this.$emit('request-copy-meal', { path, index });
             this.activeMealMenu = null;
         },
         toggleMealMenu(path, index) {
@@ -207,8 +212,9 @@ export default {
                                 <button @click="toggleMealMenu('reimbursable.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
                                 <transition name="fade-scale">
                                     <div v-if="isMenuActive('reimbursable.' + memberKey + '.meal', index)" class="actions-menu">
-                                        <button @click="requestTransferMeal('reimbursable.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
-                                        <button @click="removeMealEntry('reimbursable.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
+                                        <button @click="requestTransferMeal('reimbursable.' + memberKey + '.meal', index)" class="transfer-meal-btn" title="轉移"><i class="fa-solid fa-right-left"></i></button>
+                                        <button @click="requestCopyMeal('reimbursable.' + memberKey + '.meal', index)" class="copy-meal-btn" title="複製"><i class="fa-solid fa-copy"></i></button>
+                                        <button @click="removeMealEntry('reimbursable.' + memberKey + '.meal', index)" class="remove-meal-btn" title="刪除"><i class="fa-solid fa-trash-can"></i></button>
                                     </div>
                                 </transition>
                             </template>
@@ -256,8 +262,9 @@ export default {
                                     <button @click="toggleMealMenu('our_own.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
                                     <transition name="fade-scale">
                                         <div v-if="isMenuActive('our_own.' + memberKey + '.meal', index)" class="actions-menu">
-                                            <button @click="requestTransferMeal('our_own.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
-                                            <button @click="removeMealEntry('our_own.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
+                                            <button @click="requestTransferMeal('our_own.' + memberKey + '.meal', index)" class="transfer-meal-btn" title="轉移"><i class="fa-solid fa-right-left"></i></button>
+                                            <button @click="requestCopyMeal('our_own.' + memberKey + '.meal', index)" class="copy-meal-btn" title="複製"><i class="fa-solid fa-copy"></i></button>
+                                            <button @click="removeMealEntry('our_own.' + memberKey + '.meal', index)" class="remove-meal-btn" title="刪除"><i class="fa-solid fa-trash-can"></i></button>
                                         </div>
                                     </transition>
                                 </template>

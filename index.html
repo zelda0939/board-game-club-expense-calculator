@@ -85,6 +85,9 @@
             @remove-meal-entry="removeMealEntry"
             @request-delete-confirmation="handleDeleteMealRequest"
             @request-transfer-meal="handleRequestTransferMeal"
+            @request-delete-confirmation="handleDeleteMealRequest"
+            @request-transfer-meal="handleRequestTransferMeal"
+            @request-copy-meal="handleRequestCopyMeal"
             @request-clear-meals="handleClearMealsRequest"
             @analyze-receipt="handleReceiptAnalysis"
             :ai-analysis-enabled="features.aiAnalysisEnabled"
@@ -107,6 +110,9 @@
             @remove-meal-entry="removeMealEntry"
             @request-delete-confirmation="handleDeleteMealRequest"
             @request-transfer-meal="handleRequestTransferMeal"
+            @request-delete-confirmation="handleDeleteMealRequest"
+            @request-transfer-meal="handleRequestTransferMeal"
+            @request-copy-meal="handleRequestCopyMeal"
             @request-clear-meals="handleClearMealsRequest"
             @analyze-receipt="handleReceiptAnalysis"
             :ai-analysis-enabled="features.aiAnalysisEnabled"
@@ -129,6 +135,9 @@
             @remove-meal-entry="removeMealEntry"
             @request-delete-confirmation="handleDeleteMealRequest"
             @request-transfer-meal="handleRequestTransferMeal"
+            @request-delete-confirmation="handleDeleteMealRequest"
+            @request-transfer-meal="handleRequestTransferMeal"
+            @request-copy-meal="handleRequestCopyMeal"
             @request-clear-meals="handleClearMealsRequest"
             @analyze-receipt="handleReceiptAnalysis"
             :ai-analysis-enabled="features.aiAnalysisEnabled"
@@ -258,7 +267,7 @@
         <!-- 餐費轉移模態框 -->
         <div v-if="transferMealModal.visible" class="custom-modal-overlay" @click.self="cancelMealTransfer">
             <div class="custom-modal-content">
-                <h3>轉移餐費給</h3>
+                <h3>{{ transferMealModal.isCopy ? '複製餐費給' : '轉移餐費給' }}</h3>
                 <div class="custom-modal-actions vertical-actions">
                     <button v-for="target in transferTargets" :key="target.name" @click="executeMealTransfer(target)" class="transfer-btn">
                         {{ target.name }}
