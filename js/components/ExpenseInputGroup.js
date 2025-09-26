@@ -42,7 +42,19 @@ export default {
     data() {
         return {
             activeMealMenu: null, // e.g., { path: 'reimbursable.me.meal', index: 0 }
+            sortableInstances: {} // 存儲 Sortable 實例
         };
+    },
+    mounted() {
+        this.ensureIds();
+        this.initSortable();
+    },
+    updated() {
+        this.ensureIds();
+        this.initSortable();
+    },
+    beforeUnmount() {
+        Object.values(this.sortableInstances).forEach(instance => instance.destroy());
     },
     computed: {
         totalReimbursableMeal() {
@@ -65,6 +77,47 @@ export default {
     methods: {
         _parseAmount(amount) {
             return parseFloat(String(amount || 0).replace(/,/g, ''));
+        },
+        ensureIds() {
+            const addIdToMeals = (mealArray) => {
+                if (mealArray) {
+                    mealArray.forEach(meal => {
+                        if (!meal.id) {
+                            meal.id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+                        }
+                    });
+                }
+            };
+            addIdToMeals(this.reimbursableMeal);
+            addIdToMeals(this.ownMeal);
+        },
+        initSortable() {
+            if (typeof Sortable === 'undefined') return;
+
+            const initList = (refName, listPropName, updateEventName) => {
+                const el = this.$refs[refName];
+                if (el && !this.sortableInstances[refName]) {
+                    this.sortableInstances[refName] = Sortable.create(el, {
+                        handle: '.actions-btn',
+                        filter: 'input, .actions-menu',
+                        preventOnFilter: false,
+                        animation: 150,
+                        onEnd: (evt) => {
+                            const newArray = [...this[listPropName]];
+                            const item = newArray.splice(evt.oldIndex, 1)[0];
+                            newArray.splice(evt.newIndex, 0, item);
+                            this.$emit(updateEventName, newArray);
+                        }
+                    });
+                }
+            };
+
+            this.$nextTick(() => {
+                initList('reimbursableMealList', 'reimbursableMeal', 'update:reimbursableMeal');
+                if (!this.isBrother) {
+                    initList('ownMealList', 'ownMeal', 'update:ownMeal');
+                }
+            });
         },
         // 為了讓模板中的事件能夠正確觸發，我們需要這些方法來轉發事件到父組件
         openCalculator(path) {
@@ -197,27 +250,29 @@ export default {
             <div class="input-group">
                 <label>代墊餐費</label>
                 <div class="input-wrapper meal-entries" :data-member-path="'reimbursable.' + memberKey + '.meal'">
-                    <div v-for="(meal, index) in reimbursableMeal" :key="index" class="meal-entry" :data-index="index">
-                        <input type="text"
-                               :value="getFieldValue(reimbursableMeal[index]?.amount)"
-                               @focus="openCalculatorForMeal('reimbursable.' + memberKey + '.meal', index)"
-                               placeholder="0" readonly>
-                        <input type="text"
-                               :value="meal.note"
-                               @input="updateMealNote(reimbursableMeal, index, $event)"
-                               placeholder="備註">
-                        <div class="meal-actions" v-click-outside="() => closeMenuIfActive('reimbursable.' + memberKey + '.meal', index)">
-                            <!-- 只有在項目超過一個時才顯示操作選單按鈕 -->
-                            <template v-if="reimbursableMeal.length > 1">
-                                <button @click="toggleMealMenu('reimbursable.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
-                                <transition name="fade-scale">
-                                    <div v-if="isMenuActive('reimbursable.' + memberKey + '.meal', index)" class="actions-menu">
-                                        <button @click="requestTransferMeal('reimbursable.' + memberKey + '.meal', index)" class="transfer-meal-btn" title="轉移"><i class="fa-solid fa-right-left"></i></button>
-                                        <button @click="requestCopyMeal('reimbursable.' + memberKey + '.meal', index)" class="copy-meal-btn" title="複製"><i class="fa-solid fa-copy"></i></button>
-                                        <button @click="removeMealEntry('reimbursable.' + memberKey + '.meal', index)" class="remove-meal-btn" title="刪除"><i class="fa-solid fa-trash-can"></i></button>
-                                    </div>
-                                </transition>
-                            </template>
+                    <div class="meal-list" ref="reimbursableMealList">
+                        <div v-for="(meal, index) in reimbursableMeal" :key="meal.id || index" class="meal-entry" :data-index="index">
+                            <input type="text"
+                                   :value="getFieldValue(reimbursableMeal[index]?.amount)"
+                                   @focus="openCalculatorForMeal('reimbursable.' + memberKey + '.meal', index)"
+                                   placeholder="0" readonly>
+                            <input type="text"
+                                   :value="meal.note"
+                                   @input="updateMealNote(reimbursableMeal, index, $event)"
+                                   placeholder="備註">
+                            <div class="meal-actions" v-click-outside="() => closeMenuIfActive('reimbursable.' + memberKey + '.meal', index)">
+                                <!-- 只有在項目超過一個時才顯示操作選單按鈕 -->
+                                <template v-if="reimbursableMeal.length > 1">
+                                    <button @click.stop="toggleMealMenu('reimbursable.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
+                                    <transition name="fade-scale">
+                                        <div v-if="isMenuActive('reimbursable.' + memberKey + '.meal', index)" class="actions-menu">
+                                            <button @click.stop="requestTransferMeal('reimbursable.' + memberKey + '.meal', index)" class="transfer-meal-btn" title="轉移"><i class="fa-solid fa-right-left"></i></button>
+                                            <button @click.stop="requestCopyMeal('reimbursable.' + memberKey + '.meal', index)" class="copy-meal-btn" title="複製"><i class="fa-solid fa-copy"></i></button>
+                                            <button @click.stop="removeMealEntry('reimbursable.' + memberKey + '.meal', index)" class="remove-meal-btn" title="刪除"><i class="fa-solid fa-trash-can"></i></button>
+                                        </div>
+                                    </transition>
+                                </template>
+                            </div>
                         </div>
                     </div>
                     <div class="meal-total" v-if="reimbursableMeal && reimbursableMeal.length > 1 && totalReimbursableMeal > 0">
@@ -247,27 +302,29 @@ export default {
                 <div class="input-group">
                     <label>自家餐費</label>
                     <div class="input-wrapper meal-entries" :data-member-path="'our_own.' + memberKey + '.meal'">
-                        <div v-for="(meal, index) in ownMeal" :key="index" class="meal-entry" :data-index="index">
-                            <input type="text"
-                                   :value="getFieldValue(ownMeal[index]?.amount)"
-                                   @focus="openCalculatorForMeal('our_own.' + memberKey + '.meal', index)"
-                                   placeholder="0" readonly>
-                            <input type="text"
-                                   :value="meal.note"
-                                   @input="updateMealNote(ownMeal, index, $event)"
-                                   placeholder="備註">
-                            <div class="meal-actions" v-click-outside="() => closeMenuIfActive('our_own.' + memberKey + '.meal', index)">
-                                <!-- 只有在項目超過一個時才顯示操作選單按鈕 -->
-                                <template v-if="ownMeal.length > 1">
-                                    <button @click="toggleMealMenu('our_own.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
-                                    <transition name="fade-scale">
-                                        <div v-if="isMenuActive('our_own.' + memberKey + '.meal', index)" class="actions-menu">
-                                            <button @click="requestTransferMeal('our_own.' + memberKey + '.meal', index)" class="transfer-meal-btn" title="轉移"><i class="fa-solid fa-right-left"></i></button>
-                                            <button @click="requestCopyMeal('our_own.' + memberKey + '.meal', index)" class="copy-meal-btn" title="複製"><i class="fa-solid fa-copy"></i></button>
-                                            <button @click="removeMealEntry('our_own.' + memberKey + '.meal', index)" class="remove-meal-btn" title="刪除"><i class="fa-solid fa-trash-can"></i></button>
-                                        </div>
-                                    </transition>
-                                </template>
+                        <div class="meal-list" ref="ownMealList">
+                            <div v-for="(meal, index) in ownMeal" :key="meal.id || index" class="meal-entry" :data-index="index">
+                                <input type="text"
+                                       :value="getFieldValue(ownMeal[index]?.amount)"
+                                       @focus="openCalculatorForMeal('our_own.' + memberKey + '.meal', index)"
+                                       placeholder="0" readonly>
+                                <input type="text"
+                                       :value="meal.note"
+                                       @input="updateMealNote(ownMeal, index, $event)"
+                                       placeholder="備註">
+                                <div class="meal-actions" v-click-outside="() => closeMenuIfActive('our_own.' + memberKey + '.meal', index)">
+                                    <!-- 只有在項目超過一個時才顯示操作選單按鈕 -->
+                                    <template v-if="ownMeal.length > 1">
+                                        <button @click.stop="toggleMealMenu('our_own.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
+                                        <transition name="fade-scale">
+                                            <div v-if="isMenuActive('our_own.' + memberKey + '.meal', index)" class="actions-menu">
+                                                <button @click.stop="requestTransferMeal('our_own.' + memberKey + '.meal', index)" class="transfer-meal-btn" title="轉移"><i class="fa-solid fa-right-left"></i></button>
+                                                <button @click.stop="requestCopyMeal('our_own.' + memberKey + '.meal', index)" class="copy-meal-btn" title="複製"><i class="fa-solid fa-copy"></i></button>
+                                                <button @click.stop="removeMealEntry('our_own.' + memberKey + '.meal', index)" class="remove-meal-btn" title="刪除"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </transition>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                         <div class="meal-total" v-if="ownMeal && ownMeal.length > 1 && totalOwnMeal > 0">

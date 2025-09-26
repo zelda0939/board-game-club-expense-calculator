@@ -19,15 +19,21 @@ export default {
             // 判斷是否為手動點擊「新增餐費」按鈕（即新增一個完全空白的項目）
             const isManualEmptyAdd = numericAmount === 0 && note === '';
 
+            const newMeal = { 
+                id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+                amount: numericAmount, 
+                note: note 
+            };
+
             if (isManualEmptyAdd) {
                 // 如果是手動新增空白項目，則總是新增一筆
-                mealArray.push({ amount: numericAmount, note: note });
+                mealArray.push(newMeal);
             } else if (isLastEntryEmpty) {
                 // 如果是從 AI、轉移、快速新增等功能來的，且最後一筆是空的，則覆寫
-                mealArray[mealArray.length - 1] = { amount: numericAmount, note: note };
+                mealArray[mealArray.length - 1] = newMeal;
             } else {
                 // 否則（最後一筆不是空的），新增一筆新的
-                mealArray.push({ amount: numericAmount, note: note });
+                mealArray.push(newMeal);
             }
         }
     },

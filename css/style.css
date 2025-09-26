@@ -332,6 +332,12 @@ body.no-scroll {
     margin-bottom: 15px;
 }
 
+.meal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .meal-entry {
     display: flex;
     align-items: center;
@@ -478,6 +484,11 @@ body.no-scroll {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: grab;
+}
+
+.actions-btn:active {
+    cursor: grabbing;
 }
 
 .actions-menu {
@@ -671,3 +682,5 @@ body.fab-open-no-scroll {
 .grouped-list .item-list li {
     color: var(--text-color-secondary); /* 使用次要文字顏色，與人名區分 */
 }
+
+
