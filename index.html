@@ -261,7 +261,7 @@
                     <i class="fa-solid fa-calculator"></i>
                 </button>
                 <!-- 截圖按鈕 -->
-                <button @click="captureScreenshot(); toggleFabMenu();" class="fab fab-action" title="下載頁面截圖">
+                <button @click="showScreenshotOptions" class="fab fab-action" title="下載頁面截圖">
                     <i class="fa-solid fa-camera"></i>
                 </button>
                 <!-- 移至頂部按鈕 -->
@@ -302,6 +302,20 @@
                 <div class="custom-modal-actions quick-add-actions">
                     <button @click="saveQuickExpense"><i class="fa-solid fa-plus"></i><span>新增</span></button>
                     <button @click="closeQuickAddModal" class="cancel-btn"><i class="fa-solid fa-xmark"></i><span>取消</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 截圖選項模態框 -->
+        <div v-if="screenshotOptionsModal.visible" class="custom-modal-overlay" @click.self="hideScreenshotOptions">
+            <div class="custom-modal-content">
+                <h3>選擇截圖範圍</h3>
+                <div class="custom-modal-actions vertical-actions">
+                    <button @click="startScreenshot('full')" class="transfer-btn"><i class="fa-solid fa-display"></i><span>截取全圖</span></button>
+                    <button @click="startScreenshot('results')" class="transfer-btn"><i class="fa-solid fa-receipt"></i><span>僅截取結果</span></button>
+                </div>
+                <div class="custom-modal-actions" style="margin-top: 10px;">
+                    <button @click="hideScreenshotOptions" class="cancel-btn"><i class="fa-solid fa-xmark"></i><span>取消</span></button>
                 </div>
             </div>
         </div>

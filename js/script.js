@@ -17,6 +17,7 @@ import authHandlers from './authHandlers.js';
 import transferHandlers from './transferHandlers.js';
 import uiHelpers from './uiHelpers.js'; // 新增
 import quickAddHandlers from './quickAddHandlers.js'; // 新增
+import screenshotHandlers from './screenshotHandlers.js'; // 新增
 import aiHandlers from './aiHandlers.js'; // 導入新的 AI 處理模組
 import DebugConsole from './utils/debugConsole.js';
 
@@ -75,7 +76,8 @@ const app = createApp({
             quickAddModal: { visible: false, person: 'me', type: 'reimbursable.meal', amount: null, note: '' },
             fabMenuOpen: false, // 控制懸浮按鈕選單的開關
             isAnalyzing: false, // 新增：用於在 AI 分析時凍結畫面
-            features: { aiAnalysisEnabled: false } // AI 功能預設關閉，由登入狀態控制
+            features: { aiAnalysisEnabled: false }, // AI 功能預設關閉，由登入狀態控制
+            screenshotOptionsModal: { visible: false } // 新增：截圖選項模態框
         };
     },
     created() {
@@ -283,6 +285,7 @@ const app = createApp({
         ...transferHandlers,
         ...uiHelpers, // 新增
         ...quickAddHandlers, // 新增
+        ...screenshotHandlers, // 新增
         ...aiHandlers, // 導入 AI 處理方法
         handleDeleteMealRequest({ path, index }) {
             this.showConfirmationModal('確定要刪除此餐費項目嗎？', () => {

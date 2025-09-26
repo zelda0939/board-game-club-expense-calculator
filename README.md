@@ -31,9 +31,11 @@
 ### 使用者體驗 (UX)
 - **整合計算機**：點擊金額輸入框會彈出專用計算機，避免手動輸入錯誤並支援簡易運算。
 - **懸浮快捷按鈕 (FAB)**：提供「快速新增費用」、「滾動到結果」、「頁面截圖」等常用功能的快捷入口。
+- **頁面截圖**：提供「截取全圖」或「僅截取結果」兩種模式，方便分享與記錄。
 - **費用轉移**：可輕鬆將一筆已記錄的餐費轉移給其他成員或分類。
 - **響應式設計**：界面在桌面和行動裝置上均有良好體驗。
 - **操作回饋**：透過彈出式訊息提示使用者操作成功、失敗或警告。
+- **除錯模式**：透過在 URL 加入 `?debug=true` 參數，可在頁面底部啟用一個行動裝置友善的除錯控制台，方便開發與問題排查。
 
 ## 🛠️ 技術棧
 
@@ -78,21 +80,25 @@
 ├── css/                 # CSS 樣式檔案
 ├── js/
 │   ├── ai/              # AI 相關功能
-│   │   └── receiptAnalyzer.js
+│   │   └── receiptAnalyzer.js # 呼叫 n8n Webhook 的底層邏輯
 │   ├── components/      # Vue 組件
 │   │   └── ExpenseInputGroup.js
 │   ├── tests/           # QUnit 測試檔案
+│   │   └── dataPersistence.test.js
+│   ├── utils/           # 通用工具函式
+│   │   ├── debugConsole.js  # 除錯控制台實現
+│   │   └── scrollUtils.js   # 滾動相關工具
 │   ├── aiHandlers.js        # AI 相關應用邏輯
 │   ├── authHandlers.js      # 認證邏輯
 │   ├── calculatorAndInput.js # 計算機與輸入處理
 │   ├── CalculatorModal.js   # 計算機 Vue 組件
 │   ├── calculationHelpers.js  # 核心計算邏輯
 │   ├── dataPersistence.js   # 本地數據儲存
-│   ├── firebaseAuth.js      # Firebase 認證底層
 │   ├── firebaseHelpers.js   # Firebase 數據庫操作
 │   ├── mealEntryHelpers.js  # 餐費項目管理
 │   ├── modalHandlers.js     # 各類模態框處理
 │   ├── quickAddHandlers.js  # 快速新增功能
+│   ├── screenshotHandlers.js# 截圖選項處理
 │   ├── script.js          # Vue 應用主程式
 │   └── ...
 ├── index.html           # 主頁面
