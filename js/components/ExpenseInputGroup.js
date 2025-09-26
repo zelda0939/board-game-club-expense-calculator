@@ -40,17 +40,11 @@ export default {
     computed: {
         totalReimbursableMeal() {
             if (!this.reimbursableMeal) return 0;
-            return this.reimbursableMeal.reduce((total, meal) => {
-                const amount = parseFloat(meal.amount.toString().replace(/,/g, '') || 0);
-                return total + amount;
-            }, 0);
+            return this.reimbursableMeal.reduce((total, meal) => total + this._parseAmount(meal.amount), 0);
         },
         totalOwnMeal() {
             if (!this.ownMeal) return 0;
-            return this.ownMeal.reduce((total, meal) => {
-                const amount = parseFloat(meal.amount.toString().replace(/,/g, '') || 0);
-                return total + amount;
-            }, 0);
+            return this.ownMeal.reduce((total, meal) => total + this._parseAmount(meal.amount), 0);
         },
         formatCurrency() {
             return (value) => {
@@ -62,6 +56,9 @@ export default {
         }
     },
     methods: {
+        _parseAmount(amount) {
+            return parseFloat(String(amount || 0).replace(/,/g, ''));
+        },
         // 為了讓模板中的事件能夠正確觸發，我們需要這些方法來轉發事件到父組件
         openCalculator(path) {
             this.$emit('open-calculator', path);
@@ -76,14 +73,6 @@ export default {
             // 直接發出請求，讓父組件處理確認模態框
             this.$emit('request-delete-confirmation', { path, index });
             this.activeMealMenu = null;
-        },
-        // 處理餐費金額的顯示
-        getMealAmountFieldValue(mealArray, index) {
-            const amount = mealArray?.[index]?.amount;
-            if (amount === null || amount === undefined || amount === '') return '0';
-            const sAmount = amount.toString();
-            const num = Number(sAmount.replace(/,/g, ''));
-            return isNaN(num) ? sAmount : num.toLocaleString();
         },
         // 處理一般金額的顯示
         getFieldValue(value) {
@@ -176,7 +165,7 @@ export default {
                 <div class="input-wrapper meal-entries" :data-member-path="'reimbursable.' + memberKey + '.meal'">
                     <div v-for="(meal, index) in reimbursableMeal" :key="index" class="meal-entry" :data-index="index">
                         <input type="text"
-                               :value="getMealAmountFieldValue(reimbursableMeal, index)"
+                               :value="getFieldValue(reimbursableMeal[index]?.amount)"
                                @focus="openCalculatorForMeal('reimbursable.' + memberKey + '.meal', index)"
                                placeholder="0" readonly>
                         <input type="text"
@@ -215,7 +204,7 @@ export default {
                     <div class="input-wrapper meal-entries" :data-member-path="'our_own.' + memberKey + '.meal'">
                         <div v-for="(meal, index) in ownMeal" :key="index" class="meal-entry" :data-index="index">
                             <input type="text"
-                                   :value="getMealAmountFieldValue(ownMeal, index)"
+                                   :value="getFieldValue(ownMeal[index]?.amount)"
                                    @focus="openCalculatorForMeal('our_own.' + memberKey + '.meal', index)"
                                    placeholder="0" readonly>
                             <input type="text"

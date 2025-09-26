@@ -402,6 +402,12 @@ export default {
             }
             return false; // 表示沒有錯誤
         },
+        // 新增輔助方法來處理數字或小數點輸入
+        handleDigit(digit) {
+            if (this.handleNumberOrDecimal(digit)) {
+                return; // 有錯誤發生，中斷
+            }
+        },
         press(val) {
             if (navigator.vibrate) {
                 navigator.vibrate(50);
@@ -453,9 +459,7 @@ export default {
                 case '7':
                 case '8':
                 case '9':
-                    if (this.handleNumberOrDecimal(pressVal)) { // 呼叫新的 handleNumberOrDecimal 方法並檢查是否有錯誤
-                        return;
-                    }
+                    this.handleDigit(pressVal);
                     break;
                 default:
                     // 處理未知按鈕，例如防止不必要的錯誤或行為

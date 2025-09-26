@@ -105,7 +105,7 @@ const app = createApp({
         // 由新到舊排序的已保存條目，供載入下拉選單使用
         savedEntriesDesc() {
             if (!Array.isArray(this.savedEntries)) return [];
-            return [...this.savedEntries].slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            return [...this.savedEntries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         },
         // 我們家應獲得差額
         familyShouldReceive() {
