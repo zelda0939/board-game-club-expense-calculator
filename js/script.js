@@ -271,10 +271,29 @@ const app = createApp({
 
             const targets = [];
 
+            // 增加在同一個成員的 '代墊' 和 '自家' 之間轉移的選項
+            const [sourceCategoryKey, sourceMember] = path.split('.');
+            if (sourceMember === 'me' || sourceMember === 'wife') {
+                if (sourceCategoryKey === 'reimbursable') {
+                    targets.push({
+                        memberKey: sourceMember,
+                        categoryKey: 'our_own',
+                        name: `${members[sourceMember]} (${categories.our_own})`
+                    });
+                } else if (sourceCategoryKey === 'our_own') {
+                    targets.push({
+                        memberKey: sourceMember,
+                        categoryKey: 'reimbursable',
+                        name: `${members[sourceMember]} (${categories.reimbursable})`
+                    });
+                }
+            }
+
+            // 增加轉移給其他成員的選項
             for (const memberKey in members) {
                 if (memberKey === sourceMemberKey) continue;
 
-                if (memberKey === 'brother') {
+                if (memberKey === 'brother') { // Andrew 只有代墊費用
                     targets.push({
                         memberKey: 'brother',
                         categoryKey: 'reimbursable',
@@ -290,7 +309,7 @@ const app = createApp({
                     }
                 }
             }
-            return targets;
+            return targets.sort((a, b) => a.name.localeCompare(b.name, 'zh-Hant')); // 排序讓選項更清晰
         },
         availableExpenseTypes() {
             const person = this.quickAddModal.person;
