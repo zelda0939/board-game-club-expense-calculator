@@ -28,6 +28,7 @@
     --small-button-padding-x: 10px; /* 新增小按鈕 padding */
     --small-button-border-radius: 22px; /* 新增小按鈕圓角 */
     --small-button-font-size: 0.9em; /* 新增小按鈕字體大小 */
+    --small-button-height: 36px; /* 新增小按鈕高度 */
 }
 
 body {
@@ -187,6 +188,8 @@ input::-webkit-inner-spin-button {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: var(--small-button-height); /* 設定固定高度 */
+    box-sizing: border-box; /* 確保 padding 和 border 包含在高度內 */
     gap: 8px;
 }
 
@@ -406,8 +409,7 @@ body.no-scroll {
     background-color: var(--secondary-color);
     color: var(--success-color);
     border: 1px solid var(--success-color);
-    margin-top: 10px;
-    width: 100%;
+    flex-grow: 1; /* 讓按鈕填滿可用空間 */
     transition: all 0.3s ease-in-out;
     box-shadow: 0 2px 4px var(--shadow-color);
     display: flex;
@@ -533,4 +535,37 @@ body.no-scroll {
 /* 當懸浮選單打開時，防止 body 出現水平捲軸 */
 body.fab-open-no-scroll {
     overflow-x: hidden;
+}/* 請將此段 CSS 加入到您的 style.css 檔案中 */
+
+.meal-entry-actions {
+    display: flex;
+    gap: 8px; /* 按鈕之間的間距 */
+    margin-top: 8px;
+    align-items: center; /* 確保子項目垂直置中 */
+}
+
+.ai-receipt-btn {
+    background-color: #8e44ad; /* 紫色系，與現有按鈕區分 */
+    color: white;
+    border: 1px solid #8e44ad;
+    padding: var(--small-button-padding-y) var(--small-button-padding-x);
+    border-radius: var(--small-button-border-radius);
+    cursor: pointer;
+    font-size: var(--small-button-font-size);
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 讓圖示置中 */
+    height: var(--small-button-height); /* 設定固定高度 */
+    box-sizing: border-box; /* 確保 padding 和 border 包含在高度內 */
+    flex-shrink: 0; /* 防止按鈕被壓縮 */
+    gap: 6px;
+}
+
+.ai-receipt-btn:hover {
+    background-color: #9b59b6;
+}
+
+.ai-receipt-btn i {
+    font-size: 1em;
 }

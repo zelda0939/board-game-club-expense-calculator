@@ -11,6 +11,11 @@ export default {
         if (this.messageTimeout) {
             clearTimeout(this.messageTimeout);
         }
+        // 如果 duration 為 0，表示訊息將持續顯示，直到下一次呼叫或手動關閉
+        if (duration === 0) {
+            return;
+        }
+
         // 根據訊息長度自動調整顯示時間
         const messageLength = message.length; // 訊息字數
         const readingSpeed = 18; // 每秒閱讀字數 (例如 4 個中文字/秒)
@@ -34,6 +39,14 @@ export default {
         }, displayDuration); // 根據計算出的時間消失
     },
     // 自定義模態框確認動作
+    /**
+     * @description 手動隱藏臨時訊息模態框。
+     */
+    hideTempMessage() {
+        if (this.messageTimeout) clearTimeout(this.messageTimeout);
+        this.tempMessageModal.visible = false;
+    },
+
     confirmAction(actionType) {
         this.customModal.visible = false;
         if (actionType === 'load') {

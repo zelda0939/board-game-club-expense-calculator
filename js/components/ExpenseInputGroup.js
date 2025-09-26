@@ -17,7 +17,11 @@ export default {
             type: Boolean,
             default: false
         },
-        brotherPrinter3d: Number
+        brotherPrinter3d: Number,
+        aiAnalysisEnabled: { // 新增 prop 來接收 AI 功能開關狀態
+            type: Boolean,
+            default: false
+        }
     },
     emits: [
         'open-calculator',
@@ -30,7 +34,8 @@ export default {
         'update:ownTransport',
         'update:brotherPrinter3d',
         'request-delete-confirmation', // 新增事件
-        'request-transfer-meal'
+        'request-transfer-meal',
+        'analyze-receipt' // 新增 AI 分析事件
     ],
     data() {
         return {
@@ -73,6 +78,20 @@ export default {
             // 直接發出請求，讓父組件處理確認模態框
             this.$emit('request-delete-confirmation', { path, index });
             this.activeMealMenu = null;
+        },
+        // 觸發隱藏的檔案上傳 input
+        triggerFileUpload(path) {
+            // 使用 ref 找到對應的 input 並觸發點擊
+            const inputRef = `fileInput_${path.replace(/\./g, '_')}`;
+            this.$refs[inputRef]?.click();
+        },
+        // 處理檔案選擇
+        handleFileChange(event, path) {
+            const file = event.target.files[0];
+            if (file) {
+                this.$emit('analyze-receipt', { file, path });
+            }
+            event.target.value = ''; // 重置 input 以便可以再次上傳同一個檔案
         },
         // 處理一般金額的顯示
         getFieldValue(value) {
@@ -185,7 +204,11 @@ export default {
                     <div class="meal-total" v-if="reimbursableMeal && reimbursableMeal.length > 1 && totalReimbursableMeal > 0">
                         <strong>總計：</strong> {{ formatCurrency(totalReimbursableMeal) }}
                     </div>
-                    <button @click="addMealEntry('reimbursable.' + memberKey + '.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
+                    <div class="meal-entry-actions">
+                        <button @click="addMealEntry('reimbursable.' + memberKey + '.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
+                        <button v-if="aiAnalysisEnabled" @click="triggerFileUpload('reimbursable.' + memberKey + '.meal')" class="ai-receipt-btn"><i class="fa-solid fa-camera-retro"></i></button>
+                        <input type="file" :ref="'fileInput_reimbursable_' + memberKey + '_meal'" @change="handleFileChange($event, 'reimbursable.' + memberKey + '.meal')" accept="image/*" style="display: none;">
+                    </div>
                 </div>
             </div>
             <div class="input-group">
@@ -224,7 +247,11 @@ export default {
                         <div class="meal-total" v-if="ownMeal && ownMeal.length > 1 && totalOwnMeal > 0">
                             <strong>總計：</strong> {{ formatCurrency(totalOwnMeal) }}
                         </div>
-                        <button @click="addMealEntry('our_own.' + memberKey + '.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
+                        <div class="meal-entry-actions">
+                            <button @click="addMealEntry('our_own.' + memberKey + '.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
+                            <button v-if="aiAnalysisEnabled" @click="triggerFileUpload('our_own.' + memberKey + '.meal')" class="ai-receipt-btn"><i class="fa-solid fa-camera-retro"></i></button>
+                            <input type="file" :ref="'fileInput_our_own_' + memberKey + '_meal'" @change="handleFileChange($event, 'our_own.' + memberKey + '.meal')" accept="image/*" style="display: none;">
+                        </div>
                     </div>
                 </div>
                 <div class="input-group">
