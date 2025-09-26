@@ -18,11 +18,21 @@ import transferHandlers from './transferHandlers.js';
 import uiHelpers from './uiHelpers.js'; // 新增
 import quickAddHandlers from './quickAddHandlers.js'; // 新增
 import { analyzeReceipt } from './ai/receiptAnalyzer.js';
+import DebugConsole from './utils/debugConsole.js';
 
 // 定義初始數據結構 (已移至 dataPersistence.js)
 // const initialData = { ... };
 
 import { getSettings, saveSettings } from './settings.js';
+
+// 從 URL 參數讀取除錯模式設定
+const urlParams = new URLSearchParams(window.location.search);
+const debugModeFromUrl = urlParams.get('debug') === 'true';
+
+// 新增：應用程式配置
+const appConfig = {
+    enableDebugConsole: debugModeFromUrl // 使用 URL 參數控制除錯控制台
+};
 
 // Vue.js 應用邏輯
 const {
@@ -65,9 +75,7 @@ const app = createApp({
             quickAddModal: { visible: false, person: 'me', type: 'reimbursable.meal', amount: null, note: '' },
             fabMenuOpen: false, // 控制懸浮按鈕選單的開關
             isAnalyzing: false, // 新增：用於在 AI 分析時凍結畫面
-            features: {
-                aiAnalysisEnabled: false // 控制 AI 分析功能的開關，預設為 false
-            }
+            features: { aiAnalysisEnabled: false } // AI 功能預設關閉，由登入狀態控制
         };
     },
     created() {
@@ -79,6 +87,10 @@ const app = createApp({
         if (savedData) {
             this.assignSavedData(this.reimbursable, savedData.reimbursable);
             this.assignSavedData(this.our_own, savedData.our_own);
+        }
+        // 根據設定初始化除錯控制台
+        if (appConfig.enableDebugConsole) {
+            new DebugConsole();
         }
         this.initAuthListener();
     },
