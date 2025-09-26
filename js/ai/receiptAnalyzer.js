@@ -8,23 +8,6 @@
 const N8N_WEBHOOK_URL = 'https://linebot.paoan.com.tw:8443/n8n_receipt_analyzer';
 
 /**
- * 將圖片檔案轉換為 Base64 字串。
- * @param {File} file - 圖片檔案。
- * @returns {Promise<{imageData: string, mimeType: string}>} - 包含 Base64 資料和 MIME 類型的物件。
- */
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve({
-            imageData: reader.result.split(',')[1], // 移除 data:image/...;base64, 前綴
-            mimeType: file.type
-        });
-        reader.onerror = (err) => reject(err);
-        reader.readAsDataURL(file);
-    });
-}
-
-/**
  * 分析收據圖片並提取費用項目。
  * @param {File} imageFile - 使用者上傳的收據圖片。
  * @param {string|null} userEmail - 登入使用者的 email。
@@ -36,14 +19,18 @@ export async function analyzeReceipt(imageFile, userEmail, userId) {
     }
 
     try {
-        const { imageData, mimeType } = await fileToBase64(imageFile);
+        // 1. 建立 FormData 物件
+        const formData = new FormData();
+
+        // 2. 將圖片檔案(二進位)和其他資料附加到 FormData 中
+        //    'file' 是欄位名稱，n8n 端會用這個名稱來接收檔案
+        formData.append('file', imageFile);
+        formData.append('userEmail', userEmail || '');
+        formData.append('userId', userId || '');
 
         const response = await fetch(N8N_WEBHOOK_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ imageData, mimeType, userEmail, userId }),
+            body: formData, // 3. 直接將 formData 作為 body，fetch 會自動設定 Content-Type 為 multipart/form-data
         });
 
         const result = await response.json();
