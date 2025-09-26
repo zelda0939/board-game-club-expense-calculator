@@ -288,6 +288,12 @@ const app = createApp({
                 this.removeMealEntry(path, index);
             });
         },
+        handleClearMealsRequest({ path }) {
+            this.showConfirmationModal('確定要清空此區塊的所有餐費項目嗎？', () => {
+                const { target, key } = this.getTargetObjectAndKey(path);
+                target[key] = [{ amount: 0, note: '' }]; // 重置為一個空的項目
+            });
+        },
         /**
          * 處理從 ExpenseInputGroup 組件傳來的收據分析請求。
          * @param {object} payload - 包含 file 和 path 的物件。

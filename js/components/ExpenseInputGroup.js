@@ -35,7 +35,8 @@ export default {
         'update:brotherPrinter3d',
         'request-delete-confirmation', // 新增事件
         'request-transfer-meal',
-        'analyze-receipt' // 新增 AI 分析事件
+        'analyze-receipt', // 新增 AI 分析事件
+        'request-clear-meals' // 新增清空餐費事件
     ],
     data() {
         return {
@@ -129,8 +130,17 @@ export default {
             if (this.isMenuActive(path, index)) {
                 this.activeMealMenu = null;
             }
-        }
-        ,
+        },
+        canClearMeals(mealArray) {
+            if (!mealArray || mealArray.length === 0) return false;
+            if (mealArray.length > 1) return true;
+            const singleEntry = mealArray[0];
+            // 檢查金額是否大於0或備註不為空
+            return this._parseAmount(singleEntry.amount) > 0 || singleEntry.note !== '';
+        },
+        requestClearMeals(path) {
+            this.$emit('request-clear-meals', { path });
+        },
         // 父元件可以呼叫此方法 (透過 $refs) 來讓組件滾動並聚焦到最新加入的餐費項目
         scrollToLatestMeal(path) {
             try {
@@ -206,8 +216,11 @@ export default {
                     </div>
                     <div class="meal-entry-actions">
                         <button @click="addMealEntry('reimbursable.' + memberKey + '.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
-                        <button v-if="aiAnalysisEnabled" @click="triggerFileUpload('reimbursable.' + memberKey + '.meal')" class="ai-receipt-btn" title="AI 收據分析"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
-                        <input type="file" :ref="'fileInput_reimbursable_' + memberKey + '_meal'" @change="handleFileChange($event, 'reimbursable.' + memberKey + '.meal')" accept="image/*" style="display: none;">
+                        <div class="action-buttons-group">
+                            <button v-if="aiAnalysisEnabled" @click="triggerFileUpload('reimbursable.' + memberKey + '.meal')" class="ai-receipt-btn" title="AI 收據分析"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+                            <button v-if="canClearMeals(reimbursableMeal)" @click="requestClearMeals('reimbursable.' + memberKey + '.meal')" class="clear-meals-btn" title="清空此區餐費"><i class="fa-solid fa-broom"></i></button>
+                            <input type="file" :ref="'fileInput_reimbursable_' + memberKey + '_meal'" @change="handleFileChange($event, 'reimbursable.' + memberKey + '.meal')" accept="image/*" style="display: none;">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -249,8 +262,11 @@ export default {
                         </div>
                         <div class="meal-entry-actions">
                             <button @click="addMealEntry('our_own.' + memberKey + '.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
-                            <button v-if="aiAnalysisEnabled" @click="triggerFileUpload('our_own.' + memberKey + '.meal')" class="ai-receipt-btn" title="AI 收據分析"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
-                            <input type="file" :ref="'fileInput_our_own_' + memberKey + '_meal'" @change="handleFileChange($event, 'our_own.' + memberKey + '.meal')" accept="image/*" style="display: none;">
+                            <div class="action-buttons-group">
+                                <button v-if="aiAnalysisEnabled" @click="triggerFileUpload('our_own.' + memberKey + '.meal')" class="ai-receipt-btn" title="AI 收據分析"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+                                <button v-if="canClearMeals(ownMeal)" @click="requestClearMeals('our_own.' + memberKey + '.meal')" class="clear-meals-btn" title="清空此區餐費"><i class="fa-solid fa-broom"></i></button>
+                                <input type="file" :ref="'fileInput_our_own_' + memberKey + '_meal'" @change="handleFileChange($event, 'our_own.' + memberKey + '.meal')" accept="image/*" style="display: none;">
+                            </div>
                         </div>
                     </div>
                 </div>

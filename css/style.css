@@ -544,12 +544,18 @@ body.fab-open-no-scroll {
     align-items: center; /* 確保子項目垂直置中 */
 }
 
+.action-buttons-group {
+    display: flex;
+    gap: 8px;
+}
+
 .ai-receipt-btn {
     background-color: #8e44ad; /* 紫色系，與現有按鈕區分 */
     color: white;
     border: 1px solid #8e44ad;
-    padding: var(--small-button-padding-y) var(--small-button-padding-x);
-    border-radius: var(--small-button-border-radius);
+    border-radius: 50%; /* 改為圓形 */
+    width: var(--small-button-height); /* 寬度等於高度 */
+    padding: 0; /* 移除 padding */
     cursor: pointer;
     font-size: var(--small-button-font-size);
     transition: all 0.3s ease-in-out;
@@ -559,7 +565,6 @@ body.fab-open-no-scroll {
     height: var(--small-button-height); /* 設定固定高度 */
     box-sizing: border-box; /* 確保 padding 和 border 包含在高度內 */
     flex-shrink: 0; /* 防止按鈕被壓縮 */
-    gap: 6px;
 }
 
 .ai-receipt-btn:hover {
@@ -567,5 +572,26 @@ body.fab-open-no-scroll {
 }
 
 .ai-receipt-btn i {
-    font-size: 1em;
+    font-size: 1.1em; /* 稍微放大圖示 */
+}
+
+.clear-meals-btn {
+    background-color: var(--danger-color);
+    color: white;
+    border: 1px solid var(--danger-color);
+    border-radius: 50%;
+    width: var(--small-button-height);
+    height: var(--small-button-height);
+    padding: 0;
+    cursor: pointer;
+    font-size: var(--small-button-font-size);
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.clear-meals-btn:hover {
+    background-color: #c0392b; /* Darker red */
 }
