@@ -82,6 +82,7 @@
 │   ├── components/      # Vue 組件
 │   │   └── ExpenseInputGroup.js
 │   ├── tests/           # QUnit 測試檔案
+│   ├── aiHandlers.js        # AI 相關應用邏輯
 │   ├── authHandlers.js      # 認證邏輯
 │   ├── calculatorAndInput.js # 計算機與輸入處理
 │   ├── CalculatorModal.js   # 計算機 Vue 組件
