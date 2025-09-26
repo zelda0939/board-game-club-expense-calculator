@@ -83,9 +83,11 @@ export default {
                 }
                 saveSettings(settings);
 
+                this.features.aiAnalysisEnabled = true; // 登入後開啟 AI 功能
                 this.cancelLoginModal(); // 確保登入模態框關閉
-                console.log("Vue 應用程式中：使用者已登入", user.displayName);
+                console.log("Vue 應用程式中：使用者已登入", user.email);
             } else {
+                this.features.aiAnalysisEnabled = false; // 登出後關閉 AI 功能
                 console.log("Vue 應用程式中：使用者已登出");
             }
         });

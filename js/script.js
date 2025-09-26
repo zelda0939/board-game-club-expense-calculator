@@ -66,7 +66,7 @@ const app = createApp({
             fabMenuOpen: false, // 控制懸浮按鈕選單的開關
             isAnalyzing: false, // 新增：用於在 AI 分析時凍結畫面
             features: {
-                aiAnalysisEnabled: true // 控制 AI 分析功能的開關
+                aiAnalysisEnabled: false // 控制 AI 分析功能的開關，預設為 false
             }
         };
     },
@@ -285,10 +285,11 @@ const app = createApp({
         async handleReceiptAnalysis({ file, path }) {
             this.isAnalyzing = true; // 開始分析，凍結畫面
             this.showTempMessage('收據分析中，請稍候...', 'info', 0); // 顯示持續的提示訊息
+            const userEmail = this.user ? this.user.email : null; // 獲取登入者的 email
             try {
-                const items = await analyzeReceipt(file);
-                if (items && items.length > 0) {
-                    items.forEach(item => {
+                const items = await analyzeReceipt(file, userEmail); // 將 email 傳入 API
+                if (items.success && items.result.length > 0) {
+                    items.result.forEach(item => {
                         // 確保 amount 是數字且 note 是字串
                         const amount = typeof item.amount === 'number' ? item.amount : 0;
                         const note = typeof item.note === 'string' ? item.note : '';
@@ -298,7 +299,7 @@ const app = createApp({
                     this.showTempMessage(`成功新增 ${items.length} 個項目`, 'success');
                 } else {
                     this.hideTempMessage(); // 先關閉「分析中」的訊息
-                    this.showTempMessage('AI 未能從圖片中解析出任何項目', 'warning');
+                    this.showTempMessage(items.success?'AI 未能從圖片中解析出任何項目':items.error, 'warning');
                 }
             } catch (error) {
                 console.error('收據分析失敗:', error);

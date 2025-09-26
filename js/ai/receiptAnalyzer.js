@@ -27,9 +27,10 @@ function fileToBase64(file) {
 /**
  * 分析收據圖片並提取費用項目。
  * @param {File} imageFile - 使用者上傳的收據圖片。
+ * @param {string|null} userEmail - 登入使用者的 email。
  * @returns {Promise<Array<{note: string, amount: number}>>} - 解析出的費用項目陣列。
  */
-export async function analyzeReceipt(imageFile) {
+export async function analyzeReceipt(imageFile, userEmail) {
     if (!N8N_WEBHOOK_URL || N8N_WEBHOOK_URL === 'YOUR_N8N_WEBHOOK_URL') {
         throw new Error('尚未設定 n8n Webhook URL。請在 js/ai/receiptAnalyzer.js 中設定。');
     }
@@ -42,15 +43,11 @@ export async function analyzeReceipt(imageFile) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ imageData, mimeType }),
+            body: JSON.stringify({ imageData, mimeType, userEmail }),
         });
 
-        if (!response.ok) {
-            throw new Error(`n8n 工作流請求失敗: ${response.status} ${response.statusText}`);
-        }
-
         const result = await response.json();
-        return result.result;
+        return result;
     } catch (error) {
         console.error("n8n Webhook 呼叫失敗:", error);
         // 拋出一個對使用者更友善的錯誤訊息
