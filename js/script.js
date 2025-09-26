@@ -286,8 +286,9 @@ const app = createApp({
             this.isAnalyzing = true; // 開始分析，凍結畫面
             this.showTempMessage('收據分析中，請稍候...', 'info', 0); // 顯示持續的提示訊息
             const userEmail = this.user ? this.user.email : null; // 獲取登入者的 email
+            const userId = this.user ? this.user.uid : null;
             try {
-                const items = await analyzeReceipt(file, userEmail); // 將 email 傳入 API
+                const items = await analyzeReceipt(file, userEmail, userId); // 將 email 傳入 API
                 if (items.success && items.result.length > 0) {
                     items.result.forEach(item => {
                         // 確保 amount 是數字且 note 是字串

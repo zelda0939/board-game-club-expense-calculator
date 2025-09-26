@@ -30,7 +30,7 @@ function fileToBase64(file) {
  * @param {string|null} userEmail - 登入使用者的 email。
  * @returns {Promise<Array<{note: string, amount: number}>>} - 解析出的費用項目陣列。
  */
-export async function analyzeReceipt(imageFile, userEmail) {
+export async function analyzeReceipt(imageFile, userEmail, userId) {
     if (!N8N_WEBHOOK_URL || N8N_WEBHOOK_URL === 'YOUR_N8N_WEBHOOK_URL') {
         throw new Error('尚未設定 n8n Webhook URL。請在 js/ai/receiptAnalyzer.js 中設定。');
     }
@@ -43,7 +43,7 @@ export async function analyzeReceipt(imageFile, userEmail) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ imageData, mimeType, userEmail }),
+            body: JSON.stringify({ imageData, mimeType, userEmail, userId }),
         });
 
         const result = await response.json();
