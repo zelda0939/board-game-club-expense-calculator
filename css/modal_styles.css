@@ -112,7 +112,11 @@
     align-items: flex-start;
     z-index: 1050;
     pointer-events: none;
-    animation: toastSlideInFadeOut 3s forwards ease-out;
+}
+
+/* 當訊息需要自動消失時，才應用此動畫 */
+.temp-message-modal.disappearing {
+    animation: toastSlideInFadeOut 3s forwards ease-out; /* 保持原有的動畫效果 */
 }
 
 .temp-message-modal .custom-modal-content {

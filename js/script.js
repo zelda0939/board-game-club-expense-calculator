@@ -57,8 +57,8 @@ const app = createApp({
             savedEntries: settings.savedEntries || [],
             selectedSaveEntry: '',
             loadMessage: '',
-            customModal: { visible: false, title: '', message: '', type: 'confirm' },
-            tempMessageModal: { visible: false, message: '' },
+            customModal: { visible: false, title: '', message: '', type: 'confirm' }, // 舊的
+            tempMessageModal: { visible: false, message: '', type: 'info', disappearing: true }, // 新增 disappearing 屬性
             pendingSaveEntry: '',
             dateChangeModal: { visible: false, originalDate: '', newDate: '' },
             overwriteConfirmModal: { visible: false, originalDate: '', newDate: '', message: '' },

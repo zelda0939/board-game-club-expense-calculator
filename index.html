@@ -186,7 +186,7 @@
         </div>
 
         <!-- 短暫提示訊息模態框 -->
-        <div v-if="tempMessageModal.visible" class="custom-modal-overlay temp-message-modal">
+        <div v-if="tempMessageModal.visible" class="custom-modal-overlay temp-message-modal" :class="{ 'disappearing': tempMessageModal.disappearing }">
             <div :class="['custom-modal-content', tempMessageModal.type]">
                 <p>{{ tempMessageModal.message }}</p>
             </div>

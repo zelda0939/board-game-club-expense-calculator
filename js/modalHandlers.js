@@ -7,12 +7,14 @@ export default {
     showTempMessage(message, type = 'info', duration) {
         this.tempMessageModal.message = message;
         this.tempMessageModal.type = type; // 新增類型，用於樣式區分
+        this.tempMessageModal.disappearing = duration !== 0; // 如果 duration 不為 0，則設定為會消失
         this.tempMessageModal.visible = true;
         if (this.messageTimeout) {
             clearTimeout(this.messageTimeout);
         }
         // 如果 duration 為 0，表示訊息將持續顯示，直到下一次呼叫或手動關閉
         if (duration === 0) {
+            this.tempMessageModal.disappearing = false; // 明確設定為不會消失
             return;
         }
 
