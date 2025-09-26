@@ -21,10 +21,11 @@ export default {
 
         const mealToTransfer = this[sourceCategory][sourceMemberKey].meal[index];
 
-        // Add to target
-        this[target.categoryKey][target.memberKey].meal.push(mealToTransfer);
+        // 使用 addMealEntry 來新增到目標，這樣就能套用「覆寫空項目」的邏輯
+        const targetPath = `${target.categoryKey}.${target.memberKey}.meal`;
+        this.addMealEntry(targetPath, mealToTransfer.amount, mealToTransfer.note);
 
-        // Remove from source
+        // 從來源移除
         this[sourceCategory][sourceMemberKey].meal.splice(index, 1);
 
         this.cancelMealTransfer();

@@ -8,7 +8,22 @@ export default {
         const { target, key } = this.getTargetObjectAndKey(memberPath);
         // 清理和轉換 amount，確保它是一個數字
         const numericAmount = Number(String(amount).replace(/,/g, '')) || 0;
-        target[key].push({ amount: numericAmount, note: note });
+        const mealArray = target[key];
+
+        if (Array.isArray(mealArray)) {
+            const lastEntry = mealArray.length > 0 ? mealArray[mealArray.length - 1] : null;
+
+            // 檢查最後一筆餐費是否為空（金額為0/null/空字串 且 沒有備註）
+            const isLastEntryEmpty = lastEntry && (lastEntry.amount === 0 || lastEntry.amount === null || lastEntry.amount === '') && lastEntry.note === '';
+
+            if (isLastEntryEmpty) {
+                // 如果是空的，直接更新最後一筆
+                mealArray[mealArray.length - 1] = { amount: numericAmount, note: note };
+            } else {
+                // 否則，新增一筆新的
+                mealArray.push({ amount: numericAmount, note: note });
+            }
+        }
     },
     // 移除餐費項目
     removeMealEntry(memberPath, index) {
