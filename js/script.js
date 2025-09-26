@@ -218,6 +218,43 @@ const app = createApp({
             }
             return details;
         },
+        // 新增：車費明細
+        allTransportDetails() {
+            const details = [];
+
+            // 定義類別名稱的映射
+            const categoriesMap = {
+                reimbursable: '代墊車費',
+                our_own: '自家車費'
+            };
+
+            // 定義成員名稱的映射
+            const membersMap = {
+                me: 'Zelda',
+                wife: 'Emma',
+                brother: 'Andrew'
+            };
+
+            // 遍歷主要類別 (reimbursable, our_own)
+            for (const categoryKey in categoriesMap) {
+                if (Object.hasOwnProperty.call(this, categoryKey)) {
+                    const categoryData = this[categoryKey];
+
+                    // 遍歷該類別下的每個成員 (me, wife, brother)
+                    for (const memberKey in categoryData) {
+                        const transportCost = Number((categoryData[memberKey]?.transport || '0').toString().replace(/,/g, ''));
+                        if (transportCost > 0) {
+                            details.push({
+                                category: categoriesMap[categoryKey],
+                                member: membersMap[memberKey],
+                                amount: transportCost,
+                            });
+                        }
+                    }
+                }
+            }
+            return details;
+        },
         transferTargets() {
             const members = {
                 me: 'Zelda',

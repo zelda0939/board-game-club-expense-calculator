@@ -55,7 +55,7 @@ export default {
 
             if (type === 'results') {
                 // --- 僅截取結果的邏輯 ---
-                const selectors = ['#results-section', '.detail-card', '.footer-note'];
+                const selectors = ['#results-section', '.detail-card', '.transport-detail-card', '.footer-note'];
                 const elementsToCapture = selectors.map(s => document.querySelector(s)).filter(el => el !== null);
 
                 if (elementsToCapture.length === 0) {

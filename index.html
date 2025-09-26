@@ -160,6 +160,16 @@
             </ul>
         </div>
 
+        <!-- 新增：車費明細卡片 -->
+        <div class="card detail-card transport-detail-card" v-if="allTransportDetails.length > 0">
+            <h2>車費明細</h2>
+            <ul>
+                <li v-for="(detail, index) in allTransportDetails" :key="index">
+                    {{ detail.category }} - {{ detail.member }}: {{ formatCurrency(detail.amount) }}
+                </li>
+            </ul>
+        </div>
+
         <p class="footer-note">註：金額為綠色代表Zelda應收的錢<br>紅色代表Zelda應付的錢</p>
 
         <!-- 計算機模組 -->
