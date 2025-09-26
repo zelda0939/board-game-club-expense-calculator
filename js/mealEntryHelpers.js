@@ -16,11 +16,17 @@ export default {
             // 檢查最後一筆餐費是否為空（金額為0/null/空字串 且 沒有備註）
             const isLastEntryEmpty = lastEntry && (lastEntry.amount === 0 || lastEntry.amount === null || lastEntry.amount === '') && lastEntry.note === '';
 
-            if (isLastEntryEmpty) {
-                // 如果是空的，直接更新最後一筆
+            // 判斷是否為手動點擊「新增餐費」按鈕（即新增一個完全空白的項目）
+            const isManualEmptyAdd = numericAmount === 0 && note === '';
+
+            if (isManualEmptyAdd) {
+                // 如果是手動新增空白項目，則總是新增一筆
+                mealArray.push({ amount: numericAmount, note: note });
+            } else if (isLastEntryEmpty) {
+                // 如果是從 AI、轉移、快速新增等功能來的，且最後一筆是空的，則覆寫
                 mealArray[mealArray.length - 1] = { amount: numericAmount, note: note };
             } else {
-                // 否則，新增一筆新的
+                // 否則（最後一筆不是空的），新增一筆新的
                 mealArray.push({ amount: numericAmount, note: note });
             }
         }
