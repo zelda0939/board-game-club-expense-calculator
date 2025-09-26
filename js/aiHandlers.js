@@ -30,7 +30,7 @@ export default {
                 this.showTempMessage(`成功新增 ${items.result.length} 個項目`, 'success');
             } else {
                 this.hideTempMessage(); // 先關閉「分析中」的訊息
-                this.showTempMessage(items.success ? 'AI 未能從圖片中解析出任何項目' : items.error, 'warning');
+                this.showTempMessage(items.success ? 'AI 未能從圖片中解析出任何項目' : items.error, 'error');
             }
         } catch (error) {
             console.error('收據分析失敗:', error);
