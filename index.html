@@ -194,6 +194,21 @@
             </ul>
         </div>
 
+        <!-- 新增：3D列印明細卡片 -->
+        <div class="card detail-card printer3d-detail-card" v-if="printer3dDetail > 0">
+            <h2>3D列印明細</h2>
+            <ul class="grouped-list">
+                <li>
+                    <strong class="category-title">代墊3D列印</strong>
+                    <ul class="member-list">
+                        <li>
+                            <span class="member-name">Andrew:</span> {{ formatCurrency(printer3dDetail) }}
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
         <p class="footer-note">註：金額為綠色代表Zelda應收的錢<br>紅色代表Zelda應付的錢</p>
 
 

@@ -268,6 +268,11 @@ const app = createApp({
             }
             return groupedDetails;
         },
+        // 新增：3D列印明細
+        printer3dDetail() {
+            const printer3dValue = Number((this.reimbursable.brother?.printer_3d || '0').toString().replace(/,/g, ''));
+            return printer3dValue > 0 ? printer3dValue : 0;
+        },
         transferTargets() {
             const members = {
                 me: 'Zelda',
