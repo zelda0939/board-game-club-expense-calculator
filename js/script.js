@@ -176,59 +176,65 @@ const app = createApp({
         },
         // 餐費明細
         allMealDetails() {
-            const details = [];
-
-            // 定義類別名稱的映射
+            const groupedDetails = {};
             const categoriesMap = {
                 reimbursable: '代墊餐費',
                 our_own: '自家餐費'
             };
-
-            // 定義成員名稱的映射
             const membersMap = {
                 me: 'Zelda',
                 wife: 'Emma',
                 brother: 'Andrew'
             };
 
-            // 遍歷主要類別 (reimbursable, our_own)
             for (const categoryKey in categoriesMap) {
-                if (Object.hasOwnProperty.call(this, categoryKey)) {
-                    const categoryName = categoriesMap[categoryKey];
-                    const categoryData = this[categoryKey]; // 取得該類別下的所有成員資料
+                const categoryName = categoriesMap[categoryKey];
 
-                    // 遍歷該類別下的每個成員 (me, wife, brother)
+                if (Object.hasOwnProperty.call(this, categoryKey)) {
+                    const categoryData = this[categoryKey];
+
                     for (const memberKey in categoryData) {
                         if (Object.hasOwnProperty.call(categoryData, memberKey) && categoryData[memberKey].meal) {
                             const memberName = membersMap[memberKey];
-                            // 遍歷該成員的餐費陣列
+                            let memberTotal = 0;
+                            const memberMeals = [];
+
                             categoryData[memberKey].meal.forEach(meal => {
-                                if (Number(meal.amount.toString().replace(/,/g, '')) > 0) { // 只顯示金額大於0的項目
-                                    details.push({
-                                        category: categoryName,
-                                        member: memberName,
+                                const amount = Number(String(meal.amount || 0).replace(/,/g, ''));
+                                if (amount > 0) {
+                                    memberTotal += amount;
+                                    memberMeals.push({
                                         amount: meal.amount,
-                                        note: meal.note
+                                        note: meal.note,
+                                        id: `${categoryKey}-${memberKey}-${Math.random()}`
                                     });
                                 }
                             });
+
+                            if (memberMeals.length > 0) {
+                                    if (!groupedDetails[categoryName]) {
+                                        groupedDetails[categoryName] = { members: {} };
+                                    }
+                                    if (!groupedDetails[categoryName].members[memberName]) {
+                                        groupedDetails[categoryName].members[memberName] = { items: [], total: 0 };
+                                    }
+                                groupedDetails[categoryName].members[memberName].items = memberMeals;
+                                groupedDetails[categoryName].members[memberName].total = memberTotal;
+                            }
                         }
                     }
                 }
             }
-            return details;
+            return groupedDetails;
         },
         // 新增：車費明細
         allTransportDetails() {
-            const details = [];
-
-            // 定義類別名稱的映射
+            const groupedDetails = {
+            };
             const categoriesMap = {
                 reimbursable: '代墊車費',
                 our_own: '自家車費'
             };
-
-            // 定義成員名稱的映射
             const membersMap = {
                 me: 'Zelda',
                 wife: 'Emma',
@@ -237,6 +243,9 @@ const app = createApp({
 
             // 遍歷主要類別 (reimbursable, our_own)
             for (const categoryKey in categoriesMap) {
+                const categoryName = categoriesMap[categoryKey]; // 移至迴圈頂部
+                let categoryTotal = 0; // 移至迴圈頂部
+
                 if (Object.hasOwnProperty.call(this, categoryKey)) {
                     const categoryData = this[categoryKey];
 
@@ -244,16 +253,20 @@ const app = createApp({
                     for (const memberKey in categoryData) {
                         const transportCost = Number((categoryData[memberKey]?.transport || '0').toString().replace(/,/g, ''));
                         if (transportCost > 0) {
-                            details.push({
-                                category: categoriesMap[categoryKey],
-                                member: membersMap[memberKey],
-                                amount: transportCost,
-                            });
+                            categoryTotal += transportCost;
+                            if (!groupedDetails[categoryName]) {
+                                groupedDetails[categoryName] = { members: {}, total: 0 };
+                            }
+                            groupedDetails[categoryName].members[membersMap[memberKey]] = transportCost;
                         }
+                    }
+
+                    if (groupedDetails[categoryName]) { // 確保即使分類下沒有任何項目，total 也能被正確賦值
+                        groupedDetails[categoryName].total = categoryTotal;
                     }
                 }
             }
-            return details;
+            return groupedDetails;
         },
         transferTargets() {
             const members = {

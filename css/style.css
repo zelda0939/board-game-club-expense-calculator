@@ -595,3 +595,51 @@ body.fab-open-no-scroll {
 .clear-meals-btn:hover {
     background-color: #c0392b; /* Darker red */
 }
+
+/* 優化後的巢狀明細列表樣式 */
+.grouped-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.grouped-list .category-title {
+    font-size: 1.1em;
+    color: var(--primary-color);
+    margin-top: 10px;
+    display: block;
+}
+
+.grouped-list .category-total {
+    font-weight: normal;
+    font-size: 0.9em;
+    color: var(--text-color-secondary);
+}
+
+.grouped-list .member-total {
+    font-weight: normal;
+    font-size: 0.8em;
+    color: var(--text-color-secondary);
+    margin-left: 5px;
+}
+
+.grouped-list .member-list {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+.grouped-list .member-name {
+    font-weight: bold;
+    color: var(--text-color); /* 確保使用主要的深色文字顏色 */
+    font-size: 1.2em; /* 增加字體大小，使其更顯眼 */
+}
+
+.grouped-list .item-list {
+    list-style-type: disc;
+    padding-left: 25px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.grouped-list .item-list li {
+    color: var(--text-color-secondary); /* 使用次要文字顏色，與人名區分 */
+}

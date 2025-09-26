@@ -151,26 +151,42 @@
             </div>
         </div>
 
-        <div class="card detail-card" v-if="allMealDetails.length > 0">
+        <div class="card detail-card" v-if="Object.keys(allMealDetails).length > 0">
             <h2>餐費明細</h2>
-            <ul>
-                <li v-for="(detail, index) in allMealDetails" :key="index">
-                    {{ detail.category }} - {{ detail.member }}: {{ formatCurrency(detail.amount) }}{{ detail.note ? ' (' + detail.note + ')' : '' }}
+            <ul class="grouped-list">
+                <li v-for="(categoryData, categoryName) in allMealDetails" :key="categoryName">
+                    <strong class="category-title">{{ categoryName }}</strong>
+                    <ul class="member-list">
+                        <li v-for="(memberData, memberName) in categoryData.members" :key="memberName">
+                            <span class="member-name">{{ memberName }} <span class="member-total">(總計: {{ formatCurrency(memberData.total) }})</span></span>
+                            <ul class="item-list">
+                                <li v-for="meal in memberData.items" :key="meal.id">
+                                    {{ formatCurrency(meal.amount) }}{{ meal.note ? ' (' + meal.note + ')' : '' }}
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
 
         <!-- 新增：車費明細卡片 -->
-        <div class="card detail-card transport-detail-card" v-if="allTransportDetails.length > 0">
+        <div class="card detail-card transport-detail-card" v-if="Object.keys(allTransportDetails).length > 0">
             <h2>車費明細</h2>
-            <ul>
-                <li v-for="(detail, index) in allTransportDetails" :key="index">
-                    {{ detail.category }} - {{ detail.member }}: {{ formatCurrency(detail.amount) }}
+            <ul class="grouped-list">
+                <li v-for="(data, category) in allTransportDetails" :key="category">
+                    <strong class="category-title">{{ category }} <span class="category-total">(總計: {{ formatCurrency(data.total) }})</span></strong>
+                    <ul class="member-list">
+                        <li v-for="(amount, member) in data.members" :key="member">
+                            <span class="member-name">{{ member }}:</span> {{ formatCurrency(amount) }}
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
 
         <p class="footer-note">註：金額為綠色代表Zelda應收的錢<br>紅色代表Zelda應付的錢</p>
+
 
         <!-- 計算機模組 -->
         <calculator-modal 
