@@ -202,13 +202,16 @@ export default {
                                @input="updateMealNote(reimbursableMeal, index, $event)"
                                placeholder="備註">
                         <div class="meal-actions" v-click-outside="() => closeMenuIfActive('reimbursable.' + memberKey + '.meal', index)">
-                            <button @click="toggleMealMenu('reimbursable.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
-                            <transition name="fade-scale">
-                                <div v-if="isMenuActive('reimbursable.' + memberKey + '.meal', index)" class="actions-menu">
-                                    <button @click="requestTransferMeal('reimbursable.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
-                                    <button @click="removeMealEntry('reimbursable.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
-                                </div>
-                            </transition>
+                            <!-- 只有在項目超過一個時才顯示操作選單按鈕 -->
+                            <template v-if="reimbursableMeal.length > 1">
+                                <button @click="toggleMealMenu('reimbursable.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
+                                <transition name="fade-scale">
+                                    <div v-if="isMenuActive('reimbursable.' + memberKey + '.meal', index)" class="actions-menu">
+                                        <button @click="requestTransferMeal('reimbursable.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
+                                        <button @click="removeMealEntry('reimbursable.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </transition>
+                            </template>
                         </div>
                     </div>
                     <div class="meal-total" v-if="reimbursableMeal && reimbursableMeal.length > 1 && totalReimbursableMeal > 0">
@@ -248,13 +251,16 @@ export default {
                                    @input="updateMealNote(ownMeal, index, $event)"
                                    placeholder="備註">
                             <div class="meal-actions" v-click-outside="() => closeMenuIfActive('our_own.' + memberKey + '.meal', index)">
-                                <button @click="toggleMealMenu('our_own.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
-                                <transition name="fade-scale">
-                                    <div v-if="isMenuActive('our_own.' + memberKey + '.meal', index)" class="actions-menu">
-                                        <button @click="requestTransferMeal('our_own.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
-                                        <button @click="removeMealEntry('our_own.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
-                                    </div>
-                                </transition>
+                                <!-- 只有在項目超過一個時才顯示操作選單按鈕 -->
+                                <template v-if="ownMeal.length > 1">
+                                    <button @click="toggleMealMenu('our_own.' + memberKey + '.meal', index)" class="actions-btn"><i class="fa-solid fa-ellipsis-v"></i></button>
+                                    <transition name="fade-scale">
+                                        <div v-if="isMenuActive('our_own.' + memberKey + '.meal', index)" class="actions-menu">
+                                            <button @click="requestTransferMeal('our_own.' + memberKey + '.meal', index)" class="transfer-meal-btn"><i class="fa-solid fa-right-left"></i></button>
+                                            <button @click="removeMealEntry('our_own.' + memberKey + '.meal', index)" class="remove-meal-btn"><i class="fa-solid fa-trash-can"></i></button>
+                                        </div>
+                                    </transition>
+                                </template>
                             </div>
                         </div>
                         <div class="meal-total" v-if="ownMeal && ownMeal.length > 1 && totalOwnMeal > 0">
