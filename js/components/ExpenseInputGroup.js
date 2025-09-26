@@ -207,7 +207,7 @@ export default {
                     <div class="meal-entry-actions">
                         <button @click="addMealEntry('reimbursable.' + memberKey + '.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
                         <button v-if="aiAnalysisEnabled" @click="triggerFileUpload('reimbursable.' + memberKey + '.meal')" class="ai-receipt-btn"><i class="fa-solid fa-camera-retro"></i></button>
-                        <input type="file" :ref="'fileInput_reimbursable_' + memberKey + '_meal'" @change="handleFileChange($event, 'reimbursable.' + memberKey + '.meal')" accept="image/*" capture="environment" style="display: none;">
+                        <input type="file" :ref="'fileInput_reimbursable_' + memberKey + '_meal'" @change="handleFileChange($event, 'reimbursable.' + memberKey + '.meal')" accept="image/*" style="display: none;">
                     </div>
                 </div>
             </div>
@@ -250,7 +250,7 @@ export default {
                         <div class="meal-entry-actions">
                             <button @click="addMealEntry('our_own.' + memberKey + '.meal')" class="add-meal-btn"><i class="fa-solid fa-plus"></i> 新增餐費</button>
                             <button v-if="aiAnalysisEnabled" @click="triggerFileUpload('our_own.' + memberKey + '.meal')" class="ai-receipt-btn"><i class="fa-solid fa-camera-retro"></i></button>
-                            <input type="file" :ref="'fileInput_our_own_' + memberKey + '_meal'" @change="handleFileChange($event, 'our_own.' + memberKey + '.meal')" accept="image/*" capture="environment" style="display: none;">
+                            <input type="file" :ref="'fileInput_our_own_' + memberKey + '_meal'" @change="handleFileChange($event, 'our_own.' + memberKey + '.meal')" accept="image/*" style="display: none;">
                         </div>
                     </div>
                 </div>
